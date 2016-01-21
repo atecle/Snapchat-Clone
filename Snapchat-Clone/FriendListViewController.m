@@ -8,6 +8,8 @@
 
 #import "FriendListViewController.h"
 
+NSString * const FriendListViewControllerIdentifier = @"FriendListViewController";
+
 @interface FriendListViewController () <UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -46,6 +48,13 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return [self.friends count];
+}
+
+#pragma mark - Helpers
+
+- (void)setImage:(UIImage *)image
+{
+    _image = image;
 }
 
 @end

@@ -9,6 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "FriendTableCell.h"
 
+extern NSString * const FriendListViewControllerIdentifier;
+
 @interface FriendListViewController : UIViewController
+
+@property (copy, nonatomic, readonly) UIImage *image;
+
+- (void)setImage:(UIImage *)image;
 
 @end

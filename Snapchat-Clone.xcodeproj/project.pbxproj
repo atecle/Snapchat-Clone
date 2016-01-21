@@ -17,6 +17,7 @@
 		66494D911C516575006593B8 /* FriendTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66494D8F1C516575006593B8 /* FriendTableCell.xib */; };
 		66494D951C5165ED006593B8 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D941C5165ED006593B8 /* User.m */; };
 		66494D981C5165FD006593B8 /* Snap.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D971C5165FD006593B8 /* Snap.m */; };
+		66494D9B1C516E1F006593B8 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D9A1C516E1F006593B8 /* LoginViewController.m */; };
 		66F4058A1C5032E100C7E852 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F405891C5032E100C7E852 /* main.m */; };
 		66F4058D1C5032E100C7E852 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058C1C5032E100C7E852 /* AppDelegate.m */; };
 		66F405901C5032E100C7E852 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058F1C5032E100C7E852 /* PhotoViewController.m */; };
@@ -66,6 +67,8 @@
 		66494D941C5165ED006593B8 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		66494D961C5165FD006593B8 /* Snap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Snap.h; sourceTree = "<group>"; };
 		66494D971C5165FD006593B8 /* Snap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Snap.m; sourceTree = "<group>"; };
+		66494D991C516E1F006593B8 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		66494D9A1C516E1F006593B8 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		66F405851C5032E100C7E852 /* Snapchat-Clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Snapchat-Clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		66F405891C5032E100C7E852 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		66F4058B1C5032E100C7E852 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -234,6 +237,8 @@
 				66494D881C51505B006593B8 /* NavigationController.m */,
 				66494D8A1C5163BE006593B8 /* FriendListViewController.h */,
 				66494D8B1C5163BE006593B8 /* FriendListViewController.m */,
+				66494D991C516E1F006593B8 /* LoginViewController.h */,
+				66494D9A1C516E1F006593B8 /* LoginViewController.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -384,6 +389,7 @@
 				66494D891C51505B006593B8 /* NavigationController.m in Sources */,
 				66494D821C51370A006593B8 /* UIColor+SnapchatColors.m in Sources */,
 				66494D861C513A72006593B8 /* CameraView.m in Sources */,
+				66494D9B1C516E1F006593B8 /* LoginViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

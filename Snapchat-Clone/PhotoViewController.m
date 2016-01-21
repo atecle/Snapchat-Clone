@@ -19,8 +19,6 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) CameraView *cameraView;
-@property (strong, nonatomic) CameraButton *cameraButton;
-
 @end
 
 @implementation PhotoViewController
@@ -30,12 +28,19 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
     [super viewDidLoad];
     
     self.cameraView = [[CameraView alloc] init];
+    self.cameraView.delegate = self;
     [self.view addSubview:self.cameraView];
     [self addConstraintsToCameraView];
     [self.cameraView startCaptureSession];
     //[self.cameraView setBackgroundColor:[UIColor greenColor]];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.navigationController.navigationBarHidden = YES;
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -69,15 +74,18 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 
 - (void)cameraView:(CameraView *)cameraView didCaptureImage:(UIImage *)image
 {
-    
-}
-
-- (void)cameraViewCancelButtonPressed:(CameraView *)cameraView
-{
-    
+    self.image = image;
 }
 
 - (void)cameraViewSendSnapButtonPressed:(CameraView *)cameraView
+{
+    FriendListViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:FriendListViewControllerIdentifier];
+    
+    self.navigationController.navigationBarHidden = NO;
+    [self.navigationController pushViewController:vc animated:NO];
+}
+
+- (void)cameraViewInboxButtonPressed:(CameraView *)cameraView
 {
     
 }

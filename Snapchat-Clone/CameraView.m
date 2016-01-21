@@ -229,13 +229,16 @@ static NSInteger CancelButtonWidth = 30;
 
         [self showCameraControls:NO];
         
-        [self.delegate cameraViewDidExitCaptureMode:self];
+        if ([self.delegate respondsToSelector:@selector(cameraViewDidExitCaptureMode:)])
+        {
+            [self.delegate cameraViewDidExitCaptureMode:self];
+        }
     }];
 }
 
 - (void)sendSnapButtonPressed
 {
-    
+    [self.delegate cameraViewSendSnapButtonPressed:self];
 }
 
 - (void)inboxButtonPressed
@@ -255,11 +258,22 @@ static NSInteger CancelButtonWidth = 30;
 - (void)startCaptureSession
 {
     [self.captureSession startRunning];
+    
+    if ([self.delegate respondsToSelector:@selector(cameraViewDidEnterCaptureMode:)])
+    {
+        [self.delegate cameraViewDidEnterCaptureMode:self];
+    }
+    
 }
 
 - (void)stopCaptureSession
 {
     [self.captureSession stopRunning];
+    
+    if ([self.delegate respondsToSelector:@selector(cameraViewDidExitCaptureMode:)])
+    {
+        [self.delegate cameraViewDidExitCaptureMode:self];
+    }
 }
 
 #pragma mark - Helpers

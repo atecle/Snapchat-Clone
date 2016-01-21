@@ -17,13 +17,14 @@
 
 @required
 - (void)cameraView:(CameraView *)cameraView didCaptureImage:(UIImage *)image;
-- (void)cameraViewCancelButtonPressed:(CameraView *)cameraView;
 - (void)cameraViewSendSnapButtonPressed:(CameraView *)cameraView;
+- (void)cameraViewInboxButtonPressed:(CameraView *)cameraView;
 
 
 @optional
 - (void)cameraViewDidEnterCaptureMode:(CameraView *)cameraView;
 - (void)cameraViewDidExitCaptureMode:(CameraView *)cameraView;
+- (void)cameraViewCancelButtonPressed:(CameraView *)cameraView;
 
 @end
 

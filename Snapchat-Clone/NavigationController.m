@@ -39,6 +39,7 @@
     return [self.topViewController preferredStatusBarUpdateAnimation];
 }
 
+
 #pragma mark - ContainedViewController
 
 - (void)didBecomeVisibleViewControllerInMasterViewController:(MasterViewController *)masterViewController

@@ -10,6 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 #import "MasterViewController.h"
+#import "FriendListViewController.h"
 #import "CameraButton.h"
 #import "CameraView.h"
 

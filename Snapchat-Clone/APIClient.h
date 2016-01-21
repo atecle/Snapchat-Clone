@@ -8,6 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
+
+extern NSString * const APIClientErrorDomain;
+
+typedef NS_ENUM(NSInteger, APIClientErrorCode)
+{
+    APIClientErrorCodeNotAnError,
+    APIClientErrorCodeServerError,
+    APIClientErrorCodeInvalidContentType
+};
+
 @interface APIClient : NSObject
 
+- (void)authenticateForUser:(NSString *)username withPassword:(NSString *)password success:( void (^)(NSInteger))success failure:(void (^)(NSError *))failure;
+- (void)retrieveFriendsWithSuccess:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
 @end
