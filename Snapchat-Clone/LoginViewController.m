@@ -8,26 +8,47 @@
 
 #import "LoginViewController.h"
 
+NSString * const LoginViewControllerIdentifier = @"LoginViewController";
+
 @interface LoginViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *passwordLabel;
 
 @property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
+@property (weak, nonatomic) IBOutlet UIButton *loginButton;
+
+@property (strong, nonatomic) APIClient *APIClient;
 
 @end
 
 @implementation LoginViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    _APIClient = [[APIClient alloc] init];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)loginButtonPressed:(id)sender
+{
+    NSString *username = self.usernameTextField.text;
+    NSString *password = self.passwordTextField.text;
+    
+    [self.APIClient authenticateForUser:username withPassword:password success:^(NSInteger userID) {
+        
+    } failure:^(NSError *error) {
+        
+    }];
+}
+
+- (void)setAPIClient:(APIClient *)APIClient
+{
+    _APIClient = APIClient;
+}
 
 @end

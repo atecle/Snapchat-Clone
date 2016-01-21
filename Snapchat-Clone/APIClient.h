@@ -20,6 +20,11 @@ typedef NS_ENUM(NSInteger, APIClientErrorCode)
 
 @interface APIClient : NSObject
 
+- (instancetype)initWithAPIToken:(NSString *)APIToken;
+
 - (void)authenticateForUser:(NSString *)username withPassword:(NSString *)password success:( void (^)(NSInteger))success failure:(void (^)(NSError *))failure;
 - (void)retrieveFriendsWithSuccess:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
+
+- (void)setAPIToken:(NSString *)APIToken;
+
 @end

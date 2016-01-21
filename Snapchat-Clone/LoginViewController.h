@@ -8,6 +8,23 @@
 
 #import <UIKit/UIKit.h>
 
+#import "APIClient.h"
+
+extern NSString * const LoginViewControllerIdentifier;
+
+@class LoginViewController;
+
+@protocol LoginViewControllerDelegate <NSObject>
+
+- (void)loginViewController:(LoginViewController *)loginViewController didLoginWithAPIToken:(NSString *)APIToken;
+- (void)loginViewController:(LoginViewController *)loginViewController didFailToLoginWithError:(NSString *)error;
+
+@end
+
 @interface LoginViewController : UIViewController
+
+@property (weak, nonatomic) id<LoginViewControllerDelegate> delegate;
+
+- (void)setAPIClient:(APIClient *)APIClient;
 
 @end

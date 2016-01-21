@@ -14,9 +14,21 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
 
 @interface APIClient()
 
+@property (strong, nonatomic) NSString *APIToken;
+
 @end
 
 @implementation APIClient
+
+- (instancetype)initWithAPIToken:(NSString *)APIToken
+{
+    if ((self = [super init]))
+    {
+        _APIToken = APIToken;
+    }
+    
+    return self;
+}
 
 - (void)authenticateForUser:(NSString *)username withPassword:(NSString *)password success:( void (^)(NSInteger))success failure:(void (^)(NSError *))failure
 {
@@ -26,6 +38,11 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
 - (void)retrieveFriendsWithSuccess:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure
 {
     
+}
+
+- (void)setAPIToken:(NSString *)APIToken
+{
+    _APIToken = APIToken;
 }
 
 @end

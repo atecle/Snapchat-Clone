@@ -8,20 +8,46 @@
 
 #import "MasterViewController.h"
 
-@interface MasterViewController () <UIScrollViewDelegate>
+@interface MasterViewController () <UIScrollViewDelegate, LoginViewControllerDelegate>
 
 @property (strong, nonatomic) UIViewController<ContainedViewController> *rightViewController;
 @property (strong, nonatomic) UIViewController<ContainedViewController> *leftViewController;
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 
+@property (strong, nonatomic) NSString *APIToken;
+
+@property (strong, nonatomic) APIClient *APIClient;
 @end
 
 @implementation MasterViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *APIToken = [userDefaults stringForKey:@"APIToken"];
+    
+    if (APIToken == nil)
+    {
+        [self showLoginViewController];
+    }
+    else
+    {
+        _APIClient = [[APIClient alloc] initWithAPIToken:APIToken];
+        
+        [self configureChildViewControllers];
+    }
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)configureChildViewControllers
+{
     self.rightViewController = [[NavigationController alloc] initWithRootViewController:[self.storyboard instantiateViewControllerWithIdentifier:PhotoViewControllerIdentifier]];
     self.leftViewController = [self.storyboard instantiateViewControllerWithIdentifier:InboxViewControllerIdentifier];
     
@@ -42,12 +68,20 @@
     [self.scrollView addSubview:self.rightViewController.view];
     [self.scrollView addSubview:self.leftViewController.view];
     
-    [self addConstraintsTorightViewController];
-    [self addConstraintsToleftViewController];
-    
+    [self addConstraintsToRightViewController];
+    [self addConstraintsToLeftViewController];
 }
 
-- (void)addConstraintsTorightViewController
+- (void) showLoginViewController
+{
+    LoginViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:LoginViewControllerIdentifier];
+    vc.delegate = self;
+    
+    NavigationController *navigationController = [[NavigationController alloc] initWithRootViewController:vc];
+    [self presentViewController:navigationController animated:YES completion:nil];
+}
+
+- (void)addConstraintsToRightViewController
 {
     NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.rightViewController.view attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     
@@ -66,7 +100,7 @@
     [self.view addConstraint:widthConstraint];
 }
 
-- (void)addConstraintsToleftViewController
+- (void)addConstraintsToLeftViewController
 {
     NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.leftViewController.view attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     
@@ -89,14 +123,24 @@
     [self.view addConstraint:widthConstraint];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 - (BOOL)prefersStatusBarHidden
 {
     return YES;
+}
+
+#pragma mark - LoginViewControllerDelegate
+
+- (void)loginViewController:(LoginViewController *)loginViewController didLoginWithAPIToken:(NSString *)APIToken
+{
+    [[NSUserDefaults standardUserDefaults] setObject:APIToken forKey:@"APIToken"];
+    _APIClient = [[APIClient alloc] initWithAPIToken:APIToken];
+    [self configureChildViewControllers];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)loginViewController:(LoginViewController *)loginViewController didFailToLoginWithError:(NSString *)error
+{
+    
 }
 
 #pragma mark - UIScrollViewDelegate

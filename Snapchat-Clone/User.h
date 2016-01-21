@@ -10,4 +10,7 @@
 
 @interface User : NSObject
 
+@property (nonatomic, readonly) NSInteger userID;
+@property (strong, nonatomic, readonly) NSString *username;
+
 @end
