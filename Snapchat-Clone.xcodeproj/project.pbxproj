@@ -13,6 +13,10 @@
 		66494D861C513A72006593B8 /* CameraView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D851C513A72006593B8 /* CameraView.m */; };
 		66494D891C51505B006593B8 /* NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D881C51505B006593B8 /* NavigationController.m */; };
 		66494D8C1C5163BE006593B8 /* FriendListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D8B1C5163BE006593B8 /* FriendListViewController.m */; };
+		66494D901C516575006593B8 /* FriendTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D8E1C516575006593B8 /* FriendTableCell.m */; };
+		66494D911C516575006593B8 /* FriendTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66494D8F1C516575006593B8 /* FriendTableCell.xib */; };
+		66494D951C5165ED006593B8 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D941C5165ED006593B8 /* User.m */; };
+		66494D981C5165FD006593B8 /* Snap.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D971C5165FD006593B8 /* Snap.m */; };
 		66F4058A1C5032E100C7E852 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F405891C5032E100C7E852 /* main.m */; };
 		66F4058D1C5032E100C7E852 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058C1C5032E100C7E852 /* AppDelegate.m */; };
 		66F405901C5032E100C7E852 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058F1C5032E100C7E852 /* PhotoViewController.m */; };
@@ -55,6 +59,13 @@
 		66494D881C51505B006593B8 /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationController.m; sourceTree = "<group>"; };
 		66494D8A1C5163BE006593B8 /* FriendListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendListViewController.h; sourceTree = "<group>"; };
 		66494D8B1C5163BE006593B8 /* FriendListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendListViewController.m; sourceTree = "<group>"; };
+		66494D8D1C516575006593B8 /* FriendTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendTableCell.h; sourceTree = "<group>"; };
+		66494D8E1C516575006593B8 /* FriendTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendTableCell.m; sourceTree = "<group>"; };
+		66494D8F1C516575006593B8 /* FriendTableCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FriendTableCell.xib; sourceTree = "<group>"; };
+		66494D931C5165ED006593B8 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		66494D941C5165ED006593B8 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		66494D961C5165FD006593B8 /* Snap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Snap.h; sourceTree = "<group>"; };
+		66494D971C5165FD006593B8 /* Snap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Snap.m; sourceTree = "<group>"; };
 		66F405851C5032E100C7E852 /* Snapchat-Clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Snapchat-Clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		66F405891C5032E100C7E852 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		66F4058B1C5032E100C7E852 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -118,6 +129,9 @@
 				66494D7E1C512FC3006593B8 /* CameraButton.m */,
 				66494D841C513A72006593B8 /* CameraView.h */,
 				66494D851C513A72006593B8 /* CameraView.m */,
+				66494D8D1C516575006593B8 /* FriendTableCell.h */,
+				66494D8E1C516575006593B8 /* FriendTableCell.m */,
+				66494D8F1C516575006593B8 /* FriendTableCell.xib */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -129,6 +143,17 @@
 				66494D811C51370A006593B8 /* UIColor+SnapchatColors.m */,
 			);
 			name = Extensions;
+			sourceTree = "<group>";
+		};
+		66494D921C5165CD006593B8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				66494D931C5165ED006593B8 /* User.h */,
+				66494D941C5165ED006593B8 /* User.m */,
+				66494D961C5165FD006593B8 /* Snap.h */,
+				66494D971C5165FD006593B8 /* Snap.m */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 		66F4057C1C5032E100C7E852 = {
@@ -154,6 +179,7 @@
 		66F405871C5032E100C7E852 /* Snapchat-Clone */ = {
 			isa = PBXGroup;
 			children = (
+				66494D921C5165CD006593B8 /* Models */,
 				66494D831C51381A006593B8 /* Extensions */,
 				66494D7C1C512F5A006593B8 /* Views */,
 				66494D781C512E91006593B8 /* Networking */,
@@ -316,6 +342,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66494D911C516575006593B8 /* FriendTableCell.xib in Resources */,
 				66F405981C5032E100C7E852 /* LaunchScreen.storyboard in Resources */,
 				66F405951C5032E100C7E852 /* Assets.xcassets in Resources */,
 				66F405931C5032E100C7E852 /* Main.storyboard in Resources */,
@@ -343,10 +370,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66494D951C5165ED006593B8 /* User.m in Sources */,
 				66F405BE1C50333F00C7E852 /* MasterViewController.m in Sources */,
 				66494D7F1C512FC3006593B8 /* CameraButton.m in Sources */,
+				66494D981C5165FD006593B8 /* Snap.m in Sources */,
 				66494D7B1C512EA1006593B8 /* APIClient.m in Sources */,
 				66F405901C5032E100C7E852 /* PhotoViewController.m in Sources */,
+				66494D901C516575006593B8 /* FriendTableCell.m in Sources */,
 				66F405C11C50334A00C7E852 /* InboxViewController.m in Sources */,
 				66494D8C1C5163BE006593B8 /* FriendListViewController.m in Sources */,
 				66F4058D1C5032E100C7E852 /* AppDelegate.m in Sources */,
