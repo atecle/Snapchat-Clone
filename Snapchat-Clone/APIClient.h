@@ -28,6 +28,5 @@ typedef NS_ENUM(NSInteger, APIClientErrorCode)
 + (void)authenticateForUser:(NSString *)username withPassword:(NSString *)password success:( void (^)(User *user, NSString *APIToken))success failure:(void (^)(NSError *error))failure;
 - (void)retrieveFriendsWithSuccess:(void (^)(NSArray *friends))success failure:(void (^)(NSError *error))failure;
 - (void)sendSnapchatWithImage:(UIImage *)image toUsers:(NSArray *)users withSuccess:(void (^)(NSArray *snaps))success failure:(void (^)(NSError *error))failure;
-
-
+- (void)retrieveSnapchatsWithSuccess:(void (^)(NSArray *snaps))success failure:(void (^)(NSError *error))failure;
 @end

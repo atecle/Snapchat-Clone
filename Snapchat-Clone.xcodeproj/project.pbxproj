@@ -18,6 +18,8 @@
 		66494D951C5165ED006593B8 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D941C5165ED006593B8 /* User.m */; };
 		66494D981C5165FD006593B8 /* Snap.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D971C5165FD006593B8 /* Snap.m */; };
 		66494D9B1C516E1F006593B8 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D9A1C516E1F006593B8 /* LoginViewController.m */; };
+		66A1FAD01C52D161000A7B4B /* InboxTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A1FACE1C52D161000A7B4B /* InboxTableCell.m */; };
+		66A1FAD11C52D161000A7B4B /* InboxTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66A1FACF1C52D161000A7B4B /* InboxTableCell.xib */; };
 		66F4058A1C5032E100C7E852 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F405891C5032E100C7E852 /* main.m */; };
 		66F4058D1C5032E100C7E852 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058C1C5032E100C7E852 /* AppDelegate.m */; };
 		66F405901C5032E100C7E852 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058F1C5032E100C7E852 /* PhotoViewController.m */; };
@@ -69,6 +71,9 @@
 		66494D971C5165FD006593B8 /* Snap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Snap.m; sourceTree = "<group>"; };
 		66494D991C516E1F006593B8 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		66494D9A1C516E1F006593B8 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
+		66A1FACD1C52D161000A7B4B /* InboxTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxTableCell.h; sourceTree = "<group>"; };
+		66A1FACE1C52D161000A7B4B /* InboxTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxTableCell.m; sourceTree = "<group>"; };
+		66A1FACF1C52D161000A7B4B /* InboxTableCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InboxTableCell.xib; sourceTree = "<group>"; };
 		66F405851C5032E100C7E852 /* Snapchat-Clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Snapchat-Clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		66F405891C5032E100C7E852 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		66F4058B1C5032E100C7E852 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -135,6 +140,9 @@
 				66494D8D1C516575006593B8 /* FriendTableCell.h */,
 				66494D8E1C516575006593B8 /* FriendTableCell.m */,
 				66494D8F1C516575006593B8 /* FriendTableCell.xib */,
+				66A1FACD1C52D161000A7B4B /* InboxTableCell.h */,
+				66A1FACE1C52D161000A7B4B /* InboxTableCell.m */,
+				66A1FACF1C52D161000A7B4B /* InboxTableCell.xib */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -347,6 +355,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66A1FAD11C52D161000A7B4B /* InboxTableCell.xib in Resources */,
 				66494D911C516575006593B8 /* FriendTableCell.xib in Resources */,
 				66F405981C5032E100C7E852 /* LaunchScreen.storyboard in Resources */,
 				66F405951C5032E100C7E852 /* Assets.xcassets in Resources */,
@@ -378,6 +387,7 @@
 				66494D951C5165ED006593B8 /* User.m in Sources */,
 				66F405BE1C50333F00C7E852 /* MasterViewController.m in Sources */,
 				66494D7F1C512FC3006593B8 /* CameraButton.m in Sources */,
+				66A1FAD01C52D161000A7B4B /* InboxTableCell.m in Sources */,
 				66494D981C5165FD006593B8 /* Snap.m in Sources */,
 				66494D7B1C512EA1006593B8 /* APIClient.m in Sources */,
 				66F405901C5032E100C7E852 /* PhotoViewController.m in Sources */,

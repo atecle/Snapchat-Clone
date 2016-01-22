@@ -17,9 +17,9 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
 @property (weak, nonatomic) IBOutlet UIView *sendSnapView;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *sendViewTopLayoutConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *sendViewHeightConstraint;
 @property (weak, nonatomic) IBOutlet UIButton *sendSnapButton;
 
+@property (nonatomic) CGFloat sendSnapViewHeight;
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) APIClient *APIClient;
 @property (strong, nonatomic) User *user;
@@ -68,7 +68,6 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
 {
     [UIView animateWithDuration:0.2 animations:^{
         self.sendViewTopLayoutConstraint.constant = -1 * self.sendSnapView.bounds.size.height;
-        self.sendViewHeightConstraint.constant = -1 * self.sendSnapView.bounds.size.height;
         [self.view layoutIfNeeded];
     }];
 }
@@ -77,9 +76,7 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
 {
     [UIView animateWithDuration:0.3 animations:^{
         self.sendViewTopLayoutConstraint.constant = 0;
-        self.sendViewHeightConstraint.constant = 0;
         [self.view layoutIfNeeded];
-        
     }];
 }
 

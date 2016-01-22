@@ -10,7 +10,13 @@
 
 NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 
-@interface InboxViewController () <ContainedViewController>
+@interface InboxViewController () <ContainedViewController, UITableViewDataSource>
+
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
+
+@property (strong, nonatomic) APIClient *APIClient;
+@property (copy, nonatomic) NSArray *snaps;
 
 @end
 
@@ -30,5 +36,22 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 {
     NSLog(@"In Inbox VC");
 }
+
+- (void)setAPIClient:(APIClient *) APIClient
+{
+    _APIClient = APIClient;
+}
+
+#pragma mark - UITableViewDataSource
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    InboxTableCell *cell = [self.tableView dequeueReusableCellWithIdentifier:InboxTableCellIdentifier];
+    
+    
+    return cell;
+    
+}
+
 
 @end

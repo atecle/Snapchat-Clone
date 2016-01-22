@@ -30,6 +30,11 @@
     [super viewDidLoad];
     
     self.scrollView.bounces = NO;
+//    CGPoint position = self.scrollView.contentOffset;
+//    position.x = position.x + CGRectGetWidth(self.scrollView.frame);
+//    [self.scrollView setContentOffset:position];
+//    [self.view layoutIfNeeded];
+    
     [self configureChildViewControllers];
 }
 
@@ -63,7 +68,6 @@
 
 
 #pragma mark - Setup
-
 
 - (void)configureChildViewControllers
 {
@@ -151,6 +155,8 @@
     
     PhotoViewController *photoVC = (PhotoViewController *)self.rightViewController.topViewController;
     [photoVC setAPIClient: self.APIClient];
+    [self.leftViewController setAPIClient:self.APIClient];
+    
     self.user = user;
     [self dismissViewControllerAnimated:YES completion:nil];
 }
