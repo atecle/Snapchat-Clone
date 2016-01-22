@@ -107,13 +107,10 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
 {
     NSArray *friendIDs = [self selectedFriends];
 
-    __weak typeof(self) weakSelf = self;
     [self.APIClient sendSnapchatWithImage:self.image toUsers:friendIDs withSuccess:^(NSArray *snaps) {
         
-        __strong typeof (self) strongSelf = weakSelf;
         [self.delegate friendListViewControllerDidSendSnap:self];
         
-        [self dismissViewControllerAnimated:YES completion:nil];
     } failure:^(NSError *error) {
         NSLog(@"%@", error);
     }];

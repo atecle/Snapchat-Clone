@@ -29,6 +29,7 @@
 {
     [super viewDidLoad];
     
+    self.scrollView.bounces = NO;
     [self configureChildViewControllers];
 }
 

@@ -28,6 +28,7 @@ static NSInteger CancelButtonWidth = 30;
 @property (strong, nonatomic) UIButton *cancelButton;
 @property (strong, nonatomic) UIButton *inboxButton;
 
+@property (nonatomic) BOOL hasImage;
 
 @end
 
@@ -48,6 +49,7 @@ static NSInteger CancelButtonWidth = 30;
     {
         [self configureCaptureSession];
         [self configureCameraView];
+        [self configureImageView];
         [self configureCameraButton];
         [self configureSendSnapButton];
         [self configureInboxButton];
@@ -119,11 +121,30 @@ static NSInteger CancelButtonWidth = 30;
     [self.layer addSublayer:self.previewLayer];
 }
 
+- (void)configureImageView
+{
+    self.capturedImageView = [[UIImageView alloc] init];
+    self.capturedImageView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    [self addSubview:self.capturedImageView];
+    
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeRight multiplier:1 constant:0];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
+    
+    [self addConstraint:topConstraint];
+    [self addConstraint:bottomConstraint];
+    [self addConstraint:leftConstraint];
+    [self addConstraint:rightConstraint];
+    [self addConstraint:heightConstraint];
+}
+
 - (void)configureCameraButton
 {
     CameraButton *cameraButton = [[CameraButton alloc] init];
     cameraButton.translatesAutoresizingMaskIntoConstraints = NO;
-    // [cameraButton setTitle:NSLocalizedString(@"CAMERA BUTTON", nil) forState:UIControlStateNormal];
     [cameraButton addTarget:self action:@selector(cameraButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     [cameraButton layoutIfNeeded];
     
@@ -136,6 +157,7 @@ static NSInteger CancelButtonWidth = 30;
     
     self.cameraButton = cameraButton;
     
+    self.capturedImageView.hidden = YES;
     [self addConstraint:centerConstraint];
     [self addConstraint:bottomConstraint];
     [self addConstraint:heightConstraint];
@@ -219,15 +241,14 @@ static NSInteger CancelButtonWidth = 30;
     
     if (captureConnection == nil) return;
     
+    self.image = nil;
     [self.captureOutput captureStillImageAsynchronouslyFromConnection:captureConnection completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
         
-        
         UIImage *image = [self imageFromSampleBuffer:imageDataSampleBuffer];
+        
         [self.delegate cameraView:self didCaptureImage:image];
         [self setImage:image];
-        [self displayCapturedImage:image];
-
-        [self showCameraControls:NO];
+        self.hasImage = YES;
         
         if ([self.delegate respondsToSelector:@selector(cameraViewDidExitCaptureMode:)])
         {
@@ -248,9 +269,8 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)cancelButtonPressed
 {
-    [self.capturedImageView removeFromSuperview];
-    [self showCameraControls:YES];
-    //[self.layer insertSublayer:self.previewLayer above:self.layer];
+    [self setImage:nil];
+    self.hasImage = NO;
 }
 
 #pragma mark - Instance Methods
@@ -294,15 +314,6 @@ static NSInteger CancelButtonWidth = 30;
     }
     
     return stillImageConnection;
-}
-
-- (void)displayCapturedImage:(UIImage *)image
-{
-    UIImageView *capturedImageView = [[UIImageView alloc] initWithImage:image];
-    capturedImageView.frame = self.bounds;
-    self.capturedImageView = capturedImageView;
-    [self addSubview:capturedImageView];
-    [self sendSubviewToBack:capturedImageView];
 }
 
 - (UIImage *) imageFromSampleBuffer:(CMSampleBufferRef) sampleBuffer
@@ -350,12 +361,33 @@ static NSInteger CancelButtonWidth = 30;
     _image = image;
 }
 
-- (void)showCameraControls:(BOOL)show
+- (void)setHasImage:(BOOL)hasImage
 {
-    self.previewLayer.hidden = !show;
-    self.cameraButton.hidden = !show;
-    self.sendSnapButton.hidden = show;
-    self.cancelButton.hidden = show;
+    _hasImage = hasImage;
+    [self configureViewForImageState:hasImage];
+    
+}
+
+
+- (void)configureViewForImageState:(BOOL)hasImage
+{
+    if (hasImage)
+    {
+        self.previewLayer.hidden = YES;
+        self.cameraButton.hidden = YES;
+        self.sendSnapButton.hidden = NO;
+        self.cancelButton.hidden = NO;
+        self.capturedImageView.hidden = NO;
+        [self.capturedImageView setImage:self.image];
+    }
+    else
+    {
+        self.previewLayer.hidden = NO;
+        self.cameraButton.hidden = NO;
+        self.sendSnapButton.hidden = YES;
+        self.cancelButton.hidden = YES;
+        self.capturedImageView.hidden = YES;
+    }
 }
 
 @end

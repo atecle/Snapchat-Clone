@@ -106,7 +106,10 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 
 - (void)friendListViewControllerDidSendSnap:(FriendListViewController *)friendListViewController
 {
-    [self.cameraView showCameraControls:YES];
+    [self.navigationController popViewControllerAnimated:YES];
+    self.image = nil;
+    [self.cameraView setImage:nil];
+    [self.cameraView setHasImage:NO];
 }
 
 @end

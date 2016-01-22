@@ -32,9 +32,10 @@
 
 @property (weak, nonatomic) id<CameraViewDelegate> delegate;
 @property (strong, nonatomic, readonly) UIImage *image;
+@property (nonatomic, readonly) BOOL hasImage;
 
 - (void)startCaptureSession;
 - (void)stopCaptureSession;
-- (void)showCameraControls:(BOOL)show;
-
+- (void)setImage:(UIImage *)image;
+- (void)setHasImage:(BOOL)hasImage;
 @end
