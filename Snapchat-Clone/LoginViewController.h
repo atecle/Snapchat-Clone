@@ -16,7 +16,7 @@ extern NSString * const LoginViewControllerIdentifier;
 
 @protocol LoginViewControllerDelegate <NSObject>
 
-- (void)loginViewController:(LoginViewController *)loginViewController didLoginWithAPIToken:(NSString *)APIToken;
+- (void)loginViewController:(LoginViewController *)loginViewController didLoginUser:(User *)user withAPIToken:(NSString *)APIToken;
 - (void)loginViewController:(LoginViewController *)loginViewController didFailToLoginWithError:(NSString *)error;
 
 @end

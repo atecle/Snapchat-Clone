@@ -36,4 +36,9 @@
     
 }
 
++ (NSDictionary *)dictionaryFromUser:(User *)user
+{
+    return @{@"id" : [NSNumber numberWithInt: (int)user.userID], @"username": user.username };
+}
+
 @end

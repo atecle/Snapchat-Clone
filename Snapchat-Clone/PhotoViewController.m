@@ -10,13 +10,14 @@
 
 NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 
-@interface PhotoViewController () <CameraViewDelegate>
+@interface PhotoViewController () <CameraViewDelegate, FriendListViewControllerDelegate>
 
 @property (strong, nonatomic) AVCaptureSession *captureSession;
 @property (strong, nonatomic) AVCaptureStillImageOutput *captureOutput;
 @property (strong, nonatomic) AVCaptureConnection *captureConnection;
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
 
+@property (strong, nonatomic) APIClient *APIClient;
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) CameraView *cameraView;
 @end
@@ -41,7 +42,9 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
     
     self.navigationController.navigationBarHidden = YES;
 }
-- (void)didReceiveMemoryWarning {
+
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
@@ -70,6 +73,11 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
     return YES;
 }
 
+- (void)setAPIClient:(APIClient *)APIClient
+{
+    _APIClient = APIClient;
+}
+
 #pragma mark - CameraViewDelegate
 
 - (void)cameraView:(CameraView *)cameraView didCaptureImage:(UIImage *)image
@@ -81,6 +89,10 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 {
     FriendListViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:FriendListViewControllerIdentifier];
     
+    [vc setAPIClient:self.APIClient];
+    [vc setImage:self.image];
+    vc.delegate = self;
+    
     self.navigationController.navigationBarHidden = NO;
     [self.navigationController pushViewController:vc animated:NO];
 }
@@ -88,6 +100,13 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 - (void)cameraViewInboxButtonPressed:(CameraView *)cameraView
 {
     
+}
+
+#pragma mark - FriendListViewControllerDelegate
+
+- (void)friendListViewControllerDidSendSnap:(FriendListViewController *)friendListViewController
+{
+    [self.cameraView showCameraControls:YES];
 }
 
 @end

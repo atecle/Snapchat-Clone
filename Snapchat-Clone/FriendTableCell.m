@@ -12,6 +12,9 @@ NSString * const FriendTableCellIdentifier = @"FriendTableCell";
 
 @interface FriendTableCell()
 
+@property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *checkboxImageView;
+
 @end
 
 @implementation FriendTableCell
@@ -28,6 +31,7 @@ NSString * const FriendTableCellIdentifier = @"FriendTableCell";
 
 - (void)configureForUser:(User *)user
 {
+    self.usernameLabel.text = user.username;
     
 }
 

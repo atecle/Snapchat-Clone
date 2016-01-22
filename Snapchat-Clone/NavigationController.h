@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "MasterViewController.h"
+#import "User.h"
 
 @interface NavigationController : UINavigationController <ContainedViewController>
 

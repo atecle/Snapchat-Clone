@@ -38,7 +38,7 @@ NSString * const LoginViewControllerIdentifier = @"LoginViewController";
     
     [APIClient authenticateForUser:username withPassword:password success:^(User *user, NSString *APIToken) {
         
-        NSLog(@"SUCCESS!");
+        [self.delegate loginViewController:self didLoginUser:user withAPIToken:APIToken];
     } failure:^(NSError *error) {
         NSLog(@"%@", error);
     }];

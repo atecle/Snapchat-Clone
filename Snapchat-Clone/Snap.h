@@ -10,4 +10,14 @@
 
 @interface Snap : NSObject
 
+@property (nonatomic, readonly) NSInteger snapID, fromUserID, toUserID;
+@property (strong, nonatomic, readonly) NSString *username;
+@property (strong, nonatomic, readonly) NSURL *imageURL;
+@property (nonatomic, readonly) BOOL unread;
+
+
+- (instancetype)initFromDictionary:(NSDictionary *)dictionary;
++ (NSArray *)snapsFromDictionaries:(NSDictionary *)dictionaries;
++ (NSDictionary *)dictionaryFromSnap:(Snap *)user;
+
 @end

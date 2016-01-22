@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6211" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6204"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -12,7 +14,32 @@
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
                 <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                 <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="DTS-nr-VMv">
+                        <rect key="frame" x="255" y="0.0" width="65" height="43"/>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aPi-FU-IfD">
+                        <rect key="frame" x="24" y="0.0" width="223" height="43"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="DTS-nr-VMv" secondAttribute="bottom" id="5ru-Fn-Mw4"/>
+                    <constraint firstItem="DTS-nr-VMv" firstAttribute="leading" secondItem="aPi-FU-IfD" secondAttribute="trailing" constant="8" id="Gpd-UT-WwI"/>
+                    <constraint firstItem="aPi-FU-IfD" firstAttribute="width" secondItem="H2p-sc-9uM" secondAttribute="width" multiplier="2/3" constant="9.6666666666666856" id="JFd-Lu-uaQ"/>
+                    <constraint firstItem="aPi-FU-IfD" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="24" id="OBK-3u-Ce7"/>
+                    <constraint firstAttribute="bottom" secondItem="aPi-FU-IfD" secondAttribute="bottom" id="U4u-uM-hUb"/>
+                    <constraint firstItem="DTS-nr-VMv" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="gCz-Uo-BfJ"/>
+                    <constraint firstAttribute="trailing" secondItem="DTS-nr-VMv" secondAttribute="trailing" id="sO1-fQ-9ap"/>
+                    <constraint firstItem="aPi-FU-IfD" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="yoA-8b-Oat"/>
+                </constraints>
             </tableViewCellContentView>
+            <connections>
+                <outlet property="checkboxImageView" destination="DTS-nr-VMv" id="byL-dX-FiQ"/>
+                <outlet property="usernameLabel" destination="aPi-FU-IfD" id="pyM-cc-qzy"/>
+            </connections>
         </tableViewCell>
     </objects>
 </document>

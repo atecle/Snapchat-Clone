@@ -11,14 +11,16 @@
 
 @interface MasterViewController () <UIScrollViewDelegate, LoginViewControllerDelegate>
 
-@property (strong, nonatomic) UIViewController<ContainedViewController> *rightViewController;
-@property (strong, nonatomic) UIViewController<ContainedViewController> *leftViewController;
+@property (strong, nonatomic) NavigationController<ContainedViewController> *rightViewController;
+@property (strong, nonatomic) InboxViewController<ContainedViewController> *leftViewController;
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 
 @property (strong, nonatomic) NSString *APIToken;
 
 @property (strong, nonatomic) APIClient *APIClient;
+
+@property (strong, nonatomic) User *user;
 @end
 
 @implementation MasterViewController
@@ -34,24 +36,33 @@
 {
     [super viewDidAppear:animated];
     
+    
+    //Putting showLoginViewController in viewDidAppear instead of viewDidLoad because of warning "Attemptingto present * on * whose view is not in the window
+
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *APIToken = [userDefaults stringForKey:@"APIToken"];
+    self.user = [[User alloc] initFromDictionary:[userDefaults objectForKey:@"User"]];
     
     if (APIToken == nil)
     {
         [self showLoginViewController];
     }
-    else
+    else if (self.APIToken == nil)
     {
         _APIClient = [[APIClient alloc] initWithAPIToken:APIToken];
-        
+        PhotoViewController *photoVC = (PhotoViewController *)self.rightViewController.topViewController;
+        [photoVC setAPIClient: self.APIClient];
     }
-    
 }
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
+#pragma mark - Setup
+
 
 - (void)configureChildViewControllers
 {
@@ -77,15 +88,6 @@
     
     [self addConstraintsToRightViewController];
     [self addConstraintsToLeftViewController];
-}
-
-- (void) showLoginViewController
-{
-    LoginViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:LoginViewControllerIdentifier];
-    vc.delegate = self;
-    
-    NavigationController *navigationController = [[NavigationController alloc] initWithRootViewController:vc];
-    [self presentViewController:navigationController animated:YES completion:nil];
 }
 
 - (void)addConstraintsToRightViewController
@@ -137,11 +139,18 @@
 
 #pragma mark - LoginViewControllerDelegate
 
-- (void)loginViewController:(LoginViewController *)loginViewController didLoginWithAPIToken:(NSString *)APIToken
+- (void)loginViewController:(LoginViewController *)loginViewController didLoginUser:(User *)user withAPIToken:(NSString *)APIToken
 {
     [[NSUserDefaults standardUserDefaults] setObject:APIToken forKey:@"APIToken"];
+    NSDictionary *dictionary = [User dictionaryFromUser:user];
+    [[NSUserDefaults standardUserDefaults] setObject:dictionary forKey:@"User"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     _APIClient = [[APIClient alloc] initWithAPIToken:APIToken];
-    [self configureChildViewControllers];
+    
+    PhotoViewController *photoVC = (PhotoViewController *)self.rightViewController.topViewController;
+    [photoVC setAPIClient: self.APIClient];
+    self.user = user;
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -166,6 +175,17 @@
     {
         [self.rightViewController didBecomeVisibleViewControllerInMasterViewController:self];
     }
+}
+
+#pragma mark - Navigation
+
+- (void) showLoginViewController
+{
+    LoginViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:LoginViewControllerIdentifier];
+    vc.delegate = self;
+    
+    NavigationController *navigationController = [[NavigationController alloc] initWithRootViewController:vc];
+    [self presentViewController:navigationController animated:YES completion:nil];
 }
 
 @end

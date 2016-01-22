@@ -8,13 +8,24 @@
 
 #import <UIKit/UIKit.h>
 #import "FriendTableCell.h"
+#import  "APIClient.h"
 
 extern NSString * const FriendListViewControllerIdentifier;
 
+@class FriendListViewController;
+
+@protocol FriendListViewControllerDelegate <NSObject>
+
+- (void)friendListViewControllerDidSendSnap:(FriendListViewController *)friendListViewController;
+
+@end
+
 @interface FriendListViewController : UIViewController
 
-@property (copy, nonatomic, readonly) UIImage *image;
+@property (weak, nonatomic) id<FriendListViewControllerDelegate> delegate;
 
 - (void)setImage:(UIImage *)image;
+- (void)setUser:(User *)user;
+- (void)setAPIClient:(APIClient *)APIClient;
 
 @end

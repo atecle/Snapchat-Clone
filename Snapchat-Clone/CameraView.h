@@ -35,5 +35,6 @@
 
 - (void)startCaptureSession;
 - (void)stopCaptureSession;
+- (void)showCameraControls:(BOOL)show;
 
 @end

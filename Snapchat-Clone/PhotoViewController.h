@@ -18,6 +18,7 @@ extern NSString * const PhotoViewControllerIdentifier;
 
 @interface PhotoViewController : UIViewController
 
+- (void)setAPIClient:(APIClient *)APIClient;
 
 @end
 

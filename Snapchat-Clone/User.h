@@ -15,5 +15,6 @@
 
 - (instancetype)initFromDictionary:(NSDictionary *)userDictionary;
 + (NSArray *)usersFromUserDictionaries:(NSDictionary *)userDictionaries;
++ (NSDictionary *)dictionaryFromUser:(User *)user;
 
 @end
