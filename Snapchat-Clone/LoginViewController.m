@@ -18,8 +18,6 @@ NSString * const LoginViewControllerIdentifier = @"LoginViewController";
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
 
-@property (strong, nonatomic) APIClient *APIClient;
-
 @end
 
 @implementation LoginViewController
@@ -27,7 +25,6 @@ NSString * const LoginViewControllerIdentifier = @"LoginViewController";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    _APIClient = [[APIClient alloc] init];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -39,16 +36,12 @@ NSString * const LoginViewControllerIdentifier = @"LoginViewController";
     NSString *username = self.usernameTextField.text;
     NSString *password = self.passwordTextField.text;
     
-    [self.APIClient authenticateForUser:username withPassword:password success:^(NSInteger userID) {
+    [APIClient authenticateForUser:username withPassword:password success:^(User *user, NSString *APIToken) {
         
+        NSLog(@"SUCCESS!");
     } failure:^(NSError *error) {
-        
+        NSLog(@"%@", error);
     }];
-}
-
-- (void)setAPIClient:(APIClient *)APIClient
-{
-    _APIClient = APIClient;
 }
 
 @end

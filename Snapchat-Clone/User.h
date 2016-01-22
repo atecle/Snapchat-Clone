@@ -13,4 +13,7 @@
 @property (nonatomic, readonly) NSInteger userID;
 @property (strong, nonatomic, readonly) NSString *username;
 
+- (instancetype)initFromDictionary:(NSDictionary *)userDictionary;
++ (NSArray *)usersFromUserDictionaries:(NSDictionary *)userDictionaries;
+
 @end

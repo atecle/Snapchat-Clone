@@ -8,8 +8,7 @@
 
 #import "NavigationController.h"
 
-@interface NavigationController () <ContainedViewController>
-
+@interface NavigationController ()
 @end
 
 @implementation NavigationController

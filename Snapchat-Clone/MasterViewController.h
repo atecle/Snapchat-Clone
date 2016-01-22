@@ -11,7 +11,6 @@
 #import "PhotoViewController.h"
 #import "InboxViewController.h"
 #import "LoginViewController.h"
-#import "NavigationController.h"
 
 @class MasterViewController;
 

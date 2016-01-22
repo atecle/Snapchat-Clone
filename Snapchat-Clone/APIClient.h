@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "User.h"
 
 extern NSString * const APIClientErrorDomain;
 
@@ -22,9 +22,7 @@ typedef NS_ENUM(NSInteger, APIClientErrorCode)
 
 - (instancetype)initWithAPIToken:(NSString *)APIToken;
 
-- (void)authenticateForUser:(NSString *)username withPassword:(NSString *)password success:( void (^)(NSInteger))success failure:(void (^)(NSError *))failure;
-- (void)retrieveFriendsWithSuccess:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
-
-- (void)setAPIToken:(NSString *)APIToken;
++ (void)authenticateForUser:(NSString *)username withPassword:(NSString *)password success:( void (^)(User *user, NSString *APIToken))success failure:(void (^)(NSError *error))failure;
+- (void)retrieveFriendsWithSuccess:(void (^)(NSArray *friends))success failure:(void (^)(NSError *error))failure;
 
 @end

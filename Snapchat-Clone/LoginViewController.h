@@ -25,6 +25,4 @@ extern NSString * const LoginViewControllerIdentifier;
 
 @property (weak, nonatomic) id<LoginViewControllerDelegate> delegate;
 
-- (void)setAPIClient:(APIClient *)APIClient;
-
 @end

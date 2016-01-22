@@ -7,6 +7,7 @@
 //
 
 #import "MasterViewController.h"
+#import "NavigationController.h"
 
 @interface MasterViewController () <UIScrollViewDelegate, LoginViewControllerDelegate>
 
@@ -26,6 +27,13 @@
 {
     [super viewDidLoad];
     
+    [self configureChildViewControllers];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *APIToken = [userDefaults stringForKey:@"APIToken"];
     
@@ -37,10 +45,9 @@
     {
         _APIClient = [[APIClient alloc] initWithAPIToken:APIToken];
         
-        [self configureChildViewControllers];
     }
+    
 }
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "MasterViewController.h"
 
-@interface NavigationController : UINavigationController
+@interface NavigationController : UINavigationController <ContainedViewController>
 
 @end
