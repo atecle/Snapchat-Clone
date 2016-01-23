@@ -58,6 +58,9 @@
         _APIClient = [[APIClient alloc] initWithAPIToken:APIToken];
         PhotoViewController *photoVC = (PhotoViewController *)self.rightViewController.topViewController;
         [photoVC setAPIClient: self.APIClient];
+        [self.leftViewController setAPIClient:self.APIClient];
+        [self.leftViewController didBecomeVisibleViewControllerInMasterViewController:self];
+
     }
 }
 

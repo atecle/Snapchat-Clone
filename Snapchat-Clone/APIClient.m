@@ -216,7 +216,9 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
         if (![[HTTPResponse.allHeaderFields objectForKey:@"Content-Type"] hasPrefix:@"application/json"])
         {
             NSError *error = [NSError errorWithDomain:APIClientErrorDomain code:APIClientErrorCodeInvalidContentType userInfo:nil];
-            failure(error);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                failure(error);
+            });
             return;
         }
         
@@ -278,7 +280,9 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
         if (![[HTTPResponse.allHeaderFields objectForKey:@"Content-Type"] hasPrefix:@"application/json"])
         {
             NSError *error = [NSError errorWithDomain:APIClientErrorDomain code:APIClientErrorCodeInvalidContentType userInfo:nil];
-            failure(error);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                failure(error);
+            });
             return;
         }
         

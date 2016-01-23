@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "MasterViewController.h"
 #import "InboxTableCell.h"
+#import "APIClient.h"
+
 
 extern NSString * const InboxViewControllerIdentifier;
 

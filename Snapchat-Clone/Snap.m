@@ -17,7 +17,13 @@
         _snapID = [dictionary[@"id"] integerValue];
         _fromUserID = [dictionary[@"to_user_id"] integerValue];
         _toUserID = [dictionary[@"from_user_id"] integerValue];
-        _imageURL = [NSURL URLWithString: dictionary[@"image_url"]];
+        _fromUsername = dictionary[@"from_user"][@"username"];
+        
+        if ([dictionary[@"image_url"] isKindOfClass:[NSString class]])
+        {
+            _imageURL = [NSURL URLWithString: dictionary[@"image_url"]];
+        }
+        
         _unread = [dictionary[@"unread"] boolValue];
     }
     

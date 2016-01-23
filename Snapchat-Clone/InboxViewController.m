@@ -22,19 +22,32 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 
 @implementation InboxViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-- (void)didBecomeVisibleViewControllerInMasterViewController:(MasterViewController *)masterViewController
+- (void)viewDidLoad
 {
-    NSLog(@"In Inbox VC");
+    [super viewDidLoad];
+    self.tableView.dataSource = self;
+    
+    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([InboxTableCell class]) bundle:nil] forCellReuseIdentifier:InboxTableCellIdentifier];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+
+}
+
+- (void)retrieveSnaps
+{
+    __weak typeof(self) weakSelf = self;
+    [self.APIClient retrieveSnapchatsWithSuccess:^(NSArray *snaps)
+    {
+        __strong typeof (self) self = weakSelf;
+        self.snaps = snaps;
+        [self.tableView reloadData];
+    } failure:^(NSError *error)
+     {
+        NSLog(@"%@", error);
+    }];
 }
 
 - (void)setAPIClient:(APIClient *) APIClient
@@ -48,10 +61,22 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 {
     InboxTableCell *cell = [self.tableView dequeueReusableCellWithIdentifier:InboxTableCellIdentifier];
     
+    [cell configureForSnap:[self.snaps objectAtIndex:indexPath.row]];
     
     return cell;
     
 }
 
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [self.snaps count];
+}
+
+#pragma  mark - ContainedViewController
+
+- (void)didBecomeVisibleViewControllerInMasterViewController:(MasterViewController *)masterViewController
+{
+    [self retrieveSnaps];
+}
 
 @end

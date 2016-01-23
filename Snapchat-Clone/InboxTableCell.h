@@ -8,8 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+#import "Snap.h"
+
 extern NSString * const InboxTableCellIdentifier;
 
 @interface InboxTableCell : UITableViewCell
+
+- (void)configureForSnap:(Snap *)snap;
 
 @end

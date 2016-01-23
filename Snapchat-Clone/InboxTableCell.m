@@ -9,6 +9,7 @@
 #import "InboxTableCell.h"
 
 NSString * const InboxTableCellIdentifier = @"InboxTableCell";
+
 @interface InboxTableCell()
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *seenImageView;
@@ -28,4 +29,10 @@ NSString * const InboxTableCellIdentifier = @"InboxTableCell";
     // Configure the view for the selected state
 }
 
+- (void)configureForSnap:(Snap *)snap
+{
+    self.usernameLabel.text = snap.fromUsername;
+}
+
 @end
+
