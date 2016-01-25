@@ -37,13 +37,27 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.allowsMultipleSelection = YES;
+    [self hideSendSnapViewAnimated:NO];
     
-    UIBarButtonItem *testButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Test", nil) style:UIBarButtonItemStyleDone target:self action:@selector(hideSendSnapView)];
-    self.navigationItem.rightBarButtonItem = testButton;
+    
+    //UIBarButtonItem *testButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Test", nil) style:UIBarButtonItemStyleDone target:self action:@selector(hideSendSnapView)];
+    // self.navigationItem.rightBarButtonItem = testButton;
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([FriendTableCell class]) bundle:nil] forCellReuseIdentifier:FriendTableCellIdentifier];
     
-    //[self hideSendSnapView];
     [self retrieveFriends];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -54,9 +68,12 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
 
 - (void)retrieveFriends
 {
+    __weak typeof(self) weakSelf = self;
     [self.APIClient retrieveFriendsWithSuccess:^(NSArray *friends) {
-        
-        _friends = friends;
+    
+        __strong typeof(self) self = weakSelf;
+    
+        self.friends = friends;
         [self.tableView reloadData];
     } failure:^(NSError *error)
      {
@@ -64,20 +81,42 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
      }];
 }
 
-- (void)hideSendSnapView
+- (void)hideSendSnapViewAnimated:(BOOL)animated
 {
-    [UIView animateWithDuration:0.2 animations:^{
+    void (^work)() = ^{
         self.sendViewTopLayoutConstraint.constant = -1 * self.sendSnapView.bounds.size.height;
-        [self.view layoutIfNeeded];
-    }];
+    };
+    
+    if (animated)
+    {
+        [UIView animateWithDuration:0.2 animations:^{
+            work();
+            [self.view layoutIfNeeded];
+        }];
+    }
+    else
+    {
+        work();
+    }
 }
 
-- (void)showSendSnapView
+- (void)showSendSnapViewAnimated:(BOOL)animated
 {
-    [UIView animateWithDuration:0.3 animations:^{
+    void (^work)() = ^{
         self.sendViewTopLayoutConstraint.constant = 0;
-        [self.view layoutIfNeeded];
-    }];
+    };
+    
+    if (animated)
+    {
+        [UIView animateWithDuration:0.2 animations:^{
+            work();
+            [self.view layoutIfNeeded];
+        }];
+    }
+    else
+    {
+        work();
+    }
 }
 
 #pragma mark - UITableViewDataSource
@@ -98,14 +137,33 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
 
 #pragma mark - UITableViewDelegate
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([[self.tableView indexPathsForSelectedRows] count] == 1)
+    {
+        [self showSendSnapViewAnimated:YES];
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([[self.tableView indexPathsForSelectedRows] count] == 0)
+    {
+        [self hideSendSnapViewAnimated:YES];
+    }
+
+}
+
 #pragma mark - User Interaction
 
 - (IBAction)sendSnapButtonPressed:(id)sender
 {
     NSArray *friendIDs = [self selectedFriends];
 
-    [self.APIClient sendSnapchatWithImage:self.image toUsers:friendIDs withSuccess:^(NSArray *snaps) {
+    __weak typeof(self) weakSelf = self;
+    [self.APIClient sendSnapchatWithImageURL:nil toUsers:friendIDs withSuccess:^(NSArray *snaps) {
         
+        __strong typeof(self) self = weakSelf;
         [self.delegate friendListViewControllerDidSendSnap:self];
         
     } failure:^(NSError *error) {
@@ -134,7 +192,7 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
 {
     NSArray *indexPaths = [self.tableView indexPathsForSelectedRows];
     NSArray *userIDs = @[];
-
+    
     for (NSIndexPath *indexPath in indexPaths)
     {
         User *friend = [self.friends objectAtIndex:indexPath.row];

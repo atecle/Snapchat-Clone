@@ -93,8 +93,7 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
     [vc setImage:self.image];
     vc.delegate = self;
     
-    self.navigationController.navigationBarHidden = NO;
-    [self.navigationController pushViewController:vc animated:NO];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)cameraViewInboxButtonPressed:(CameraView *)cameraView

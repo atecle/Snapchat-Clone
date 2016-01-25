@@ -29,9 +29,25 @@ NSString * const InboxTableCellIdentifier = @"InboxTableCell";
     // Configure the view for the selected state
 }
 
-- (void)configureForSnap:(Snap *)snap
+- (void)configureForSnap:(Snap *)snap currentUserID:(NSInteger )userID
 {
-    self.usernameLabel.text = snap.fromUsername;
+    
+    UIImage *statusImage;
+    
+    if (snap.fromUserID == userID)
+    {
+        statusImage = snap.unread ? [UIImage imageNamed:@"red-double-arrow"] : [UIImage imageNamed:@"empty-red-circle"];
+        self.usernameLabel.text = snap.toUsername;
+    }
+    else
+    {
+        statusImage = snap.unread ? [UIImage imageNamed:@"red-filled-circle"] : [UIImage imageNamed:@"empty-red-circle"];
+        self.usernameLabel.text = snap.fromUsername;
+
+    }
+    
+
+    [self.seenImageView setImage:statusImage];
 }
 
 @end

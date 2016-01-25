@@ -14,6 +14,6 @@ extern NSString * const InboxTableCellIdentifier;
 
 @interface InboxTableCell : UITableViewCell
 
-- (void)configureForSnap:(Snap *)snap;
+- (void)configureForSnap:(Snap *)snap currentUserID:(NSInteger) userID;
 
 @end

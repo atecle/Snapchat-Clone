@@ -11,7 +11,7 @@
 @interface Snap : NSObject
 
 @property (nonatomic, readonly) NSInteger snapID, fromUserID, toUserID;
-@property (strong, nonatomic, readonly) NSString *fromUsername;
+@property (strong, nonatomic, readonly) NSString *fromUsername, *toUsername;
 @property (strong, nonatomic, readonly) NSURL *imageURL;
 @property (nonatomic, readonly) BOOL unread;
 

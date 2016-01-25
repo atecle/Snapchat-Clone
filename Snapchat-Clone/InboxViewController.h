@@ -17,5 +17,6 @@ extern NSString * const InboxViewControllerIdentifier;
 @interface InboxViewController : UIViewController
 
 - (void)setAPIClient:(APIClient *) APIClient;
+- (void)setUser:(User *)user;
 
 @end

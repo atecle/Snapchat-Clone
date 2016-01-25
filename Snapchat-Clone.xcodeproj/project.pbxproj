@@ -30,6 +30,7 @@
 		66F405AE1C5032E100C7E852 /* Snapchat_CloneUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F405AD1C5032E100C7E852 /* Snapchat_CloneUITests.m */; };
 		66F405BE1C50333F00C7E852 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F405BD1C50333F00C7E852 /* MasterViewController.m */; };
 		66F405C11C50334A00C7E852 /* InboxViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F405C01C50334A00C7E852 /* InboxViewController.m */; };
+		66F9E6591C5690560045638C /* SnapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F9E6581C5690560045638C /* SnapView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +95,8 @@
 		66F405BD1C50333F00C7E852 /* MasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
 		66F405BF1C50334A00C7E852 /* InboxViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxViewController.h; sourceTree = "<group>"; };
 		66F405C01C50334A00C7E852 /* InboxViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxViewController.m; sourceTree = "<group>"; };
+		66F9E6571C5690560045638C /* SnapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapView.h; sourceTree = "<group>"; };
+		66F9E6581C5690560045638C /* SnapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnapView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +140,8 @@
 				66494D7E1C512FC3006593B8 /* CameraButton.m */,
 				66494D841C513A72006593B8 /* CameraView.h */,
 				66494D851C513A72006593B8 /* CameraView.m */,
+				66F9E6571C5690560045638C /* SnapView.h */,
+				66F9E6581C5690560045638C /* SnapView.m */,
 				66494D8D1C516575006593B8 /* FriendTableCell.h */,
 				66494D8E1C516575006593B8 /* FriendTableCell.m */,
 				66494D8F1C516575006593B8 /* FriendTableCell.xib */,
@@ -397,6 +402,7 @@
 				66F4058D1C5032E100C7E852 /* AppDelegate.m in Sources */,
 				66F4058A1C5032E100C7E852 /* main.m in Sources */,
 				66494D891C51505B006593B8 /* NavigationController.m in Sources */,
+				66F9E6591C5690560045638C /* SnapView.m in Sources */,
 				66494D821C51370A006593B8 /* UIColor+SnapchatColors.m in Sources */,
 				66494D861C513A72006593B8 /* CameraView.m in Sources */,
 				66494D9B1C516E1F006593B8 /* LoginViewController.m in Sources */,

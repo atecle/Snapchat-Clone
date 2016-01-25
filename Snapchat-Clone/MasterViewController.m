@@ -46,19 +46,20 @@
     //Putting showLoginViewController in viewDidAppear instead of viewDidLoad because of warning "Attemptingto present * on * whose view is not in the window
 
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSString *APIToken = [userDefaults stringForKey:@"APIToken"];
+    self.APIToken = [userDefaults stringForKey:@"APIToken"];
     self.user = [[User alloc] initFromDictionary:[userDefaults objectForKey:@"User"]];
     
-    if (APIToken == nil)
+    if (self.APIToken == nil)
     {
         [self showLoginViewController];
     }
-    else if (self.APIToken == nil)
+    else
     {
-        _APIClient = [[APIClient alloc] initWithAPIToken:APIToken];
+        _APIClient = [[APIClient alloc] initWithAPIToken:self.APIToken];
         PhotoViewController *photoVC = (PhotoViewController *)self.rightViewController.topViewController;
         [photoVC setAPIClient: self.APIClient];
         [self.leftViewController setAPIClient:self.APIClient];
+        [self.leftViewController setUser:self.user];
         [self.leftViewController didBecomeVisibleViewControllerInMasterViewController:self];
 
     }
@@ -159,6 +160,7 @@
     PhotoViewController *photoVC = (PhotoViewController *)self.rightViewController.topViewController;
     [photoVC setAPIClient: self.APIClient];
     [self.leftViewController setAPIClient:self.APIClient];
+    [self.leftViewController setUser:user];
     
     self.user = user;
     [self dismissViewControllerAnimated:YES completion:nil];

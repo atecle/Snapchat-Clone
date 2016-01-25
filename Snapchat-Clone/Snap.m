@@ -15,9 +15,12 @@
     if ((self = [super init]))
     {
         _snapID = [dictionary[@"id"] integerValue];
-        _fromUserID = [dictionary[@"to_user_id"] integerValue];
-        _toUserID = [dictionary[@"from_user_id"] integerValue];
+        _fromUserID = [dictionary[@"from_user"][@"id"] integerValue];
         _fromUsername = dictionary[@"from_user"][@"username"];
+
+        _toUserID = [dictionary[@"to_user"][@"id"] integerValue];
+        _toUsername = dictionary[@"to_user"][@"username"];
+
         
         if ([dictionary[@"image_url"] isKindOfClass:[NSString class]])
         {
@@ -47,5 +50,6 @@
 {
     return nil;
 }
+
 
 @end
