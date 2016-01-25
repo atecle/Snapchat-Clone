@@ -262,7 +262,7 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
     
     if (parameters != nil)
     {
-        NSData *parameterJSON = [NSJSONSerialization dataWithJSONObject:parameters options:kNilOptions error:&JSONError];
+        parameterJSON = [NSJSONSerialization dataWithJSONObject:parameters options:kNilOptions error:&JSONError];
         if (parameterJSON == nil)
         {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -280,7 +280,7 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
     [URLRequest setValue:self.APIToken forHTTPHeaderField:@"X-Api-Token"];
     [URLRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     
-    return URLRequest;
+    return [URLRequest copy];
 }
 
 - (NSDictionary *)dictionaryFromData:(NSData *)data response:(NSURLResponse *)response error:(NSError *)error failure:(void (^)(NSError *error))failure
