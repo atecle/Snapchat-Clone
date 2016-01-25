@@ -10,6 +10,7 @@
 
 static NSInteger ButtonMargin = 20;
 static NSInteger CameraButtonHeight = 80;
+static NSInteger FlipCameraButtonHeight = 40;
 static NSInteger CheckBoxButtonHeight = 45;
 static NSInteger CancelButtonHeight = 30;
 static NSInteger CancelButtonWidth = 30;
@@ -178,14 +179,14 @@ static NSInteger CancelButtonWidth = 30;
     [self addSubview:flipCameraButton];
     
     
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:flipCameraButton attribute:NSLayoutAttributeRight multiplier:1 constant:0];
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:flipCameraButton attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
-    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:flipCameraButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonHeight];
-    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:flipCameraButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonHeight];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:flipCameraButton attribute:NSLayoutAttributeRight multiplier:1 constant:ButtonMargin];
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:flipCameraButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:10];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:flipCameraButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:FlipCameraButtonHeight];
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:flipCameraButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:FlipCameraButtonHeight];
     
     
     self.flipCameraButton = flipCameraButton;
-    self.flipCameraButton.hidden = YES;
+    self.flipCameraButton.hidden = NO;
     
     [self addConstraint:rightConstraint];
     [self addConstraint:topConstraint];
