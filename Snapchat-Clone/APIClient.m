@@ -272,11 +272,12 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
         }
     }
     
-    NSMutableURLRequest *URLRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:fullPath]];
+    NSMutableURLRequest *URLRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:fullPath]];
     
     [URLRequest setHTTPMethod:HTTPMethod];
     [URLRequest setHTTPBody:parameterJSON];
     
+    [URLRequest setValue:self.APIToken forHTTPHeaderField:@"X-Api-Token"];
     [URLRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     
     return URLRequest;
