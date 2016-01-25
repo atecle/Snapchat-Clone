@@ -56,7 +56,6 @@
 - (void)setImage:(UIImage *)image
 {
     [self.imageView setImage:image];
-    [self layoutIfNeeded];
 }
 
 @end

@@ -29,7 +29,6 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     [super viewDidLoad];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    self.tableView.allowsMultipleSelection = NO;
     
     [self configureSnapView];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([InboxTableCell class]) bundle:nil] forCellReuseIdentifier:InboxTableCellIdentifier];
@@ -38,7 +37,6 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-
 }
 
 #pragma mark - Set up
@@ -48,11 +46,9 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     self.snapView = [[SnapView alloc] init];
     self.snapView.delegate = self;
     self.snapView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.snapView.hidden = YES;
     [self.view addSubview:self.snapView];
     [self addConstraintsToSnapView];
-    
-    [self.view bringSubviewToFront:self.snapView];
-    self.snapView.hidden = YES;
 }
 
 - (void)addConstraintsToSnapView
@@ -79,8 +75,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
         __strong typeof (self) self = weakSelf;
         self.snaps = snaps;
         [self.tableView reloadData];
-    } failure:^(NSError *error)
-     {
+    } failure:^(NSError *error) {
         NSLog(@"%@", error);
     }];
 }
@@ -97,6 +92,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     }];
 }
 
+#pragma mark - UI 
 
 - (void)showSnap:(Snap *)snap
 {
@@ -133,7 +129,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
-#pragma  mark - ContainedViewController
+#pragma mark - ContainedViewController
 
 - (void)didBecomeVisibleViewControllerInMasterViewController:(MasterViewController *)masterViewController
 {
