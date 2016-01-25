@@ -26,11 +26,11 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
 {
     if ((self = [super init]))
     {
-        _APIToken = APIToken;
+        self.APIToken = APIToken;
     }
     
-    _configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    _session = [NSURLSession sessionWithConfiguration:self.configuration];
+    self.configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    self.session = [NSURLSession sessionWithConfiguration:self.configuration];
     return self;
 }
 
@@ -184,7 +184,7 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
     [dataTask resume];
 }
 
-- (void)retrieveSnapchatWithID:(NSInteger) snapID withSuccess:(void (^)(Snap *snap))success failure:(void (^)(NSError *error))failure
+- (void)retrieveSnapchatWithID:(NSInteger) snapID success:(void (^)(Snap *snap))success failure:(void (^)(NSError *error))failure
 {
     NSString *fullPath = [NSString stringWithFormat:@"%@/snaps/%ld", baseURL, snapID];
     
@@ -218,12 +218,10 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
 
     NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:URLRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
-        NSDictionary *dictionary = [self dictionaryFromData:data response:response error:error failure:failure];
-
-        NSArray *snaps = [Snap snapsFromDictionaries:dictionary];
+        //NSDictionary *dictionary = [self dictionaryFromData:data response:response error:error failure:failure];
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            success(snaps);
+
         });
         
     }];
@@ -231,7 +229,7 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
     [dataTask resume];
 }
 
-- (void)markSnapchatReadWithID:(NSInteger) snapID withSuccess:(void (^)(Snap *snap))success failure:(void (^)(NSError *error))failure
+- (void)markSnapchatReadWithID:(NSInteger) snapID success:(void (^)(Snap *snap))success failure:(void (^)(NSError *error))failure
 {
     NSString *fullPath = [NSString stringWithFormat:@"%@/snaps/%ld/read", baseURL, snapID];
     

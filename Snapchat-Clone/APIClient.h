@@ -30,7 +30,7 @@ typedef NS_ENUM(NSInteger, APIClientErrorCode)
 - (void)sendSnapchatWithImageURL:(NSURL *)imageURL toUsers:(NSArray *)users withSuccess:(void (^)(NSArray *snaps))success failure:(void (^)(NSError *error))failure;
 - (void)uploadImage:(UIImage *)image withSuccess:(void (^)(NSURL *URL))success failure:(void (^)(NSError *error))failure;
 - (void)retrieveSnapchatsWithSuccess:(void (^)(NSArray *snaps))success failure:(void (^)(NSError *error))failure;
-- (void)retrieveSnapchatWithID:(NSInteger) snapID withSuccess:(void (^)(Snap *snap))success failure:(void (^)(NSError *error))failure;
-- (void)markSnapchatReadWithID:(NSInteger) snapID withSuccess:(void (^)(Snap *snap))success failure:(void (^)(NSError *error))failure;
+- (void)retrieveSnapchatWithID:(NSInteger) snapID success:(void (^)(Snap *snap))success failure:(void (^)(NSError *error))failure;
+- (void)markSnapchatReadWithID:(NSInteger) snapID success:(void (^)(Snap *snap))success failure:(void (^)(NSError *error))failure;
 
 @end

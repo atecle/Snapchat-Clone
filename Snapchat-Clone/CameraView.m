@@ -8,9 +8,9 @@
 
 #import "CameraView.h"
 
-static NSInteger CameraButtonBottomMargin = 20;
-static NSInteger CameraButtonHeight = 60;
-static NSInteger CameraButtonWidth = 60;
+static NSInteger ButtonMargin = 20;
+static NSInteger CameraButtonHeight = 80;
+static NSInteger CheckBoxButtonHeight = 45;
 static NSInteger CancelButtonHeight = 30;
 static NSInteger CancelButtonWidth = 30;
 
@@ -24,9 +24,11 @@ static NSInteger CancelButtonWidth = 30;
 
 @property (strong, nonatomic) UIImageView *capturedImageView;
 @property (strong, nonatomic) CameraButton *cameraButton;
+@property (strong, nonatomic) UIButton *flipCameraButton;
 @property (strong, nonatomic) UIButton *sendSnapButton;
 @property (strong, nonatomic) UIButton *cancelButton;
 @property (strong, nonatomic) UIButton *inboxButton;
+
 
 @property (nonatomic) BOOL hasImage;
 
@@ -51,6 +53,7 @@ static NSInteger CancelButtonWidth = 30;
         [self configureCameraView];
         [self configureImageView];
         [self configureCameraButton];
+        [self configureFlipCameraButton];
         [self configureSendSnapButton];
         [self configureInboxButton];
         [self configureCancelButton];
@@ -151,15 +154,41 @@ static NSInteger CancelButtonWidth = 30;
     [self addSubview:cameraButton];
     
     NSLayoutConstraint *centerConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:cameraButton attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:cameraButton attribute:NSLayoutAttributeBottom multiplier:1 constant:CameraButtonBottomMargin];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:cameraButton attribute:NSLayoutAttributeBottom multiplier:1 constant:ButtonMargin];
     NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:cameraButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonHeight];
-    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:cameraButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonWidth];
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:cameraButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonHeight];
     
     self.cameraButton = cameraButton;
     
     self.capturedImageView.hidden = YES;
     [self addConstraint:centerConstraint];
     [self addConstraint:bottomConstraint];
+    [self addConstraint:heightConstraint];
+    [self addConstraint:widthConstraint];
+}
+
+- (void)configureFlipCameraButton
+{
+    UIButton *flipCameraButton = [[UIButton alloc] init];
+    [flipCameraButton setImage:[UIImage imageNamed:@"flip-camera-icon"] forState:UIControlStateNormal];
+    flipCameraButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [flipCameraButton addTarget:self action:@selector(flipCameraButton) forControlEvents:UIControlEventTouchUpInside];
+    [flipCameraButton layoutIfNeeded];
+    
+    [self addSubview:flipCameraButton];
+    
+    
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:flipCameraButton attribute:NSLayoutAttributeRight multiplier:1 constant:0];
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:flipCameraButton attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:flipCameraButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonHeight];
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:flipCameraButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonHeight];
+    
+    
+    self.flipCameraButton = flipCameraButton;
+    self.flipCameraButton.hidden = YES;
+    
+    [self addConstraint:rightConstraint];
+    [self addConstraint:topConstraint];
     [self addConstraint:heightConstraint];
     [self addConstraint:widthConstraint];
 }
@@ -174,9 +203,9 @@ static NSInteger CancelButtonWidth = 30;
     [self addSubview:sendSnapButton];
     
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:sendSnapButton attribute:NSLayoutAttributeRight multiplier:1 constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:sendSnapButton attribute:NSLayoutAttributeBottom multiplier:1 constant:CameraButtonBottomMargin];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:sendSnapButton attribute:NSLayoutAttributeBottom multiplier:1 constant:ButtonMargin];
     NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:sendSnapButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonHeight];
-    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:sendSnapButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonWidth];
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:sendSnapButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonHeight];
     
     [self addConstraint:rightConstraint];
     [self addConstraint:bottomConstraint];
@@ -199,8 +228,8 @@ static NSInteger CancelButtonWidth = 30;
     
     NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:inboxButton attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:inboxButton attribute:NSLayoutAttributeBottom multiplier:1 constant:20];
-    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:inboxButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonHeight];
-    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:inboxButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonWidth];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:inboxButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CheckBoxButtonHeight];
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:inboxButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CheckBoxButtonHeight];
     
     [self addConstraint:leftConstraint];
     [self addConstraint:bottomConstraint];
@@ -384,6 +413,7 @@ static NSInteger CancelButtonWidth = 30;
     {
         self.previewLayer.hidden = NO;
         self.cameraButton.hidden = NO;
+        self.flipCameraButton.hidden = NO;
         self.sendSnapButton.hidden = YES;
         self.cancelButton.hidden = YES;
         self.capturedImageView.hidden = YES;

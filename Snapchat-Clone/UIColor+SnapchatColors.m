@@ -12,7 +12,7 @@
 
 + (UIColor *)translucentSilverColor
 {
-    return [UIColor colorWithRed:204/255 green:204/255 blue:205 alpha:0.5];
+    return [UIColor colorWithRed:204 green:204 blue:204 alpha:0.5];
 }
 
 @end

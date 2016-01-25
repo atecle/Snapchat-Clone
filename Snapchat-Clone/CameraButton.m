@@ -14,14 +14,20 @@
 {
     if ((self = [super initWithFrame:frame]))
     {
-        self.layer.borderWidth = 3;
-        self.layer.borderColor = (__bridge CGColorRef _Nullable)([UIColor whiteColor]);
-        self.layer.cornerRadius = self.bounds.size.width / 2.0;
-        self.backgroundColor = [UIColor translucentSilverColor];
+      
     }
     
     return self;
 }
 
+
+- (void)layoutSubviews
+{
+    self.layer.borderWidth = 4.0f;
+    self.layer.borderColor = [UIColor whiteColor].CGColor;
+    self.layer.cornerRadius = self.bounds.size.width / 2.0;
+    self.backgroundColor = [UIColor translucentSilverColor];
+    
+}
 
 @end

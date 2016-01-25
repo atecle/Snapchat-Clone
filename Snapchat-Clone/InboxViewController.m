@@ -83,7 +83,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 - (void)markSnapRead:(Snap *)snap
 {
     __block Snap *unreadSnap = snap;
-    [self.APIClient markSnapchatReadWithID:snap.snapID withSuccess:^(Snap *snap) {
+    [self.APIClient markSnapchatReadWithID:snap.snapID success:^(Snap *snap) {
         
         [self replaceUnreadSnap:unreadSnap withReadSnap:snap];
         [self.tableView reloadData];
@@ -122,7 +122,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 {
     Snap *snap = [self.snaps objectAtIndex:indexPath.row];
     
-    if (snap.fromUserID == self.user.userID) return;
+    if (snap.fromUserID == self.user.userID || snap.unread == NO) return;
    
     [self showSnap:snap];
     [self markSnapRead:snap];
@@ -138,7 +138,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 
 #pragma mark - SnapViewDelegate
 
-- (void)snapViewDidRecieveTap:(SnapView *)snap
+- (void)snapViewDidRecieveTapGesture:(SnapView *)snap
 {
     NSLog(@"snap view tapped");
     self.snapView.hidden = YES;

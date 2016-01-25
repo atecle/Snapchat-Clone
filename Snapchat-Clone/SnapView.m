@@ -50,7 +50,7 @@
 
 - (void)imageViewTapped
 {
-    [self.delegate snapViewDidRecieveTap:self];
+    [self.delegate snapViewDidRecieveTapGesture:self];
 }
 
 - (void)setImage:(UIImage *)image

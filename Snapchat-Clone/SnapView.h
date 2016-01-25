@@ -12,7 +12,7 @@
 
 @protocol SnapViewDelegate <NSObject>
 
-- (void)snapViewDidRecieveTap:(SnapView *)snap;
+- (void)snapViewDidRecieveTapGesture:(SnapView *)snap;
 
 @end
 
