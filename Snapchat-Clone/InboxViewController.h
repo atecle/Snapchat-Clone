@@ -10,6 +10,7 @@
 #import "MasterViewController.h"
 #import "InboxTableCell.h"
 #import "APIClient.h"
+#import "SnapView.h"
 
 
 extern NSString * const InboxViewControllerIdentifier;

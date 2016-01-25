@@ -8,6 +8,18 @@
 
 #import <UIKit/UIKit.h>
 
+@class SnapView;
+
+@protocol SnapViewDelegate <NSObject>
+
+- (void)snapViewDidRecieveTap:(SnapView *)snap;
+
+@end
+
+
 @interface SnapView : UIView
+
+@property (weak, nonatomic) id<SnapViewDelegate> delegate;
+- (void)setImage:(UIImage *)image;
 
 @end

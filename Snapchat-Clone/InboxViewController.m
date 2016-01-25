@@ -10,7 +10,7 @@
 
 NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 
-@interface InboxViewController () <ContainedViewController, UITableViewDataSource>
+@interface InboxViewController () <ContainedViewController, UITableViewDataSource, UITableViewDelegate, SnapViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
@@ -18,6 +18,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 @property (strong, nonatomic) APIClient *APIClient;
 @property (copy, nonatomic) NSArray *snaps;
 @property (strong, nonatomic) User *user;
+@property (strong, nonatomic) SnapView *snapView;
 
 @end
 
@@ -27,7 +28,10 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 {
     [super viewDidLoad];
     self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+    self.tableView.allowsMultipleSelection = NO;
     
+    [self configureSnapView];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([InboxTableCell class]) bundle:nil] forCellReuseIdentifier:InboxTableCellIdentifier];
 }
 
@@ -36,6 +40,36 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     [super didReceiveMemoryWarning];
 
 }
+
+#pragma mark - Set up
+
+- (void)configureSnapView
+{
+    self.snapView = [[SnapView alloc] init];
+    self.snapView.delegate = self;
+    self.snapView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:self.snapView];
+    [self addConstraintsToSnapView];
+    
+    [self.view bringSubviewToFront:self.snapView];
+    self.snapView.hidden = YES;
+}
+
+- (void)addConstraintsToSnapView
+{
+    
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.snapView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.snapView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.snapView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.snapView attribute:NSLayoutAttributeRight multiplier:1 constant:0];
+    
+    [self.view addConstraint:topConstraint];
+    [self.view addConstraint:bottomConstraint];
+    [self.view addConstraint:rightConstraint];
+    [self.view addConstraint:leftConstraint];
+}
+
+#pragma mark - Networking 
 
 - (void)retrieveSnaps
 {
@@ -51,29 +85,23 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     }];
 }
 
-- (void)setAPIClient:(APIClient *) APIClient
+- (void)markSnapRead:(Snap *)snap
 {
-    _APIClient = APIClient;
-}
-
-- (void)setUser:(User *)user
-{
-    _user = user;
-}
-
-- (void)retrieveSnap:(Snap *)snap
-{
-    [self.APIClient retrieveSnapchatWithID:snap.snapID withSuccess:^(Snap *snap) {
+    __block Snap *unreadSnap = snap;
+    [self.APIClient markSnapchatReadWithID:snap.snapID withSuccess:^(Snap *snap) {
         
+        [self replaceUnreadSnap:unreadSnap withReadSnap:snap];
+        [self.tableView reloadData];
     } failure:^(NSError *error) {
         
     }];
-    
 }
 
-- (void)viewSnap:(Snap *)snap
+
+- (void)showSnap:(Snap *)snap
 {
-    
+    [self.snapView setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:snap.imageURL.absoluteString]]]];
+    self.snapView.hidden = NO;
 }
 
 #pragma mark - UITableViewDataSource
@@ -100,7 +128,9 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     
     if (snap.fromUserID == self.user.userID) return;
    
-    [self viewSnap:snap];
+    [self showSnap:snap];
+    [self markSnapRead:snap];
+    [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
 #pragma  mark - ContainedViewController
@@ -108,6 +138,35 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 - (void)didBecomeVisibleViewControllerInMasterViewController:(MasterViewController *)masterViewController
 {
     [self retrieveSnaps];
+}
+
+#pragma mark - SnapViewDelegate
+
+- (void)snapViewDidRecieveTap:(SnapView *)snap
+{
+    NSLog(@"snap view tapped");
+    self.snapView.hidden = YES;
+    [self.snapView setImage:nil];
+}
+
+#pragma mark - Helpers
+
+- (void)setAPIClient:(APIClient *) APIClient
+{
+    _APIClient = APIClient;
+}
+
+- (void)setUser:(User *)user
+{
+    _user = user;
+}
+
+- (void)replaceUnreadSnap:(Snap *)unreadSnap withReadSnap:(Snap *)readSnap
+{
+    NSMutableArray *tempSnaps = [self.snaps mutableCopy];
+    
+    [tempSnaps replaceObjectAtIndex:[tempSnaps indexOfObject:unreadSnap] withObject:readSnap];
+    self.snaps = [tempSnaps copy];
 }
 
 @end

@@ -291,7 +291,7 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
         NSError *JSONError = nil;
         NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&JSONError];
         
-        NSLog(@"test");
+        NSLog(@"recieving snapchats");
         
         if (dictionary == nil)
         {
@@ -421,8 +421,6 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
         NSError *JSONError = nil;
         NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&JSONError];
         
-        NSLog(@"test");
-        
         if (dictionary == nil)
         {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -435,6 +433,70 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
         
         dispatch_async(dispatch_get_main_queue(), ^{
             success(snaps);
+        });
+        
+    }];
+    
+    [dataTask resume];
+}
+
+- (void)markSnapchatReadWithID:(NSInteger) snapID withSuccess:(void (^)(Snap *snap))success failure:(void (^)(NSError *error))failure
+{
+    NSString *fullPath = [NSString stringWithFormat:@"%@/snaps/%ld/read", baseURL, snapID];
+    
+    NSMutableURLRequest *URLRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:fullPath]];
+    
+    [URLRequest setHTTPMethod:@"PUT"];
+    
+    [URLRequest setValue:self.APIToken forHTTPHeaderField:@"X-Api-Token"];
+    
+    
+    [URLRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    
+    NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:URLRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        
+        if (error != nil)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                failure(error);
+            });
+            return;
+        }
+        
+        NSHTTPURLResponse *HTTPResponse = (NSHTTPURLResponse *)response;
+        if (HTTPResponse.statusCode < 200 || HTTPResponse.statusCode > 299)
+        {
+            NSError *error = [NSError errorWithDomain:APIClientErrorDomain code:APIClientErrorCodeServerError userInfo:nil];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                failure(error);
+            });
+            return;
+        }
+        
+        if (![[HTTPResponse.allHeaderFields objectForKey:@"Content-Type"] hasPrefix:@"application/json"])
+        {
+            NSError *error = [NSError errorWithDomain:APIClientErrorDomain code:APIClientErrorCodeInvalidContentType userInfo:nil];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                failure(error);
+            });
+            return;
+        }
+        
+        NSError *JSONError = nil;
+        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&JSONError];
+        
+        if (dictionary == nil)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                failure(JSONError);
+            });
+            return;
+        }
+        
+        Snap *snap = [[Snap alloc] initFromDictionary:dictionary];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            success(snap);
         });
         
     }];
