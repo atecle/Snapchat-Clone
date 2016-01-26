@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6606564C1C57FAD10075F08A /* ProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6606564B1C57FAD10075F08A /* ProgressView.m */; };
+		6606564C1C57FAD10075F08A /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6606564B1C57FAD10075F08A /* LoadingView.m */; };
 		66494D7B1C512EA1006593B8 /* APIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D7A1C512EA1006593B8 /* APIClient.m */; };
 		66494D7F1C512FC3006593B8 /* CameraButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D7E1C512FC3006593B8 /* CameraButton.m */; };
 		66494D821C51370A006593B8 /* UIColor+SnapchatColors.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D811C51370A006593B8 /* UIColor+SnapchatColors.m */; };
@@ -52,8 +52,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		6606564A1C57FAD10075F08A /* ProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressView.h; sourceTree = "<group>"; };
-		6606564B1C57FAD10075F08A /* ProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressView.m; sourceTree = "<group>"; };
+		6606564A1C57FAD10075F08A /* LoadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingView.h; sourceTree = "<group>"; };
+		6606564B1C57FAD10075F08A /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingView.m; sourceTree = "<group>"; };
 		66494D791C512EA1006593B8 /* APIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIClient.h; sourceTree = "<group>"; };
 		66494D7A1C512EA1006593B8 /* APIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APIClient.m; sourceTree = "<group>"; };
 		66494D7D1C512FC3006593B8 /* CameraButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraButton.h; sourceTree = "<group>"; };
@@ -151,8 +151,8 @@
 				66A1FACD1C52D161000A7B4B /* InboxTableCell.h */,
 				66A1FACE1C52D161000A7B4B /* InboxTableCell.m */,
 				66A1FACF1C52D161000A7B4B /* InboxTableCell.xib */,
-				6606564A1C57FAD10075F08A /* ProgressView.h */,
-				6606564B1C57FAD10075F08A /* ProgressView.m */,
+				6606564A1C57FAD10075F08A /* LoadingView.h */,
+				6606564B1C57FAD10075F08A /* LoadingView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -405,7 +405,7 @@
 				66F405C11C50334A00C7E852 /* InboxViewController.m in Sources */,
 				66494D8C1C5163BE006593B8 /* FriendListViewController.m in Sources */,
 				66F4058D1C5032E100C7E852 /* AppDelegate.m in Sources */,
-				6606564C1C57FAD10075F08A /* ProgressView.m in Sources */,
+				6606564C1C57FAD10075F08A /* LoadingView.m in Sources */,
 				66F4058A1C5032E100C7E852 /* main.m in Sources */,
 				66494D891C51505B006593B8 /* NavigationController.m in Sources */,
 				66F9E6591C5690560045638C /* SnapView.m in Sources */,

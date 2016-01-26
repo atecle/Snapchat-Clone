@@ -6,42 +6,62 @@
 //  Copyright © 2016 atecle. All rights reserved.
 //
 
-#import "ProgressView.h"
+#import "LoadingView.h"
 
-@interface ProgressView()
+@interface LoadingView()
 
 @property (strong, nonatomic) UIView *contentView;
 @property (strong, nonatomic) UIActivityIndicatorView *activityIndicatorView;
 
+@property (strong, nonatomic) NSLayoutConstraint *centerXConstraint;
+
+//this property is for appearance/dismissal animation
+@property (nonatomic) CGFloat centerXOffset;
 @end
 
-@implementation ProgressView
+@implementation LoadingView
 
-- (instancetype)initWithFrame:(CGRect)frame
+
+#pragma mark - Initialization
+
++ (instancetype)loadingViewInView:(UIView *)view
 {
-    if ((self = [super initWithFrame:frame]))
+    LoadingView *loadingView = [[LoadingView alloc] initWithSuperView:view];
+ 
+    return loadingView;
+}
+
+- (instancetype)initWithSuperView:(UIView *)superview
+{
+    if ((self = [super initWithFrame:CGRectZero]))
     {
+        
+        [superview addSubview:self];
+        
         [self setBackgroundColor: [UIColor clearColor]];
+
+        [self addConstraintsToSuperview];
         
         [self configureContentView];
         
         [self configureActivityIndicatorView];
+        
+        [self.superview layoutIfNeeded];
     }
     
     return self;
 }
 
+#pragma mark - Set up
+
 - (void)configureContentView
 {
-    
     self.contentView = [[UIView alloc] init];
     [self.contentView setBackgroundColor:[UIColor whiteColor]];
     self.contentView.layer.cornerRadius = 10;
     [self.contentView layoutIfNeeded];
     [self addSubview:self.contentView];
     [self addConstraintsToContentView];
-    
-    
 }
 
 - (void)configureActivityIndicatorView
@@ -49,6 +69,25 @@
     self.activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     [self.contentView addSubview:self.activityIndicatorView];
     [self addConstraintsToIndicatorView];
+}
+
+
+- (void)addConstraintsToSuperview
+{
+    self.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.superview addSubview:self];
+    
+    self.centerXOffset = CGRectGetWidth(self.superview.frame) * 2;
+
+    NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:self.centerXOffset];
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1  constant:0];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1  constant:0];
+    
+    self.centerXConstraint = centerXConstraint;
+    
+    [self.superview addConstraints:@[topConstraint, bottomConstraint, rightConstraint, heightConstraint, centerXConstraint]];
 }
 
 - (void)addConstraintsToContentView
@@ -62,9 +101,7 @@
     NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:0.25 constant:0];
     NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:0.4 constant:0];
     
-    
     [self addConstraints:@[centerXConstraint, centerYConstraint, heightConstraint, widthConstraint]];
-    
 }
 
 
@@ -80,31 +117,24 @@
     [self addConstraints:@[centerXConstraint, centerYConstraint, heightConstraint, widthConstraint]];
 }
 
+#pragma mark - UI
 
-- (void)startAnimating
+- (void)showLoadingView
 {
-    [self.activityIndicatorView startAnimating];
-}
+    __weak typeof(self) weakSelf = self;
+    [UIView animateWithDuration:.2 animations:^{
 
-- (void)stopAnimating
-{
-    [self.activityIndicatorView stopAnimating];
-}
-
-- (void)setIsDisplayed:(BOOL)isDisplayed
-{
-    _isDisplayed = isDisplayed;
-}
-
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-{
-    UIView *hitView = [super hitTest:point withEvent:event];
-    if (hitView == self && self.isDisplayed == NO)
-    {
-        return nil;
-    }
+        __strong typeof(self) self = weakSelf;
+        [self.activityIndicatorView startAnimating];
+        self.centerXConstraint.constant = 0;
+        [self layoutIfNeeded];
+    }];
     
-    return hitView;
+}
+
+- (void)hideLoadingView
+{
+    [self removeFromSuperview];
 }
 
 @end
