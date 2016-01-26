@@ -13,10 +13,6 @@
 @property (strong, nonatomic) UIView *contentView;
 @property (strong, nonatomic) UIActivityIndicatorView *activityIndicatorView;
 
-@property (strong, nonatomic) NSLayoutConstraint *centerXConstraint;
-
-//this property is for appearance/dismissal animation
-@property (nonatomic) CGFloat centerXOffset;
 @end
 
 @implementation LoadingView
@@ -39,6 +35,8 @@
         [superview addSubview:self];
         
         [self setBackgroundColor: [UIColor clearColor]];
+        
+        self.alpha = 0;
 
         [self addConstraintsToSuperview];
         
@@ -77,16 +75,12 @@
     self.translatesAutoresizingMaskIntoConstraints = NO;
     [self.superview addSubview:self];
     
-    self.centerXOffset = CGRectGetWidth(self.superview.frame) * 2;
-
-    NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:self.centerXOffset];
+    NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
     NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1  constant:0];
     NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1  constant:0];
-    
-    self.centerXConstraint = centerXConstraint;
-    
+        
     [self.superview addConstraints:@[topConstraint, bottomConstraint, rightConstraint, heightConstraint, centerXConstraint]];
 }
 
@@ -119,20 +113,20 @@
 
 #pragma mark - UI
 
-- (void)showLoadingView
+- (void)show
 {
     __weak typeof(self) weakSelf = self;
     [UIView animateWithDuration:.2 animations:^{
 
         __strong typeof(self) self = weakSelf;
+        self.alpha = 1;
         [self.activityIndicatorView startAnimating];
-        self.centerXConstraint.constant = 0;
         [self layoutIfNeeded];
     }];
     
 }
 
-- (void)hideLoadingView
+- (void)hide
 {
     [self removeFromSuperview];
 }

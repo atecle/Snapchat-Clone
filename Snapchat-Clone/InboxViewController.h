@@ -11,6 +11,7 @@
 #import "InboxTableCell.h"
 #import "APIClient.h"
 #import "SnapView.h"
+#import "LoadingView.h"
 
 
 extern NSString * const InboxViewControllerIdentifier;

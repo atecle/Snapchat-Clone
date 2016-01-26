@@ -12,7 +12,7 @@
 
 + (instancetype) loadingViewInView:(UIView *)view;
 
-- (void)showLoadingView;
-- (void)hideLoadingView;
+- (void)show;
+- (void)hide;
 
 @end

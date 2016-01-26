@@ -15,6 +15,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 
+@property (strong, nonatomic) LoadingView *loadingView;
 @property (strong, nonatomic) APIClient *APIClient;
 @property (copy, nonatomic) NSArray *snaps;
 @property (strong, nonatomic) User *user;
@@ -69,13 +70,18 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 
 - (void)retrieveSnaps
 {
+    self.loadingView = [LoadingView loadingViewInView:self.view];
+    [self.loadingView show];
     __weak typeof(self) weakSelf = self;
     [self.APIClient retrieveSnapchatsWithSuccess:^(NSArray *snaps)
     {
         __strong typeof (self) self = weakSelf;
         self.snaps = snaps;
         [self.tableView reloadData];
+        [self.loadingView hide];
     } failure:^(NSError *error) {
+        __strong typeof(self) self = weakSelf;
+        [self.loadingView hide];
         NSLog(@"%@", error);
     }];
 }
@@ -83,8 +89,11 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 - (void)markSnapRead:(Snap *)snap
 {
     __block Snap *unreadSnap = snap;
+    
+    __weak typeof(self) weakSelf = self;
     [self.APIClient markSnapchatReadWithID:snap.snapID success:^(Snap *snap) {
         
+        __strong typeof (self) self = weakSelf;
         [self replaceUnreadSnap:unreadSnap withReadSnap:snap];
         [self.tableView reloadData];
     } failure:^(NSError *error) {
