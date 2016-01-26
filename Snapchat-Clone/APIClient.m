@@ -138,8 +138,6 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
 {
     NSString *fullPath = [NSString stringWithFormat:@"%@/snaps", baseURL];
    
-    imageURL = [NSURL URLWithString:@"https://snapchat-api-photos.s3.amazonaws.com/snaps/snap_dcd02410e1dff942effa0b42f2df8e93.jpg"];
-
     NSDictionary *parameters = @{@"to" : users, @"image_url" : imageURL.absoluteString};
 
     NSURLRequest *URLRequest = [self requestWithPath:fullPath parameters:parameters HTTPMethod:@"POST" failure:failure];
@@ -175,8 +173,10 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
 
         NSArray *snaps = [Snap snapsFromDictionaries:dictionary];
         
+        NSArray *reverseSnaps = [[snaps reverseObjectEnumerator] allObjects];
+        
         dispatch_async(dispatch_get_main_queue(), ^{
-            success(snaps);
+            success(reverseSnaps);
         });
 
     }];
@@ -212,16 +212,26 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
 {
     NSString *fullPath = [NSString stringWithFormat:@"%@/media/upload", baseURL];
     
-    NSURLRequest *URLRequest = [self requestWithPath:fullPath parameters:nil HTTPMethod:@"POST" failure:failure];
-    
-    if (URLRequest == nil) return;
+    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
+  
+    NSURLRequest *URLRequest = [self multipartRequestWithPath:fullPath HTTPMethod:@"POST" data:imageData];
 
     NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:URLRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
-        //NSDictionary *dictionary = [self dictionaryFromData:data response:response error:error failure:failure];
+        NSDictionary *dictionary = [self dictionaryFromData:data response:response error:error failure:failure];
+        
+        if (dictionary == nil)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                failure(error);
+            });
+            return;
+        }
+        
+        NSURL *imageURL = [NSURL URLWithString: dictionary[@"image_url"]];
         
         dispatch_async(dispatch_get_main_queue(), ^{
-
+            success(imageURL);
         });
         
     }];
@@ -322,6 +332,45 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
     
     
     return dictionary;
+}
+
+- (NSURLRequest *)multipartRequestWithPath:(NSString *)fullPath HTTPMethod:(NSString *)method data:(NSData *)data
+{
+    
+    NSMutableURLRequest *URLRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:fullPath]];
+    
+    [URLRequest setHTTPMethod:method];
+    [URLRequest setValue:self.APIToken forHTTPHeaderField:@"X-Api-Token"];
+    
+    NSData *randomStringData = [[[NSUUID UUID] UUIDString] dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *boundary = [randomStringData base64EncodedStringWithOptions:kNilOptions];
+    
+    NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
+    
+    [URLRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
+    
+    NSData *bodyBoundaryBegin = [[NSString stringWithFormat:@"\r\n--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *bodyBoundaryEnd = [[NSString stringWithFormat:@"\r\n--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSString *parameterName = @"file";
+    NSString *fileName = @"file.jpg";
+    NSString *contentDisposition = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", parameterName, fileName];
+    NSString *dataType = @"Content-Type: application/octet-stream\r\n\r\n";
+    
+    NSMutableData *HTTPBody = [[NSMutableData alloc] init];
+    
+    [HTTPBody appendData:bodyBoundaryBegin];
+    
+    [HTTPBody appendData:[contentDisposition dataUsingEncoding:NSUTF8StringEncoding]];
+    [HTTPBody appendData:[dataType dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    [HTTPBody appendData:data];
+    
+    [HTTPBody appendData:bodyBoundaryEnd];
+    
+    [URLRequest setHTTPBody:HTTPBody];
+    
+    return URLRequest;
 }
 
 - (void)setAPIToken:(NSString *)APIToken

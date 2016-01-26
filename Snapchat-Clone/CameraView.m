@@ -19,6 +19,8 @@ static NSInteger CancelButtonWidth = 30;
 @interface CameraView()
 
 @property (strong, nonatomic) AVCaptureSession *captureSession;
+@property (strong, nonatomic) AVCaptureDeviceInput *backCameraDeviceInput;
+@property (strong, nonatomic) AVCaptureDeviceInput *frontCameraDeviceInput;
 @property (strong, nonatomic) AVCaptureStillImageOutput *captureOutput;
 @property (strong, nonatomic) AVCaptureConnection *captureConnection;
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
@@ -30,6 +32,7 @@ static NSInteger CancelButtonWidth = 30;
 @property (strong, nonatomic) UIButton *cancelButton;
 @property (strong, nonatomic) UIButton *inboxButton;
 
+@property (nonatomic) BOOL cameraFlipped;
 
 @property (nonatomic) BOOL hasImage;
 
@@ -76,25 +79,41 @@ static NSInteger CancelButtonWidth = 30;
 {
     AVCaptureSession *captureSession = [[AVCaptureSession alloc] init];
     
-    AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    AVCaptureDevice *backCameraCaptureDevice = [self cameraWithPosition:AVCaptureDevicePositionBack];
     
     NSError *error;
     
-    AVCaptureDeviceInput *deviceInput = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:&error];
+    AVCaptureDeviceInput *backCameraDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:backCameraCaptureDevice error:&error];
     
-    if (deviceInput == nil)
+    //back camera input
+    if (backCameraDeviceInput == nil)
     {
         NSLog(@"%@", error);
         return;
     }
     
-    if (![captureSession canAddInput:deviceInput])
+    if (![captureSession canAddInput:backCameraDeviceInput])
     {
         NSLog(@"Couldn't add input");
         return;
     }
     
-    [captureSession addInput:deviceInput];
+    [captureSession addInput:backCameraDeviceInput];
+    self.backCameraDeviceInput = backCameraDeviceInput;
+    
+    AVCaptureDevice *frontCameraCaptureDevice = [self cameraWithPosition:AVCaptureDevicePositionFront];
+    
+    AVCaptureDeviceInput *frontCameraDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:frontCameraCaptureDevice error:&error];
+    
+    if (frontCameraDeviceInput == nil)
+    {
+        NSLog(@"%@", error);
+        return;
+    }
+        
+    self.frontCameraDeviceInput = frontCameraDeviceInput;
+    
+    //output config
     
     AVCaptureStillImageOutput *captureOutput = [[AVCaptureStillImageOutput alloc] init];
     
@@ -173,7 +192,7 @@ static NSInteger CancelButtonWidth = 30;
     UIButton *flipCameraButton = [[UIButton alloc] init];
     [flipCameraButton setImage:[UIImage imageNamed:@"flip-camera-icon"] forState:UIControlStateNormal];
     flipCameraButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [flipCameraButton addTarget:self action:@selector(flipCameraButton) forControlEvents:UIControlEventTouchUpInside];
+    [flipCameraButton addTarget:self action:@selector(flipCameraButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     [flipCameraButton layoutIfNeeded];
     
     [self addSubview:flipCameraButton];
@@ -192,6 +211,27 @@ static NSInteger CancelButtonWidth = 30;
     [self addConstraint:topConstraint];
     [self addConstraint:heightConstraint];
     [self addConstraint:widthConstraint];
+}
+
+- (void)flipCameraButtonPressed
+{
+    [self.captureSession beginConfiguration];
+    
+    if (self.cameraFlipped)
+    {
+        [self.captureSession removeInput:self.frontCameraDeviceInput];
+        [self.captureSession addInput:self.backCameraDeviceInput];
+    }
+    else
+    {
+        [self.captureSession removeInput:self.backCameraDeviceInput];
+        [self.captureSession addInput:self.frontCameraDeviceInput];
+    }
+    
+    self.cameraFlipped = !self.cameraFlipped;
+    
+    [self.captureSession commitConfiguration];
+    
 }
 
 - (void)configureSendSnapButton
@@ -344,6 +384,16 @@ static NSInteger CancelButtonWidth = 30;
     }
     
     return stillImageConnection;
+}
+
+- (AVCaptureDevice *) cameraWithPosition:(AVCaptureDevicePosition) position
+{
+    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    for (AVCaptureDevice *device in devices)
+    {
+        if ([device position] == position) return device;
+    }
+    return nil;
 }
 
 - (UIImage *) imageFromSampleBuffer:(CMSampleBufferRef) sampleBuffer
