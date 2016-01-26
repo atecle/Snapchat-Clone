@@ -19,6 +19,10 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *sendViewTopLayoutConstraint;
 @property (weak, nonatomic) IBOutlet UIButton *sendSnapButton;
 
+@property (strong, nonatomic) NSLayoutConstraint *progressViewRightLayoutConstraint;
+@property (nonatomic) CGFloat progressViewRightMargin;
+
+@property (strong, nonatomic) ProgressView *progressView;
 @property (nonatomic) CGFloat sendSnapViewHeight;
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) APIClient *APIClient;
@@ -38,7 +42,8 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
     self.tableView.dataSource = self;
     self.tableView.allowsMultipleSelection = YES;
     [self hideSendSnapViewAnimated:NO];
-    
+    [self configureProgressView];
+    [self hideProgressView];
     
     //UIBarButtonItem *testButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Test", nil) style:UIBarButtonItemStyleDone target:self action:@selector(hideSendSnapView)];
     // self.navigationItem.rightBarButtonItem = testButton;
@@ -50,7 +55,7 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-
+    
     [self.navigationController setNavigationBarHidden:NO animated:animated];
 }
 
@@ -66,13 +71,40 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - Set up
+
+- (void)configureProgressView
+{
+    self.progressView = [[ProgressView alloc] init];
+    self.progressView.hidden = NO;
+    [self.view addSubview:self.progressView];
+    
+    self.progressViewRightMargin = CGRectGetWidth(self.view.frame);
+    
+    self.progressView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.progressView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.progressView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.progressView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.progressView attribute:NSLayoutAttributeRight multiplier:1  constant:0];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.progressView attribute:NSLayoutAttributeHeight multiplier:1  constant:0];
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.progressView attribute:NSLayoutAttributeWidth multiplier:1  constant:0];
+
+    self.progressViewRightLayoutConstraint = rightConstraint;
+    
+    [self.view addConstraints:@[topConstraint, bottomConstraint, leftConstraint, rightConstraint, heightConstraint, widthConstraint]];
+    
+}
+
+#pragma mark - Networking
+
 - (void)retrieveFriends
 {
     __weak typeof(self) weakSelf = self;
     [self.APIClient retrieveFriendsWithSuccess:^(NSArray *friends) {
-    
+        
         __strong typeof(self) self = weakSelf;
-    
+        
         self.friends = friends;
         [self.tableView reloadData];
     } failure:^(NSError *error)
@@ -80,6 +112,41 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
          NSLog(@"%@", error);
      }];
 }
+
+- (void)sendSnap
+{
+    __weak typeof(self) weakSelf = self;
+    [self showProgressView];
+    [self.APIClient uploadImage:self.image withSuccess:^(NSURL *imageURL) {
+        
+        __strong typeof(self) self = weakSelf;
+        [self.APIClient sendSnapchatWithImageURL:imageURL toUsers:[self selectedFriends] withSuccess:^(NSArray *snaps) {
+            
+            [self.delegate friendListViewControllerDidSendSnap:self];
+            [self hideProgressView];
+
+        } failure:^(NSError *error) {
+            
+            [self hideProgressView];
+            NSLog(@"%@", error);
+        }];
+        
+    } failure:^(NSError *error) {
+        
+        NSLog(@"%@", error);
+        [self hideProgressView];
+    }];
+}
+
+
+#pragma mark - User Interaction
+
+- (IBAction)sendSnapButtonPressed:(id)sender
+{
+    [self showProgressView];
+    [self sendSnap];
+}
+
 
 - (void)hideSendSnapViewAnimated:(BOOL)animated
 {
@@ -119,6 +186,35 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
     }
 }
 
+- (void)showProgressView
+{
+    self.progressView.hidden = NO;
+    
+    __weak typeof(self) weakSelf = self;
+    [UIView animateWithDuration:.2 animations:^{
+        __strong typeof(self) self = weakSelf;
+        self.progressViewRightLayoutConstraint.constant = 0;
+        [self.view layoutIfNeeded];
+    }];
+    
+    [self.progressView startAnimating];
+    self.progressView.isDisplayed = YES;
+}
+
+- (void)hideProgressView
+{
+    __weak typeof(self) weakSelf = self;
+    [UIView animateWithDuration:.2 animations:^{
+        __strong typeof(self) self = weakSelf;
+        self.progressViewRightLayoutConstraint.constant = self.progressViewRightMargin;
+        self.progressView.hidden = YES;
+        [self.view layoutIfNeeded];
+
+    }];
+    [self.progressView stopAnimating];
+    self.progressView.isDisplayed = NO;
+}
+
 #pragma mark - UITableViewDataSource
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -151,34 +247,7 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
     {
         [self hideSendSnapViewAnimated:YES];
     }
-
-}
-
-#pragma mark - User Interaction
-
-- (IBAction)sendSnapButtonPressed:(id)sender
-{
-    [self sendSnap];
-}
-
-- (void)sendSnap
-{
-    __weak typeof(self) weakSelf = self;
-    [self.APIClient uploadImage:self.image withSuccess:^(NSURL *imageURL) {
-       
-        __strong typeof(self) self = weakSelf;
-        [self.APIClient sendSnapchatWithImageURL:imageURL toUsers:[self selectedFriends] withSuccess:^(NSArray *snaps) {
-            
-            [self.delegate friendListViewControllerDidSendSnap:self];
-        } failure:^(NSError *error) {
-           
-            NSLog(@"%@", error);
-        }];
     
-    } failure:^(NSError *error) {
-       
-        NSLog(@"%@", error);
-    }];
 }
 
 #pragma mark - Helpers

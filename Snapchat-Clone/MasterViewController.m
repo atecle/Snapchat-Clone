@@ -9,7 +9,7 @@
 #import "MasterViewController.h"
 #import "NavigationController.h"
 
-@interface MasterViewController () <UIScrollViewDelegate, LoginViewControllerDelegate>
+@interface MasterViewController () <UIScrollViewDelegate, LoginViewControllerDelegate, InboxViewControllerDelegate>
 
 @property (strong, nonatomic) NavigationController<ContainedViewController> *rightViewController;
 @property (strong, nonatomic) InboxViewController<ContainedViewController> *leftViewController;
@@ -86,6 +86,7 @@
     self.leftViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     
+    self.leftViewController.delegate = self;
     //[self.rightViewController.view setBackgroundColor:[UIColor greenColor]];
     //[self.leftViewController.view setBackgroundColor:[UIColor blueColor]];
     
@@ -198,6 +199,19 @@
     
     NavigationController *navigationController = [[NavigationController alloc] initWithRootViewController:vc];
     [self presentViewController:navigationController animated:YES completion:nil];
+}
+
+
+#pragma mark - InboxViewControllerDelegate
+
+- (void)inboxViewControllerDidShowSnap:(InboxViewController *)inboxViewController
+{
+    self.scrollView.scrollEnabled = NO;
+}
+
+- (void)inboxViewControllerDidDismissSnap:(id)inboxViewController
+{
+    self.scrollView.scrollEnabled = YES;
 }
 
 @end

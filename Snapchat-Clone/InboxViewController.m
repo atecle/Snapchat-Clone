@@ -98,6 +98,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 {
     [self.snapView setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:snap.imageURL.absoluteString]]]];
     self.snapView.hidden = NO;
+    [self.delegate inboxViewControllerDidShowSnap:self];
 }
 
 #pragma mark - UITableViewDataSource
@@ -143,6 +144,8 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     NSLog(@"snap view tapped");
     self.snapView.hidden = YES;
     [self.snapView setImage:nil];
+    [self.delegate inboxViewControllerDidDismissSnap:self];
+
 }
 
 #pragma mark - Helpers

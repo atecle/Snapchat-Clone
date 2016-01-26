@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "FriendTableCell.h"
 #import  "APIClient.h"
+#import "ProgressView.h"
 
 extern NSString * const FriendListViewControllerIdentifier;
 

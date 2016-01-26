@@ -15,7 +15,17 @@
 
 extern NSString * const InboxViewControllerIdentifier;
 
+@class InboxViewController;
+
+@protocol InboxViewControllerDelegate <NSObject>
+
+- (void)inboxViewControllerDidShowSnap:(InboxViewController *)inboxViewController;
+- (void)inboxViewControllerDidDismissSnap:(id)inboxViewController;
+
+@end
 @interface InboxViewController : UIViewController
+
+@property (weak, nonatomic) id<InboxViewControllerDelegate> delegate;
 
 - (void)setAPIClient:(APIClient *) APIClient;
 - (void)setUser:(User *)user;
