@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "APIClient.h"
+#import "LoadingView.h"
 
 extern NSString * const LoginViewControllerIdentifier;
 

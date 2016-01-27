@@ -47,7 +47,7 @@
     
     if (self.APIToken == nil)
     {
-        [self showLoginViewController];
+        [self showHomeViewController];
     }
     else
     {
@@ -188,10 +188,9 @@
 
 #pragma mark - Navigation
 
-- (void) showLoginViewController
+- (void) showHomeViewController
 {
-    LoginViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:LoginViewControllerIdentifier];
-    vc.delegate = self;
+    HomeViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:HomeViewControllerIdentifier];
     
     NavigationController *navigationController = [[NavigationController alloc] initWithRootViewController:vc];
     [self presentViewController:navigationController animated:YES completion:nil];

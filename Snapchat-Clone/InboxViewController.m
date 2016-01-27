@@ -72,6 +72,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 {
     self.loadingView = [LoadingView loadingViewInView:self.view];
     [self.loadingView show];
+    
     __weak typeof(self) weakSelf = self;
     [self.APIClient retrieveSnapchatsWithSuccess:^(NSArray *snaps)
     {
@@ -97,7 +98,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
         [self replaceUnreadSnap:unreadSnap withReadSnap:snap];
         [self.tableView reloadData];
     } failure:^(NSError *error) {
-        
+        NSLog(@"%@", error);
     }];
 }
 

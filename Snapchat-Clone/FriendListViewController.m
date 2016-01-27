@@ -80,8 +80,7 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
         
         self.friends = friends;
         [self.tableView reloadData];
-    } failure:^(NSError *error)
-     {
+    } failure:^(NSError *error) {
          NSLog(@"%@", error);
      }];
 }
@@ -131,8 +130,10 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
     
     if (animated)
     {
+        __weak typeof(self) weakSelf = self;
         [UIView animateWithDuration:0.2 animations:^{
             work();
+            __strong typeof(self) self = weakSelf;
             [self.view layoutIfNeeded];
         }];
     }
@@ -150,8 +151,10 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
     
     if (animated)
     {
+        __weak typeof(self) weakSelf = self;
         [UIView animateWithDuration:0.2 animations:^{
             work();
+            __strong typeof(self) self = weakSelf;
             [self.view layoutIfNeeded];
         }];
     }
