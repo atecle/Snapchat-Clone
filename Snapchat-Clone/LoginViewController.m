@@ -25,10 +25,19 @@ NSString * const LoginViewControllerIdentifier = @"LoginViewController";
     
     self.title = NSLocalizedString(@"Login", nil);
     
+    [self.navigationItem.leftBarButtonItem setTitle:@""];
+    
     self.usernameTextField.delegate = self;
     self.passwordTextField.delegate = self;
     self.usernameTextField.returnKeyType = UIReturnKeyNext;
     self.passwordTextField.returnKeyType = UIReturnKeyNext;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
 }
 
 - (void)didReceiveMemoryWarning {

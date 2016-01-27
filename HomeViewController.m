@@ -27,7 +27,7 @@ NSString * const HomeViewControllerIdentifier = @"HomeViewController";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    self.navigationController.navigationBarHidden = YES;
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -38,9 +38,10 @@ NSString * const HomeViewControllerIdentifier = @"HomeViewController";
 - (IBAction)loginButtonPressed:(id)sender
 {
     LoginViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:LoginViewControllerIdentifier];
-    MasterViewController<LoginViewControllerDelegate> *masterVC = (MasterViewController<LoginViewControllerDelegate> *) self.presentingViewController;
-    vc.delegate = masterVC;
-    self.navigationController.navigationBarHidden = NO;
+    
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:self action:nil];
+    vc.delegate = self.loginDelegate;
+    
     [self.navigationController pushViewController:vc animated:NO];
 }
 

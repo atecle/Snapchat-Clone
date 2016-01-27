@@ -77,7 +77,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ve0-Tr-Vuu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1203" y="1093"/>
+            <point key="canvasLocation" x="149" y="401"/>
         </scene>
         <!--Friend List View Controller-->
         <scene sceneID="dXs-jg-sNq">
@@ -150,7 +150,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WdZ-dh-2xh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="715" y="1898"/>
+            <point key="canvasLocation" x="2267" y="401"/>
         </scene>
         <!--Photo View Controller-->
         <scene sceneID="lWy-hU-fOj">
@@ -168,7 +168,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mUP-JP-CSd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="130" y="1093"/>
+            <point key="canvasLocation" x="1554" y="401"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="j9c-fa-JoT">
@@ -187,7 +187,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="LRe-Bf-pxy"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <fontDescription key="fontDescription" type="italicSystem" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="k5A-2J-JME">
@@ -195,7 +195,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="Hdw-Tr-aJi"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <fontDescription key="fontDescription" type="italicSystem" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                             </textField>
                         </subviews>
@@ -216,7 +216,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JKd-Wb-0CI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1393" y="3208"/>
+            <point key="canvasLocation" x="871" y="-320"/>
         </scene>
         <!--Home View Controller-->
         <scene sceneID="5UF-pT-r5n">
@@ -284,7 +284,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MxG-fS-MIJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="671" y="3208"/>
+            <point key="canvasLocation" x="149" y="-320"/>
         </scene>
     </scenes>
     <resources>

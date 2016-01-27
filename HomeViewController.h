@@ -13,4 +13,6 @@ extern NSString * const HomeViewControllerIdentifier;
 
 @interface HomeViewController : UIViewController
 
+@property (weak, nonatomic) id<LoginViewControllerDelegate> loginDelegate;
+
 @end

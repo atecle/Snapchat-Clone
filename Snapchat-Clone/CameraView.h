@@ -10,6 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 #import "CameraButton.h"
+#import "SnapTextView.h"
 
 @class CameraView;
 

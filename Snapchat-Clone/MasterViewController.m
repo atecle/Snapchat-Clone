@@ -192,6 +192,8 @@
 {
     HomeViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:HomeViewControllerIdentifier];
     
+    vc.loginDelegate = self;
+    
     NavigationController *navigationController = [[NavigationController alloc] initWithRootViewController:vc];
     [self presentViewController:navigationController animated:YES completion:nil];
 }

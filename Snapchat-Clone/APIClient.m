@@ -186,7 +186,7 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
 
 - (void)retrieveSnapchatWithID:(NSInteger) snapID success:(void (^)(Snap *snap))success failure:(void (^)(NSError *error))failure
 {
-    NSString *fullPath = [NSString stringWithFormat:@"%@/snaps/%ld", baseURL, snapID];
+    NSString *fullPath = [NSString stringWithFormat:@"%@/snaps/%ld", baseURL, (long)snapID];
     
     NSURLRequest *URLRequest = [self requestWithPath:fullPath parameters:nil HTTPMethod:@"GET" failure:failure];
 
@@ -241,7 +241,7 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
 
 - (void)markSnapchatReadWithID:(NSInteger) snapID success:(void (^)(Snap *snap))success failure:(void (^)(NSError *error))failure
 {
-    NSString *fullPath = [NSString stringWithFormat:@"%@/snaps/%ld/read", baseURL, snapID];
+    NSString *fullPath = [NSString stringWithFormat:@"%@/snaps/%ld/read", baseURL, (long)snapID];
     
     NSURLRequest *URLRequest = [self requestWithPath:fullPath parameters:nil HTTPMethod:@"PUT" failure:failure];
 
