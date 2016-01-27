@@ -14,8 +14,8 @@ static NSInteger CharacterLimit = 150;
 
 @property (strong, nonatomic) UITapGestureRecognizer *tapGesture;
 @property (strong, nonatomic) UITextField *textField;
-@property (strong, nonatomic) NSLayoutConstraint *centerYConstraint;
-@property (strong, nonatomic) NSLayoutConstraint *textFieldToKeyboardBottomConstraint;
+@property (strong, nonatomic) NSLayoutConstraint *textFieldCenterYConstraint;
+@property (strong, nonatomic) NSLayoutConstraint *textFieldBottomConstraint;
 
 @end
 
@@ -79,7 +79,7 @@ static NSInteger CharacterLimit = 150;
     
     NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
     
-    self.centerYConstraint = centerYConstraint;
+    self.textFieldCenterYConstraint = centerYConstraint;
     
     [self addConstraints:@[widthConstraint, heightConstraint, centerXConstraint, centerYConstraint]];
 }
@@ -87,9 +87,8 @@ static NSInteger CharacterLimit = 150;
 - (void)configureTextField
 {
     self.textField = [[UITextField alloc] init];
-    [self.textField setBackgroundColor:[UIColor blackColor]];
+    [self.textField setBackgroundColor:[UIColor  colorWithRed:0 green:0 blue:0 alpha:0.5]];
     [self.textField setTextColor:[UIColor whiteColor]];
-    [self.textField setAlpha:0.5];
     self.textField.hidden = YES;
     self.textField.delegate = self;
 }
@@ -111,6 +110,7 @@ static NSInteger CharacterLimit = 150;
 
 - (void)snapTextViewTapped
 {
+    self.textField.hidden  = NO;
     
     [self.textField becomeFirstResponder];
 //    if ([self.textField isFirstResponder])
@@ -150,21 +150,33 @@ static NSInteger CharacterLimit = 150;
     
 }
 
-- (void)animateTextFieldAboveKeyboard
+- (void)animateTextFieldAboveKeyboard:(CGRect)keyboardFrame
 {
-  //  NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLAyoutAttributeBottom multiplier:1 constant:0];
+    self.textFieldBottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeBottom multiplier:1 constant:keyboardFrame.size.height];
+    
+    __weak typeof(self) weakSelf = self;
+    [UIView animateWithDuration:.3 animations:^{
+        __strong typeof(self) self = weakSelf;
+        
+        [self removeConstraint:self.textFieldCenterYConstraint];
+        [self addConstraint:self.textFieldBottomConstraint];
+        [self layoutIfNeeded];
+    }];
 }
 
 #pragma mark - Keyboard Observer
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-    [self animateTextFieldAboveKeyboard];
+    NSValue *keyboardFrameValue = [[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey];
+    CGRect keyboardFrame = [keyboardFrameValue CGRectValue];
+    
+    [self animateTextFieldAboveKeyboard:keyboardFrame];
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
-
+    
 }
 
 #pragma mark - UITextFieldDelegate
