@@ -151,7 +151,7 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)configureSnapTextView
 {
-    
+    self.snapTextView = [SnapTextView snapTextViewInView:self];
 }
 
 - (void)configureImageView

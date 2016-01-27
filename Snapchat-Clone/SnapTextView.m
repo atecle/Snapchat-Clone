@@ -14,6 +14,8 @@ static NSInteger CharacterLimit = 150;
 
 @property (strong, nonatomic) UITapGestureRecognizer *tapGesture;
 @property (strong, nonatomic) UITextField *textField;
+@property (strong, nonatomic) NSLayoutConstraint *centerYConstraint;
+@property (strong, nonatomic) NSLayoutConstraint *textFieldToKeyboardBottomConstraint;
 
 @end
 
@@ -33,6 +35,7 @@ static NSInteger CharacterLimit = 150;
         [superview addSubview:self];
         [self setBackgroundColor:[UIColor clearColor]];
         
+        [self observeKeyboard];
         [self addConstraintsToSuperView];
         [self configureTapGesture];
         [self configureTextField];
@@ -70,11 +73,13 @@ static NSInteger CharacterLimit = 150;
     
     NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
     
-    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeWidth multiplier:0.0625 constant:0];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.textField attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:0.0625 constant:0];
 
     NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
     
     NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
+    
+    self.centerYConstraint = centerYConstraint;
     
     [self addConstraints:@[widthConstraint, heightConstraint, centerXConstraint, centerYConstraint]];
 }
@@ -85,27 +90,42 @@ static NSInteger CharacterLimit = 150;
     [self.textField setBackgroundColor:[UIColor blackColor]];
     [self.textField setTextColor:[UIColor whiteColor]];
     [self.textField setAlpha:0.5];
+    self.textField.hidden = YES;
     self.textField.delegate = self;
 }
 
 - (void)configureTapGesture
 {
     self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(snapTextViewTapped)];
+    [self addGestureRecognizer:self.tapGesture];
+}
+
+- (void)observeKeyboard
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+
 }
 
 #pragma mark - User Interaction
 
 - (void)snapTextViewTapped
 {
-    if ([self.textField isFirstResponder])
-    {
-        [self dismissTextField];
-    }
-    else
-    {
-        [self showTextField];
-    }
+    
+    [self.textField becomeFirstResponder];
+//    if ([self.textField isFirstResponder])
+//    {
+//        NSLog(@"Snap View Tapped");
+//        [self dismissTextField];
+//    }
+//    else
+//    {
+//        [self showTextField];
+//    }
 }
+
+
+#pragma mark - UI Methods
 
 - (void)showTextField
 {
@@ -130,18 +150,31 @@ static NSInteger CharacterLimit = 150;
     
 }
 
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+- (void)animateTextFieldAboveKeyboard
 {
-    if (CGRectContainsPoint(self.textField.bounds, point))
-    {
-        return self;
-    }
-    
-    return nil;
+  //  NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLAyoutAttributeBottom multiplier:1 constant:0];
+}
+
+#pragma mark - Keyboard Observer
+
+- (void)keyboardWillShow:(NSNotification *)notification
+{
+    [self animateTextFieldAboveKeyboard];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification
+{
+
 }
 
 #pragma mark - UITextFieldDelegate
 
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    NSLog(@"Text field tapped");
+    return YES;
+}
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
@@ -150,8 +183,6 @@ static NSInteger CharacterLimit = 150;
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
- 
-    
     [self.textField resignFirstResponder];
     return YES;
 }
@@ -164,6 +195,20 @@ static NSInteger CharacterLimit = 150;
     }
     
 }
+
+#pragma mark - Overrides
+
+//
+//- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+//{
+//    if (CGRectContainsPoint(self.textField.bounds, point))
+//    {
+//        return self;
+//    }
+//
+//    return nil;
+//}
+
 
 #pragma mark - Helpers
 
