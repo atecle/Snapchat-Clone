@@ -16,8 +16,10 @@ static NSInteger CancelButtonHeight = 30;
 static NSInteger CancelButtonWidth = 30;
 
 
+
 @interface CameraView()
 
+//could refactor this out
 @property (strong, nonatomic) AVCaptureSession *captureSession;
 @property (strong, nonatomic) AVCaptureDeviceInput *backCameraDeviceInput;
 @property (strong, nonatomic) AVCaptureDeviceInput *frontCameraDeviceInput;
@@ -25,7 +27,6 @@ static NSInteger CancelButtonWidth = 30;
 @property (strong, nonatomic) AVCaptureConnection *captureConnection;
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
 
-@property (strong, nonatomic) UITapGestureRecognizer *tapGesture;
 @property (strong, nonatomic) SnapTextView *snapTextView;
 @property (strong, nonatomic) UIImageView *capturedImageView;
 @property (strong, nonatomic) CameraButton *cameraButton;
@@ -57,7 +58,7 @@ static NSInteger CancelButtonWidth = 30;
     {
         [self configureCaptureSession];
         [self configureCameraView];
-        [self configureTapGesture];
+        [self configureSnapTextView];
         [self configureImageView];
         [self configureCameraButton];
         [self configureFlipCameraButton];
@@ -148,11 +149,9 @@ static NSInteger CancelButtonWidth = 30;
     [self.layer addSublayer:self.previewLayer];
 }
 
-- (void)configureTapGesture
+- (void)configureSnapTextView
 {
-    self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(photoTapped)];
-    self.tapGesture.enabled = NO;
-    [self addGestureRecognizer:self.tapGesture];
+    
 }
 
 - (void)configureImageView
@@ -354,11 +353,6 @@ static NSInteger CancelButtonWidth = 30;
     self.hasImage = NO;
 }
 
-- (void)photoTapped
-{
-
-}
-
 #pragma mark - Instance Methods
 
 - (void)startCaptureSession
@@ -475,7 +469,6 @@ static NSInteger CancelButtonWidth = 30;
         self.cancelButton.hidden = NO;
         self.capturedImageView.hidden = NO;
         [self.capturedImageView setImage:self.image];
-        self.tapGesture.enabled = YES;
     }
     else
     {
@@ -485,7 +478,6 @@ static NSInteger CancelButtonWidth = 30;
         self.sendSnapButton.hidden = YES;
         self.cancelButton.hidden = YES;
         self.capturedImageView.hidden = YES;
-        self.tapGesture.enabled = NO;
     }
 }
 
