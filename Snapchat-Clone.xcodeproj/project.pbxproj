@@ -21,6 +21,7 @@
 		66494D9B1C516E1F006593B8 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D9A1C516E1F006593B8 /* LoginViewController.m */; };
 		66A1FAD01C52D161000A7B4B /* InboxTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A1FACE1C52D161000A7B4B /* InboxTableCell.m */; };
 		66A1FAD11C52D161000A7B4B /* InboxTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66A1FACF1C52D161000A7B4B /* InboxTableCell.xib */; };
+		66A324D31C582B0B0021DFF6 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66A324D21C582B0B0021DFF6 /* HockeySDK.framework */; };
 		66F4058A1C5032E100C7E852 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F405891C5032E100C7E852 /* main.m */; };
 		66F4058D1C5032E100C7E852 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058C1C5032E100C7E852 /* AppDelegate.m */; };
 		66F405901C5032E100C7E852 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058F1C5032E100C7E852 /* PhotoViewController.m */; };
@@ -78,6 +79,7 @@
 		66A1FACD1C52D161000A7B4B /* InboxTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxTableCell.h; sourceTree = "<group>"; };
 		66A1FACE1C52D161000A7B4B /* InboxTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxTableCell.m; sourceTree = "<group>"; };
 		66A1FACF1C52D161000A7B4B /* InboxTableCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InboxTableCell.xib; sourceTree = "<group>"; };
+		66A324D21C582B0B0021DFF6 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
 		66F405851C5032E100C7E852 /* Snapchat-Clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Snapchat-Clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		66F405891C5032E100C7E852 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		66F4058B1C5032E100C7E852 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66A324D31C582B0B0021DFF6 /* HockeySDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,6 +216,7 @@
 		66F405881C5032E100C7E852 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				66A324D21C582B0B0021DFF6 /* HockeySDK.framework */,
 				66F405941C5032E100C7E852 /* Assets.xcassets */,
 				66F405961C5032E100C7E852 /* LaunchScreen.storyboard */,
 				66F4058B1C5032E100C7E852 /* AppDelegate.h */,
@@ -551,7 +555,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Snapchat-Clone",
+				);
 				INFOPLIST_FILE = "Snapchat-Clone/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.atecle.Snapchat-Clone";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -562,11 +571,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: adam tecle (3GR96D7Z4R)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Snapchat-Clone",
+				);
 				INFOPLIST_FILE = "Snapchat-Clone/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.atecle.Snapchat-Clone";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "a8aa12c7-ab28-41ee-a5cb-521633de7fad";
 			};
 			name = Release;
 		};

@@ -30,10 +30,6 @@
     [super viewDidLoad];
     
     self.scrollView.bounces = NO;
-//    CGPoint position = self.scrollView.contentOffset;
-//    position.x = position.x + CGRectGetWidth(self.scrollView.frame);
-//    [self.scrollView setContentOffset:position];
-//    [self.view layoutIfNeeded];
     
     [self configureChildViewControllers];
 }
