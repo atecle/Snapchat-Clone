@@ -8,7 +8,7 @@
 
 #import "SnapTextView.h"
 
-static NSInteger CharacterLimit = 150;
+static NSInteger CharacterLimit = 25;
 
 @interface SnapTextView() <UITextFieldDelegate>
 
@@ -34,6 +34,7 @@ static NSInteger CharacterLimit = 150;
     {
         [superview addSubview:self];
         [self setBackgroundColor:[UIColor clearColor]];
+        self.enabled = NO;
         
         [self observeKeyboard];
         [self addConstraintsToSuperView];
@@ -74,7 +75,7 @@ static NSInteger CharacterLimit = 150;
     NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
     
     NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.textField attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:0.0625 constant:0];
-
+    
     NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
     
     NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
@@ -103,64 +104,55 @@ static NSInteger CharacterLimit = 150;
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-
+    
 }
 
 #pragma mark - User Interaction
 
 - (void)snapTextViewTapped
 {
-    self.textField.hidden  = NO;
+    if ([self.textField isFirstResponder] == NO)
+    {
+        [self.textField becomeFirstResponder];
+    }
+    else
+    {
+        [self.textField resignFirstResponder];
+    }
     
-    [self.textField becomeFirstResponder];
-//    if ([self.textField isFirstResponder])
-//    {
-//        NSLog(@"Snap View Tapped");
-//        [self dismissTextField];
-//    }
-//    else
-//    {
-//        [self showTextField];
-//    }
 }
 
 
 #pragma mark - UI Methods
 
-- (void)showTextField
-{
-    self.textField.hidden = NO;
-    
-}
-
-- (void)dismissTextField
-{
-    if ([self.textField.text length] != 0)
-    {
-        [self placeTextField];
-    }
-    else
-    {
-        self.textField.hidden = YES;
-    }
-}
-
-- (void)placeTextField
-{
-    
-}
-
 - (void)animateTextFieldAboveKeyboard:(CGRect)keyboardFrame
 {
-    self.textFieldBottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeBottom multiplier:1 constant:keyboardFrame.size.height];
+    
+    if (self.textFieldBottomConstraint == nil)
+    {
+        self.textFieldBottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeBottom multiplier:1 constant:keyboardFrame.size.height];
+    }
     
     __weak typeof(self) weakSelf = self;
+    [self removeConstraint:self.textFieldCenterYConstraint];
+    [UIView animateWithDuration:.3 animations:^{
+        __strong typeof(self) self = weakSelf;
+        self.textField.hidden = NO;
+        [self addConstraint:self.textFieldBottomConstraint];
+        [self.superview layoutIfNeeded];
+    }];
+}
+
+//this will eventually place the text field into whatever position it was last moved
+- (void)animateTextFieldIntoPosition
+{
+    __weak typeof(self) weakSelf = self;
+    [self removeConstraint:self.textFieldBottomConstraint];
     [UIView animateWithDuration:.3 animations:^{
         __strong typeof(self) self = weakSelf;
         
-        [self removeConstraint:self.textFieldCenterYConstraint];
-        [self addConstraint:self.textFieldBottomConstraint];
-        [self layoutIfNeeded];
+        [self addConstraint:self.textFieldCenterYConstraint];
+        [self.superview layoutIfNeeded];
     }];
 }
 
@@ -171,12 +163,20 @@ static NSInteger CharacterLimit = 150;
     NSValue *keyboardFrameValue = [[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey];
     CGRect keyboardFrame = [keyboardFrameValue CGRectValue];
     
+    [self.textField setHidden:NO];
     [self animateTextFieldAboveKeyboard:keyboardFrame];
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
-    
+    if ([self.textField.text length] == 0 || self.enabled == NO)
+    {
+        self.textField.hidden = YES;
+    }
+    else
+    {
+        [self animateTextFieldIntoPosition];
+    }
 }
 
 #pragma mark - UITextFieldDelegate
@@ -205,25 +205,30 @@ static NSInteger CharacterLimit = 150;
     {
         return;
     }
-    
 }
 
 #pragma mark - Overrides
 
-//
-//- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-//{
-//    if (CGRectContainsPoint(self.textField.bounds, point))
-//    {
-//        return self;
-//    }
-//
-//    return nil;
-//}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    if (self.enabled == YES)
+    {
+        return self;
+    }
+
+    return nil;
+}
 
 
 #pragma mark - Helpers
 
-
+- (void)setEnabled:(BOOL)enabled
+{
+    _enabled = enabled;
+    
+    self.textField.hidden = !enabled;
+    [self.textField resignFirstResponder];
+}
 
 @end

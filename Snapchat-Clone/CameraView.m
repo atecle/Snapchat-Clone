@@ -160,6 +160,7 @@ static NSInteger CancelButtonWidth = 30;
     self.capturedImageView.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:self.capturedImageView];
+    [self sendSubviewToBack:self.capturedImageView];
     
     NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
@@ -469,6 +470,7 @@ static NSInteger CancelButtonWidth = 30;
         self.cancelButton.hidden = NO;
         self.capturedImageView.hidden = NO;
         [self.capturedImageView setImage:self.image];
+        self.snapTextView.enabled = YES;
     }
     else
     {
@@ -478,6 +480,8 @@ static NSInteger CancelButtonWidth = 30;
         self.sendSnapButton.hidden = YES;
         self.cancelButton.hidden = YES;
         self.capturedImageView.hidden = YES;
+        self.snapTextView.enabled = NO;
+
     }
 }
 
