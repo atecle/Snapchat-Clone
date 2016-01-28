@@ -76,8 +76,8 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     if (self.currentlyRetrievingSnaps == NO)
     {
         self.currentlyRetrievingSnaps = YES;
-        self.loadingView = [LoadingView loadingViewInView:self.view];
-        [self.loadingView show];
+        __block LoadingView *loadingView = [LoadingView loadingViewInView:self.view];
+        [loadingView show];
         
         __weak typeof(self) weakSelf = self;
         [self.APIClient retrieveSnapchatsWithSuccess:^(NSArray *snaps)
@@ -85,12 +85,12 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
              __strong typeof (self) self = weakSelf;
              self.snaps = snaps;
              [self.tableView reloadData];
-             [self.loadingView hide];
+             [loadingView hide];
              self.currentlyRetrievingSnaps = NO;
          } failure:^(NSError *error) {
              __strong typeof(self) self = weakSelf;
+             [loadingView hide];
              self.currentlyRetrievingSnaps = NO;
-             [self.loadingView hide];
              NSLog(@"%@", error);
          }];
     }
@@ -101,18 +101,14 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 {
     __block Snap *unreadSnap = snap;
     
-    [self.loadingView show];
     __weak typeof(self) weakSelf = self;
     [self.APIClient markSnapchatReadWithID:snap.snapID success:^(Snap *snap) {
         
         __strong typeof (self) self = weakSelf;
         [self replaceUnreadSnap:unreadSnap withReadSnap:snap];
-        [self.loadingView hide];
         self.snapView.hidden = YES;
     } failure:^(NSError *error) {
-        __strong typeof(self) self = weakSelf;
         NSLog(@"%@", error);
-        [self.loadingView hide];
     }];
 }
 
@@ -124,6 +120,16 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     self.snapView.hidden = NO;
     [self.view layoutIfNeeded];
     [self.delegate inboxViewControllerDidShowSnap:self];
+}
+
+
+#pragma mark - SnapViewDelegate
+
+- (void)snapViewDidRecieveTapGesture:(SnapView *)snap
+{
+    NSIndexPath *selectedRow = [self.tableView indexPathForSelectedRow];
+    [self markSnapRead:[self.snaps objectAtIndex:selectedRow.row]];
+    [self.delegate inboxViewControllerDidDismissSnap:self];
 }
 
 #pragma mark - UITableViewDataSource
@@ -157,16 +163,6 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 - (void)didBecomeVisibleViewControllerInMasterViewController:(MasterViewController *)masterViewController
 {
     [self retrieveSnaps];
-}
-
-#pragma mark - SnapViewDelegate
-
-- (void)snapViewDidRecieveTapGesture:(SnapView *)snap
-{
-        NSLog(@"snap view tapped");
-        NSIndexPath *selectedRow = [self.tableView indexPathForSelectedRow];
-        [self markSnapRead:[self.snaps objectAtIndex:selectedRow.row]];
-        [self.delegate inboxViewControllerDidDismissSnap:self];
 }
 
 #pragma mark - Helpers

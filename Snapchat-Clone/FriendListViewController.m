@@ -87,8 +87,8 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
 
 - (void)sendSnap
 {
-    self.loadingView = [LoadingView loadingViewInView:self.view];
-    [self.loadingView show];
+    __block LoadingView *loadingView = [LoadingView loadingViewInView:self.view];
+    [loadingView show];
     
     __weak typeof(self) weakSelf = self;
     [self.APIClient uploadImage:self.image withSuccess:^(NSURL *imageURL) {
@@ -98,17 +98,15 @@ NSString * const FriendListViewControllerIdentifier = @"FriendListViewController
             
             __strong typeof (self) self = weakSelf;
             [self.delegate friendListViewControllerDidSendSnap:self];
-            [self.loadingView hide];
+            [loadingView hide];
             
         } failure:^(NSError *error) {
-            __strong typeof (self) self = weakSelf;
-            [self.loadingView hide];
+            [loadingView hide];
             NSLog(@"%@", error);
         }];
         
     } failure:^(NSError *error) {
-        __strong typeof (self) self = weakSelf;
-        [self.loadingView hide];
+        [loadingView hide];
         NSLog(@"%@", error);
     }];
 }

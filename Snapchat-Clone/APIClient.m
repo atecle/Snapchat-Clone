@@ -161,6 +161,7 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
 
 - (void)retrieveSnapchatsWithSuccess:(void (^)(NSArray *snaps))success failure:(void (^)(NSError *error))failure
 {
+    NSLog(@"In retrieve snapchats w/ success");
     NSString *fullPath = [NSString stringWithFormat:@"%@/snaps", baseURL];
     
     NSURLRequest *URLRequest = [self requestWithPath:fullPath parameters:nil HTTPMethod:@"GET" failure:failure];
