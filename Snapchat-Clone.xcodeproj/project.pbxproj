@@ -25,6 +25,7 @@
 		66BB690B1C591DBC00CCB102 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB690A1C591DBC00CCB102 /* HomeViewController.m */; };
 		66BB690E1C592CA800CCB102 /* SnapTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB690D1C592CA800CCB102 /* SnapTextView.m */; };
 		66BB69561C5A993C00CCB102 /* SnapTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB69551C5A993C00CCB102 /* SnapTextField.m */; };
+		66BB69591C5A9BAC00CCB102 /* SwipeContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB69581C5A9BAC00CCB102 /* SwipeContainerViewController.m */; };
 		66F4058A1C5032E100C7E852 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F405891C5032E100C7E852 /* main.m */; };
 		66F4058D1C5032E100C7E852 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058C1C5032E100C7E852 /* AppDelegate.m */; };
 		66F405901C5032E100C7E852 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058F1C5032E100C7E852 /* PhotoViewController.m */; };
@@ -89,6 +90,8 @@
 		66BB690D1C592CA800CCB102 /* SnapTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnapTextView.m; sourceTree = "<group>"; };
 		66BB69541C5A993C00CCB102 /* SnapTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapTextField.h; sourceTree = "<group>"; };
 		66BB69551C5A993C00CCB102 /* SnapTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnapTextField.m; sourceTree = "<group>"; };
+		66BB69571C5A9BAC00CCB102 /* SwipeContainerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwipeContainerViewController.h; sourceTree = "<group>"; };
+		66BB69581C5A9BAC00CCB102 /* SwipeContainerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SwipeContainerViewController.m; sourceTree = "<group>"; };
 		66F405851C5032E100C7E852 /* Snapchat-Clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Snapchat-Clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		66F405891C5032E100C7E852 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		66F4058B1C5032E100C7E852 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -276,6 +279,8 @@
 				66BB690A1C591DBC00CCB102 /* HomeViewController.m */,
 				66494D991C516E1F006593B8 /* LoginViewController.h */,
 				66494D9A1C516E1F006593B8 /* LoginViewController.m */,
+				66BB69571C5A9BAC00CCB102 /* SwipeContainerViewController.h */,
+				66BB69581C5A9BAC00CCB102 /* SwipeContainerViewController.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -416,6 +421,7 @@
 				66494D951C5165ED006593B8 /* User.m in Sources */,
 				66F405BE1C50333F00C7E852 /* MasterViewController.m in Sources */,
 				66BB69561C5A993C00CCB102 /* SnapTextField.m in Sources */,
+				66BB69591C5A9BAC00CCB102 /* SwipeContainerViewController.m in Sources */,
 				66494D7F1C512FC3006593B8 /* CameraButton.m in Sources */,
 				66A1FAD01C52D161000A7B4B /* InboxTableCell.m in Sources */,
 				66494D981C5165FD006593B8 /* Snap.m in Sources */,
