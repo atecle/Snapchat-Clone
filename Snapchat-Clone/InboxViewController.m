@@ -20,6 +20,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 @property (copy, nonatomic) NSArray *snaps;
 @property (strong, nonatomic) User *user;
 @property (strong, nonatomic) SnapView *snapView;
+@property (nonatomic) BOOL currentlyRetrievingSnaps;
 
 @end
 
@@ -66,25 +67,33 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     [self.view addConstraint:leftConstraint];
 }
 
-#pragma mark - Networking 
+#pragma mark - Networking
 
 - (void)retrieveSnaps
 {
-    self.loadingView = [LoadingView loadingViewInView:self.view];
-    [self.loadingView show];
     
-    __weak typeof(self) weakSelf = self;
-    [self.APIClient retrieveSnapchatsWithSuccess:^(NSArray *snaps)
+    if (self.currentlyRetrievingSnaps == NO)
     {
-        __strong typeof (self) self = weakSelf;
-        self.snaps = snaps;
-        [self.tableView reloadData];
-        [self.loadingView hide];
-    } failure:^(NSError *error) {
-        __strong typeof(self) self = weakSelf;
-        [self.loadingView hide];
-        NSLog(@"%@", error);
-    }];
+        self.currentlyRetrievingSnaps = YES;
+        self.loadingView = [LoadingView loadingViewInView:self.view];
+        [self.loadingView show];
+        
+        __weak typeof(self) weakSelf = self;
+        [self.APIClient retrieveSnapchatsWithSuccess:^(NSArray *snaps)
+         {
+             __strong typeof (self) self = weakSelf;
+             self.snaps = snaps;
+             [self.tableView reloadData];
+             [self.loadingView hide];
+             self.currentlyRetrievingSnaps = NO;
+         } failure:^(NSError *error) {
+             __strong typeof(self) self = weakSelf;
+             self.currentlyRetrievingSnaps = NO;
+             [self.loadingView hide];
+             NSLog(@"%@", error);
+         }];
+    }
+    
 }
 
 - (void)markSnapRead:(Snap *)snap
@@ -97,7 +106,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
         
         __strong typeof (self) self = weakSelf;
         [self replaceUnreadSnap:unreadSnap withReadSnap:snap];
-        [self.tableView reloadData];
+        self.snapView.hidden = YES;
         [self.loadingView hide];
     } failure:^(NSError *error) {
         __strong typeof(self) self = weakSelf;
@@ -106,7 +115,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     }];
 }
 
-#pragma mark - UI 
+#pragma mark - UI
 
 - (void)showSnap:(Snap *)snap
 {
@@ -138,10 +147,8 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     Snap *snap = [self.snaps objectAtIndex:indexPath.row];
     
     if (snap.fromUserID == self.user.userID || snap.unread == NO) return;
-   
+    
     [self showSnap:snap];
-    [self markSnapRead:snap];
-    [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
 #pragma mark - ContainedViewController
@@ -156,10 +163,10 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 - (void)snapViewDidRecieveTapGesture:(SnapView *)snap
 {
     NSLog(@"snap view tapped");
-    self.snapView.hidden = YES;
-    [self.snapView setImage:nil];
+    NSIndexPath *selectedRow = [self.tableView indexPathForSelectedRow];
+    [self markSnapRead:[self.snaps objectAtIndex:selectedRow.row]];
     [self.delegate inboxViewControllerDidDismissSnap:self];
-
+    
 }
 
 #pragma mark - Helpers
@@ -180,6 +187,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     
     [tempSnaps replaceObjectAtIndex:[tempSnaps indexOfObject:unreadSnap] withObject:readSnap];
     self.snaps = [tempSnaps copy];
+    [self.tableView reloadData];
 }
 
 @end
