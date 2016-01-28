@@ -27,7 +27,7 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 {
     [super viewDidLoad];
     
-    self.cameraView = [[CameraView alloc] init];
+    self.cameraView =  [[CameraView alloc] init];
     self.cameraView.delegate = self;
     [self.view addSubview:self.cameraView];
     [self addConstraintsToCameraView];
@@ -83,7 +83,6 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 {
     FriendListViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:FriendListViewControllerIdentifier];
     
-    
     [vc setAPIClient:self.APIClient];
     [vc setImage:image];
     vc.delegate = self;
@@ -100,6 +99,7 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 
 - (void)friendListViewControllerDidSendSnap:(FriendListViewController *)friendListViewController
 {
+    [self.cameraView resetToCameraMode];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

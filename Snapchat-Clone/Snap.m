@@ -25,6 +25,7 @@
         if ([dictionary[@"image_url"] isKindOfClass:[NSString class]])
         {
             _imageURL = [NSURL URLWithString: dictionary[@"image_url"]];
+            _imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:_imageURL.absoluteString]];
         }
         
         _unread = [dictionary[@"unread"] boolValue];

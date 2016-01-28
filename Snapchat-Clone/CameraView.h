@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
+#import "FriendListViewController.h"
 #import "CameraButton.h"
 #import "SnapTextView.h"
 
@@ -32,6 +33,7 @@
 
 @property (weak, nonatomic) id<CameraViewDelegate> delegate;
 
+- (void)resetToCameraMode;
 - (void)startCaptureSession;
 - (void)stopCaptureSession;
 

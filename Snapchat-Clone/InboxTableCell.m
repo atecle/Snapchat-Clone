@@ -20,13 +20,13 @@ NSString * const InboxTableCellIdentifier = @"InboxTableCell";
 @implementation InboxTableCell
 
 - (void)awakeFromNib {
-    // Initialization code
+    [super awakeFromNib];
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 
-    // Configure the view for the selected state
 }
 
 - (void)configureForSnap:(Snap *)snap currentUserID:(NSInteger )userID

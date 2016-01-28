@@ -13,6 +13,7 @@
 @property (nonatomic, readonly) NSInteger snapID, fromUserID, toUserID;
 @property (strong, nonatomic, readonly) NSString *fromUsername, *toUsername;
 @property (strong, nonatomic, readonly) NSURL *imageURL;
+@property (strong, nonatomic, readonly) NSData *imageData;
 @property (nonatomic, readonly) BOOL unread;
 
 

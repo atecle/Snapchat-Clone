@@ -134,7 +134,6 @@ static NSInteger CharacterLimit = 25;
     
 }
 
-
 #pragma mark - UI Methods
 
 - (void)animateTextFieldAboveKeyboard:(CGRect)keyboardFrame
@@ -166,6 +165,11 @@ static NSInteger CharacterLimit = 25;
         [self addConstraint:self.textFieldCenterYConstraint];
         [self.superview layoutIfNeeded];
     }];
+}
+
+- (void)clearText
+{
+    self.textField.text = @"";
 }
 
 #pragma mark - Keyboard Observer

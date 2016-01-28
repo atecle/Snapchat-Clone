@@ -404,6 +404,12 @@ static NSInteger CancelButtonWidth = 30;
     }
 }
 
+- (void)resetToCameraMode
+{
+    [self setHasImage:NO];
+    [self.snapTextView clearText];
+}
+
 #pragma mark - Helpers
 
 - (AVCaptureConnection *)captureConnection

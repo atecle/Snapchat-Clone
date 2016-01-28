@@ -91,14 +91,18 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 {
     __block Snap *unreadSnap = snap;
     
+    [self.loadingView show];
     __weak typeof(self) weakSelf = self;
     [self.APIClient markSnapchatReadWithID:snap.snapID success:^(Snap *snap) {
         
         __strong typeof (self) self = weakSelf;
         [self replaceUnreadSnap:unreadSnap withReadSnap:snap];
         [self.tableView reloadData];
+        [self.loadingView hide];
     } failure:^(NSError *error) {
+        __strong typeof(self) self = weakSelf;
         NSLog(@"%@", error);
+        [self.loadingView hide];
     }];
 }
 
@@ -106,8 +110,9 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 
 - (void)showSnap:(Snap *)snap
 {
-    [self.snapView setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:snap.imageURL.absoluteString]]]];
+    [self.snapView setImage:[UIImage imageWithData:snap.imageData]];
     self.snapView.hidden = NO;
+    [self.view layoutIfNeeded];
     [self.delegate inboxViewControllerDidShowSnap:self];
 }
 
@@ -118,7 +123,6 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
     InboxTableCell *cell = [self.tableView dequeueReusableCellWithIdentifier:InboxTableCellIdentifier];
     
     [cell configureForSnap:[self.snaps objectAtIndex:indexPath.row] currentUserID:self.user.userID];
-    
     return cell;
 }
 
