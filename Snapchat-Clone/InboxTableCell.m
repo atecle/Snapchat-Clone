@@ -29,14 +29,14 @@ NSString * const InboxTableCellIdentifier = @"InboxTableCell";
 
 }
 
-- (void)configureForSnap:(Snap *)snap currentUserID:(NSInteger )userID
+- (void)configureForSnap:(Snap *)snap currentUserID:(NSInteger )currentUserID
 {
     
     UIImage *statusImage;
     
-    if (snap.fromUserID == userID)
+    if (snap.fromUserID == currentUserID)
     {
-        statusImage = snap.unread ? [UIImage imageNamed:@"red-double-arrow"] : [UIImage imageNamed:@"empty-red-circle"];
+        statusImage = snap.unread ? [UIImage imageNamed:@"red-double-arrow"] : [UIImage imageNamed:@"red-double-arrow-no-fill"];
         self.usernameLabel.text = snap.toUsername;
     }
     else
