@@ -21,6 +21,7 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 @property (strong, nonatomic) User *user;
 @property (strong, nonatomic) SnapView *snapView;
 @property (nonatomic) BOOL currentlyRetrievingSnaps;
+@property (nonatomic) BOOL currentlyViewingSnap;
 
 @end
 
@@ -106,8 +107,8 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
         
         __strong typeof (self) self = weakSelf;
         [self replaceUnreadSnap:unreadSnap withReadSnap:snap];
-        self.snapView.hidden = YES;
         [self.loadingView hide];
+        self.snapView.hidden = YES;
     } failure:^(NSError *error) {
         __strong typeof(self) self = weakSelf;
         NSLog(@"%@", error);
@@ -162,11 +163,10 @@ NSString * const InboxViewControllerIdentifier = @"InboxViewController";
 
 - (void)snapViewDidRecieveTapGesture:(SnapView *)snap
 {
-    NSLog(@"snap view tapped");
-    NSIndexPath *selectedRow = [self.tableView indexPathForSelectedRow];
-    [self markSnapRead:[self.snaps objectAtIndex:selectedRow.row]];
-    [self.delegate inboxViewControllerDidDismissSnap:self];
-    
+        NSLog(@"snap view tapped");
+        NSIndexPath *selectedRow = [self.tableView indexPathForSelectedRow];
+        [self markSnapRead:[self.snaps objectAtIndex:selectedRow.row]];
+        [self.delegate inboxViewControllerDidDismissSnap:self];
 }
 
 #pragma mark - Helpers

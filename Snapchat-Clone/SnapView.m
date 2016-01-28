@@ -50,12 +50,14 @@
 
 - (void)imageViewTapped
 {
+    self.tapGesture.enabled = NO;
     [self.delegate snapViewDidRecieveTapGesture:self];
 }
 
 - (void)setImage:(UIImage *)image
 {
     [self.imageView setImage:image];
+    self.tapGesture.enabled = YES;
 }
 
 @end
