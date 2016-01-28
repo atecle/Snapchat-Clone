@@ -17,8 +17,7 @@
 @protocol CameraViewDelegate <NSObject>
 
 @required
-- (void)cameraView:(CameraView *)cameraView didCaptureImage:(UIImage *)image;
-- (void)cameraViewSendSnapButtonPressed:(CameraView *)cameraView;
+- (void)cameraView:(CameraView *)cameraView didPressSnapButtonWithImage:(UIImage *)image;
 - (void)cameraViewInboxButtonPressed:(CameraView *)cameraView;
 
 
@@ -32,11 +31,8 @@
 @interface CameraView : UIView
 
 @property (weak, nonatomic) id<CameraViewDelegate> delegate;
-@property (strong, nonatomic, readonly) UIImage *image;
-@property (nonatomic, readonly) BOOL hasImage;
 
 - (void)startCaptureSession;
 - (void)stopCaptureSession;
-- (void)setImage:(UIImage *)image;
-- (void)setHasImage:(BOOL)hasImage;
+
 @end

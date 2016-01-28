@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "SnapTextField.h"
+
 @interface SnapTextView : UIView
 
 @property (nonatomic) BOOL enabled;

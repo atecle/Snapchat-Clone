@@ -27,6 +27,7 @@ static NSInteger CancelButtonWidth = 30;
 @property (strong, nonatomic) AVCaptureConnection *captureConnection;
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
 
+@property (strong, nonatomic) UIView *snapContainerView;
 @property (strong, nonatomic) SnapTextView *snapTextView;
 @property (strong, nonatomic) UIImageView *capturedImageView;
 @property (strong, nonatomic) CameraButton *cameraButton;
@@ -43,23 +44,14 @@ static NSInteger CancelButtonWidth = 30;
 
 @implementation CameraView
 
-- (void)awakeFromNib
-{
-    [super awakeFromNib];
-    
-    [self configureCaptureSession];
-    [self configureCameraView];
-    [self configureCameraButton];
-}
-
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if ((self = [super initWithFrame:frame]))
     {
+        self.translatesAutoresizingMaskIntoConstraints = NO;
         [self configureCaptureSession];
         [self configureCameraView];
-        [self configureSnapTextView];
-        [self configureImageView];
+        [self configureSnapContainerView];
         [self configureCameraButton];
         [self configureFlipCameraButton];
         [self configureSendSnapButton];
@@ -149,9 +141,31 @@ static NSInteger CancelButtonWidth = 30;
     [self.layer addSublayer:self.previewLayer];
 }
 
+- (void)configureSnapContainerView
+{
+    
+    self.snapContainerView = [[UIView alloc] init];
+    self.snapContainerView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:self.snapContainerView];
+    
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.snapContainerView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.snapContainerView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.snapContainerView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.snapContainerView attribute:NSLayoutAttributeRight multiplier:1 constant:0];
+    
+    [self addConstraint:topConstraint];
+    [self addConstraint:bottomConstraint];
+    [self addConstraint:leftConstraint];
+    [self addConstraint:rightConstraint];
+    
+    [self configureSnapTextView];
+    [self configureImageView];
+}
+
+
 - (void)configureSnapTextView
 {
-    self.snapTextView = [SnapTextView snapTextViewInView:self];
+    self.snapTextView = [SnapTextView snapTextViewInView:self.snapContainerView];
 }
 
 - (void)configureImageView
@@ -159,20 +173,20 @@ static NSInteger CancelButtonWidth = 30;
     self.capturedImageView = [[UIImageView alloc] init];
     self.capturedImageView.translatesAutoresizingMaskIntoConstraints = NO;
     
-    [self addSubview:self.capturedImageView];
-    [self sendSubviewToBack:self.capturedImageView];
+    [self.snapContainerView addSubview:self.capturedImageView];
+    [self.snapContainerView sendSubviewToBack:self.capturedImageView];
     
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
-    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeRight multiplier:1 constant:0];
-    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.snapContainerView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.snapContainerView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self.snapContainerView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self.snapContainerView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeRight multiplier:1 constant:0];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.snapContainerView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
     
-    [self addConstraint:topConstraint];
-    [self addConstraint:bottomConstraint];
-    [self addConstraint:leftConstraint];
-    [self addConstraint:rightConstraint];
-    [self addConstraint:heightConstraint];
+    [self.snapContainerView addConstraint:topConstraint];
+    [self.snapContainerView addConstraint:bottomConstraint];
+    [self.snapContainerView addConstraint:leftConstraint];
+    [self.snapContainerView addConstraint:rightConstraint];
+    [self.snapContainerView addConstraint:heightConstraint];
 }
 
 - (void)configureCameraButton
@@ -322,15 +336,11 @@ static NSInteger CancelButtonWidth = 30;
     
     if (captureConnection == nil) return;
     
-    self.image = nil;
     [self.captureOutput captureStillImageAsynchronouslyFromConnection:captureConnection completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
         
         UIImage *image = [self imageFromSampleBuffer:imageDataSampleBuffer];
-        
-        [self.delegate cameraView:self didCaptureImage:image];
-        [self setImage:image];
+        [self.capturedImageView setImage:image];
         self.hasImage = YES;
-        
         if ([self.delegate respondsToSelector:@selector(cameraViewDidExitCaptureMode:)])
         {
             [self.delegate cameraViewDidExitCaptureMode:self];
@@ -340,7 +350,9 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)sendSnapButtonPressed
 {
-    [self.delegate cameraViewSendSnapButtonPressed:self];
+    UIImage *image = [self rasterizeViewToImage];
+    
+    [self.delegate cameraView:self didPressSnapButtonWithImage:image];
 }
 
 - (void)inboxButtonPressed
@@ -350,8 +362,23 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)cancelButtonPressed
 {
-    [self setImage:nil];
     self.hasImage = NO;
+}
+
+
+- (UIImage *)rasterizeViewToImage
+{
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, 1);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CALayer *layer = self.snapContainerView.layer;
+    [layer renderInContext:context];
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return image;
 }
 
 #pragma mark - Instance Methods
@@ -447,11 +474,6 @@ static NSInteger CancelButtonWidth = 30;
     return (image);
 }
 
-- (void)setImage:(UIImage *)image
-{
-    _image = image;
-}
-
 - (void)setHasImage:(BOOL)hasImage
 {
     _hasImage = hasImage;
@@ -469,7 +491,6 @@ static NSInteger CancelButtonWidth = 30;
         self.sendSnapButton.hidden = NO;
         self.cancelButton.hidden = NO;
         self.capturedImageView.hidden = NO;
-        [self.capturedImageView setImage:self.image];
         self.snapTextView.enabled = YES;
     }
     else
@@ -481,7 +502,6 @@ static NSInteger CancelButtonWidth = 30;
         self.cancelButton.hidden = YES;
         self.capturedImageView.hidden = YES;
         self.snapTextView.enabled = NO;
-
     }
 }
 

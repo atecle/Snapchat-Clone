@@ -13,7 +13,7 @@ static NSInteger CharacterLimit = 25;
 @interface SnapTextView() <UITextFieldDelegate>
 
 @property (strong, nonatomic) UITapGestureRecognizer *tapGesture;
-@property (strong, nonatomic) UITextField *textField;
+@property (strong, nonatomic) SnapTextField *textField;
 @property (strong, nonatomic) NSLayoutConstraint *textFieldCenterYConstraint;
 @property (strong, nonatomic) NSLayoutConstraint *textFieldBottomConstraint;
 
@@ -87,7 +87,7 @@ static NSInteger CharacterLimit = 25;
 
 - (void)configureTextField
 {
-    self.textField = [[UITextField alloc] init];
+    self.textField = [[SnapTextField alloc] init];
     [self.textField setBackgroundColor:[UIColor  colorWithRed:0 green:0 blue:0 alpha:0.5]];
     [self.textField setTextColor:[UIColor whiteColor]];
     self.textField.hidden = YES;

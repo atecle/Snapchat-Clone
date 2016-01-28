@@ -18,7 +18,6 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
 
 @property (strong, nonatomic) APIClient *APIClient;
-@property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) CameraView *cameraView;
 @end
 
@@ -80,17 +79,13 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 
 #pragma mark - CameraViewDelegate
 
-- (void)cameraView:(CameraView *)cameraView didCaptureImage:(UIImage *)image
-{
-    self.image = image;
-}
-
-- (void)cameraViewSendSnapButtonPressed:(CameraView *)cameraView
+- (void)cameraView:(CameraView *)cameraView didPressSnapButtonWithImage:(UIImage *)image
 {
     FriendListViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:FriendListViewControllerIdentifier];
     
+    
     [vc setAPIClient:self.APIClient];
-    [vc setImage:self.image];
+    [vc setImage:image];
     vc.delegate = self;
     
     [self.navigationController pushViewController:vc animated:YES];
@@ -106,9 +101,6 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 - (void)friendListViewControllerDidSendSnap:(FriendListViewController *)friendListViewController
 {
     [self.navigationController popViewControllerAnimated:YES];
-    self.image = nil;
-    [self.cameraView setImage:nil];
-    [self.cameraView setHasImage:NO];
 }
 
 @end
