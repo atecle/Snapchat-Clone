@@ -107,6 +107,18 @@ static NSInteger CharacterLimit = 25;
     
 }
 
+- (void)configureForState:(BOOL)enabled
+{
+    if (enabled == YES)
+    {
+        self.textField.hidden = YES;
+    }
+    else
+    {
+        
+    }
+}
+
 #pragma mark - User Interaction
 
 - (void)snapTextViewTapped
@@ -227,7 +239,7 @@ static NSInteger CharacterLimit = 25;
 {
     _enabled = enabled;
     
-    self.textField.hidden = !enabled;
+    self.textField.hidden = YES;
     [self.textField resignFirstResponder];
 }
 
