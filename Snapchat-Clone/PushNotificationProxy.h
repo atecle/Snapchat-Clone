@@ -11,6 +11,7 @@
 
 @interface PushNotificationProxy : NSObject
 
+- (void)registerPushNotificationTokenWithDeviceToken:(NSData *)deviceToken;
 - (void)setAPIClient:(APIClient *)APIClient;
 
 @end

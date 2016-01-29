@@ -142,7 +142,13 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
 {
     NSString *fullPath = [NSString stringWithFormat:@"%@/snaps", baseURL];
     
-    NSDictionary *parameters = @{@"to" : users, @"image_url" : imageURL.absoluteString};
+#if DEBUG
+    NSString *forceSandbox = @"true";
+#else
+    NSString *forceSandbox = @"false";
+#endif
+    
+    NSDictionary *parameters = @{@"to" : users, @"image_url" : imageURL.absoluteString, @"force_sandbox" : forceSandbox};
     
     NSURLRequest *URLRequest = [self requestWithPath:fullPath parameters:parameters HTTPMethod:@"POST" failure:failure];
     

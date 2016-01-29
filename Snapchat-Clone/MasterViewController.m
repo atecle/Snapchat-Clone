@@ -8,6 +8,7 @@
 
 #import "MasterViewController.h"
 #import "NavigationController.h"
+#import "AppDelegate.h"
 
 @interface MasterViewController () <UIScrollViewDelegate, LoginViewControllerDelegate, InboxViewControllerDelegate>
 
@@ -19,6 +20,7 @@
 @property (strong, nonatomic) NSString *APIToken;
 
 @property (strong, nonatomic) APIClient *APIClient;
+@property (strong, nonatomic) PushNotificationProxy *pushNotificationProxy;
 
 @property (strong, nonatomic) User *user;
 @end
@@ -39,7 +41,7 @@
     [super viewDidAppear:animated];
     
     
-    //Putting showLoginViewController in viewDidAppear instead of viewDidLoad because of warning "Attemptingto present * on * whose view is not in the window
+    //Putting showHomeViewController in viewDidAppear instead of viewDidLoad because of warning "Attemptingto present * on * whose view is not in the window
 
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     self.APIToken = [userDefaults stringForKey:@"APIToken"];
@@ -51,13 +53,8 @@
     }
     else if (self.APIClient == nil)
     {
-        _APIClient = [[APIClient alloc] initWithAPIToken:self.APIToken];
-        PhotoViewController *photoVC = (PhotoViewController *)self.rightViewController.topViewController;
-        [photoVC setAPIClient: self.APIClient];
-        [self.leftViewController setAPIClient:self.APIClient];
-        [self.leftViewController setUser:self.user];
-        [self.leftViewController didBecomeVisibleViewControllerInMasterViewController:self];
-
+        [self configureAPIClient];
+        [self configurePushNotificationProxy];
     }
 }
 
@@ -68,6 +65,25 @@
 
 
 #pragma mark - Setup
+
+- (void)configureAPIClient
+{
+    _APIClient = [[APIClient alloc] initWithAPIToken:self.APIToken];
+    PhotoViewController *photoVC = (PhotoViewController *)self.rightViewController.topViewController;
+    [photoVC setAPIClient: self.APIClient];
+    [self.leftViewController setAPIClient:self.APIClient];
+    [self.leftViewController setUser:self.user];
+    [self.leftViewController didBecomeVisibleViewControllerInMasterViewController:self];
+}
+
+- (void)configurePushNotificationProxy
+{
+    self.pushNotificationProxy = [[PushNotificationProxy alloc] init];
+    [self.pushNotificationProxy setAPIClient:self.APIClient];
+    self.delegate = (AppDelegate<MasterViewControllerDelegate> *)[UIApplication sharedApplication].delegate;
+    
+    [self.delegate masterViewController:self didInitializePushNotificationProxy:self.pushNotificationProxy];
+}
 
 - (void)configureChildViewControllers
 {
@@ -151,15 +167,13 @@
     NSDictionary *dictionary = [User dictionaryFromUser:user];
     [[NSUserDefaults standardUserDefaults] setObject:dictionary forKey:@"User"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    _APIClient = [[APIClient alloc] initWithAPIToken:APIToken];
-    
-    PhotoViewController *photoVC = (PhotoViewController *)self.rightViewController.topViewController;
-    [photoVC setAPIClient: self.APIClient];
-    [self.leftViewController setAPIClient:self.APIClient];
-    [self.leftViewController setUser:user];
-    
+  
+    self.APIToken = APIToken;
     self.user = user;
+    
+    [self configureAPIClient];
+    [self configurePushNotificationProxy];
+    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

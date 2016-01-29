@@ -35,6 +35,7 @@ static NSInteger CancelButtonWidth = 30;
 @property (strong, nonatomic) UIButton *sendSnapButton;
 @property (strong, nonatomic) UIButton *cancelButton;
 @property (strong, nonatomic) UIButton *inboxButton;
+@property (strong, nonatomic) UIButton *pickImageButton;
 
 @property (nonatomic) BOOL cameraFlipped;
 
@@ -58,6 +59,10 @@ static NSInteger CancelButtonWidth = 30;
         [self configureInboxButton];
         [self configureCancelButton];
         
+#if TARGET_IPHONE_SIMULATOR
+        [self configurePickImageButton];
+#endif
+        
     }
     
     return self;
@@ -71,6 +76,25 @@ static NSInteger CancelButtonWidth = 30;
 }
 
 #pragma mark  - Setup
+
+- (void)configurePickImageButton
+{
+    self.pickImageButton = [[UIButton alloc] init];
+    [self addSubview:self.pickImageButton];
+    [self.pickImageButton addTarget:self action:@selector(pickImageButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    [self.pickImageButton setTitle:NSLocalizedString(@"PICK AN IMAGE", nil) forState:UIControlStateNormal];
+    
+    self.pickImageButton.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    self.pickImageButton.backgroundColor = [UIColor grayColor];
+    
+    NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.pickImageButton attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
+    NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.pickImageButton attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.pickImageButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:50];
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self.pickImageButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:50];
+    
+    [self addConstraints:@[centerXConstraint, centerYConstraint, heightConstraint, widthConstraint]];
+}
 
 - (void)configureCaptureSession
 {
@@ -365,6 +389,14 @@ static NSInteger CancelButtonWidth = 30;
     self.hasImage = NO;
 }
 
+- (void)pickImageButtonPressed
+{
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.allowsEditing = YES;
+    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    [self.delegate cameraView:self didSelectMediaFromImagePickerController:picker];
+    
+}
 
 - (UIImage *)rasterizeViewToImage
 {

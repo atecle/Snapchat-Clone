@@ -26,6 +26,7 @@
 - (void)cameraViewDidEnterCaptureMode:(CameraView *)cameraView;
 - (void)cameraViewDidExitCaptureMode:(CameraView *)cameraView;
 - (void)cameraViewCancelButtonPressed:(CameraView *)cameraView;
+- (void)cameraView:(CameraView *)cameraView didSelectMediaFromImagePickerController:(UIImagePickerController *)imagePickerController;
 
 @end
 

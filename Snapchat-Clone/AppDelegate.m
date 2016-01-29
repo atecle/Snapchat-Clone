@@ -7,11 +7,12 @@
 //
 
 #import "AppDelegate.h"
-#import "PushNotificationProxy.h"
+#import "MasterViewController.h"
 
-@interface AppDelegate ()
+@interface AppDelegate () <MasterViewControllerDelegate>
 
-@property (strong, nonatomic) PushNotificationProxy *notificationProxy;
+@property (strong, nonatomic) MasterViewController *masterViewController;
+@property (weak, nonatomic) PushNotificationProxy *pushNotificationProxy;
 
 @end
 
@@ -23,7 +24,6 @@
     [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"16331209be0a45ce85f55259e62ba2bb"];
     [[BITHockeyManager sharedHockeyManager] startManager];
 
-    [application registerForRemoteNotifications];
     return YES;
 }
 
@@ -51,12 +51,24 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    NSLog(@"Test");
-}
-- (void) application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
-{
-    const void* devTokenBytes = [deviceToken bytes];
 }
 
+- (void) application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+    [self.pushNotificationProxy registerPushNotificationTokenWithDeviceToken:deviceToken];
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+{
+    NSLog(@"%@", error);
+}
+
+- (void)masterViewController:(MasterViewController *)masterViewController didInitializePushNotificationProxy:(PushNotificationProxy *)pushNotificationProxy
+{
+    self.masterViewController = masterViewController;
+    self.pushNotificationProxy = pushNotificationProxy;
+    
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
+}
 
 @end

@@ -8,6 +8,27 @@
 
 #import "PushNotificationProxy.h"
 
+@interface PushNotificationProxy()
+
+@property (strong, nonatomic) APIClient *APIClient;
+
+@end
+
 @implementation PushNotificationProxy
 
+- (void)registerPushNotificationTokenWithDeviceToken:(NSData *)deviceToken
+{
+    [self.APIClient sendProviderDeviceToken:deviceToken success:^(NSString *token) {
+        
+        NSLog(@"Success: %@", token);
+        
+    } failure:^(NSError *error) {
+        NSLog(@"%@", error);
+    }];
+}
+
+- (void)setAPIClient:(APIClient *)APIClient
+{
+    _APIClient = APIClient;
+}
 @end

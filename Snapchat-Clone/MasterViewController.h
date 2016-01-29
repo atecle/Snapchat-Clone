@@ -12,6 +12,7 @@
 #import "InboxViewController.h"
 #import "LoginViewController.h"
 #import "HomeViewController.h"
+#import "PushNotificationProxy.h"
 
 @class MasterViewController;
 
@@ -21,6 +22,14 @@
 
 @end
 
+@protocol MasterViewControllerDelegate <NSObject>
+
+- (void)masterViewController:(MasterViewController *)masterViewController didInitializePushNotificationProxy:(PushNotificationProxy *)pushNotificationProxy;
+
+@end
+
 @interface MasterViewController : UIViewController
+
+@property (weak, nonatomic) id<MasterViewControllerDelegate> delegate;
 
 @end

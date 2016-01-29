@@ -10,7 +10,7 @@
 
 NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 
-@interface PhotoViewController () <CameraViewDelegate, FriendListViewControllerDelegate>
+@interface PhotoViewController () <CameraViewDelegate, FriendListViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property (strong, nonatomic) AVCaptureSession *captureSession;
 @property (strong, nonatomic) AVCaptureStillImageOutput *captureOutput;
@@ -94,6 +94,31 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
 {
     
 }
+
+- (void)cameraView:(CameraView *)cameraView didSelectMediaFromImagePickerController:(UIImagePickerController *)imagePickerController
+{
+    imagePickerController.delegate = self;
+    [self presentViewController:imagePickerController animated:YES completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+{
+    UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
+    
+    FriendListViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:FriendListViewControllerIdentifier];
+    
+    [vc setAPIClient:self.APIClient];
+    [vc setImage:chosenImage];
+    vc.delegate = self;
+    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [picker dismissViewControllerAnimated:YES completion:nil];
+}
+
 
 #pragma mark - FriendListViewControllerDelegate
 
