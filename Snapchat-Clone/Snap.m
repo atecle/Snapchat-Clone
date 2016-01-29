@@ -28,6 +28,8 @@
             _imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:_imageURL.absoluteString]];
         }
         
+        _createdDate = [self dateFromString:dictionary[@"created_at"]];
+        
         _unread = [dictionary[@"unread"] boolValue];
     }
     
@@ -52,5 +54,9 @@
     return nil;
 }
 
+- (NSDate *)dateFromString:(NSString *)dateString
+{
+    return nil;
+}
 
 @end

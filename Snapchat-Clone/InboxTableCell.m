@@ -43,10 +43,8 @@ NSString * const InboxTableCellIdentifier = @"InboxTableCell";
     {
         statusImage = snap.unread ? [UIImage imageNamed:@"red-filled-circle"] : [UIImage imageNamed:@"empty-red-circle"];
         self.usernameLabel.text = snap.fromUsername;
-
     }
     
-
     [self.seenImageView setImage:statusImage];
 }
 

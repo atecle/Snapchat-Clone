@@ -148,7 +148,7 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
     NSString *forceSandbox = @"false";
 #endif
     
-    NSDictionary *parameters = @{@"to" : users, @"image_url" : imageURL.absoluteString, @"force_sandbox" : forceSandbox};
+    NSDictionary *parameters = @{@"to" : users, @"image_url" : imageURL.absoluteString, @"force_sandbox" : (__bridge id)kCFBooleanTrue};
     
     NSURLRequest *URLRequest = [self requestWithPath:fullPath parameters:parameters HTTPMethod:@"POST" failure:failure];
     
@@ -299,8 +299,6 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
             });
             return;
         }
-        
-        
     }];
     
     [dataTask resume];

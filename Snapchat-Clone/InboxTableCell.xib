@@ -16,7 +16,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zid-NM-c6M">
-                        <rect key="frame" x="72" y="0.0" width="134" height="43"/>
+                        <rect key="frame" x="72" y="0.0" width="128" height="43"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
@@ -24,25 +24,25 @@
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="euP-3V-OFz">
                         <rect key="frame" x="0.0" y="0.0" width="64" height="43"/>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aoo-a2-eDx">
-                        <rect key="frame" x="263" y="8" width="49" height="0.0"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date Time" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aoo-a2-eDx">
+                        <rect key="frame" x="232" y="8" width="80" height="17"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
                 <constraints>
                     <constraint firstItem="aoo-a2-eDx" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="0De-iR-faa"/>
-                    <constraint firstItem="aoo-a2-eDx" firstAttribute="leading" secondItem="Zid-NM-c6M" secondAttribute="trailing" constant="57" id="3tZ-Ki-UZF"/>
                     <constraint firstItem="euP-3V-OFz" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="5jI-zZ-WOo"/>
                     <constraint firstAttribute="trailing" secondItem="aoo-a2-eDx" secondAttribute="trailing" constant="8" id="6oX-0X-AdS"/>
                     <constraint firstItem="Zid-NM-c6M" firstAttribute="leading" secondItem="euP-3V-OFz" secondAttribute="trailing" constant="8" id="HIH-bD-f9G"/>
+                    <constraint firstItem="aoo-a2-eDx" firstAttribute="width" secondItem="H2p-sc-9uM" secondAttribute="width" multiplier="1/4" id="JlC-XE-UHH"/>
                     <constraint firstAttribute="bottom" secondItem="euP-3V-OFz" secondAttribute="bottom" id="NKn-mx-sOg"/>
                     <constraint firstItem="euP-3V-OFz" firstAttribute="width" secondItem="H2p-sc-9uM" secondAttribute="width" multiplier="1/5" id="QsG-zo-hV6"/>
                     <constraint firstItem="Zid-NM-c6M" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="SAI-wH-FOU"/>
                     <constraint firstItem="euP-3V-OFz" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="SmE-Zv-5HN"/>
                     <constraint firstAttribute="bottom" secondItem="Zid-NM-c6M" secondAttribute="bottom" id="hrT-fP-rYc"/>
-                    <constraint firstItem="Zid-NM-c6M" firstAttribute="width" secondItem="H2p-sc-9uM" secondAttribute="width" multiplier="3/5" constant="-58" id="nNJ-cK-ZF1"/>
+                    <constraint firstItem="Zid-NM-c6M" firstAttribute="width" secondItem="H2p-sc-9uM" secondAttribute="width" multiplier="2/5" id="nNJ-cK-ZF1"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>

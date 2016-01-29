@@ -18,6 +18,9 @@
 
 - (void)registerPushNotificationTokenWithDeviceToken:(NSData *)deviceToken
 {
+
+#if TARGET_IPHONE_SIMULATOR
+#else
     [self.APIClient sendProviderDeviceToken:deviceToken success:^(NSString *token) {
         
         NSLog(@"Success: %@", token);
@@ -25,6 +28,8 @@
     } failure:^(NSError *error) {
         NSLog(@"%@", error);
     }];
+#endif
+    
 }
 
 - (void)setAPIClient:(APIClient *)APIClient
