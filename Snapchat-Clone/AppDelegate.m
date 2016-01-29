@@ -7,8 +7,11 @@
 //
 
 #import "AppDelegate.h"
+#import "PushNotificationProxy.h"
 
 @interface AppDelegate ()
+
+@property (strong, nonatomic) PushNotificationProxy *notificationProxy;
 
 @end
 
@@ -19,7 +22,8 @@
     
     [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"16331209be0a45ce85f55259e62ba2bb"];
     [[BITHockeyManager sharedHockeyManager] startManager];
-    
+
+    [application registerForRemoteNotifications];
     return YES;
 }
 
@@ -44,5 +48,15 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+{
+    NSLog(@"Test");
+}
+- (void) application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+    const void* devTokenBytes = [deviceToken bytes];
+}
+
 
 @end

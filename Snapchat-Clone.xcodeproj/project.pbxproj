@@ -26,6 +26,8 @@
 		66BB690E1C592CA800CCB102 /* SnapTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB690D1C592CA800CCB102 /* SnapTextView.m */; };
 		66BB69561C5A993C00CCB102 /* SnapTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB69551C5A993C00CCB102 /* SnapTextField.m */; };
 		66BB69591C5A9BAC00CCB102 /* SwipeContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB69581C5A9BAC00CCB102 /* SwipeContainerViewController.m */; };
+		66C673EA1C5BC69400D6B1E9 /* NSData+Conversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C673E91C5BC69400D6B1E9 /* NSData+Conversion.m */; };
+		66C673ED1C5BD34100D6B1E9 /* PushNotificationProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C673EC1C5BD34100D6B1E9 /* PushNotificationProxy.m */; };
 		66F4058A1C5032E100C7E852 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F405891C5032E100C7E852 /* main.m */; };
 		66F4058D1C5032E100C7E852 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058C1C5032E100C7E852 /* AppDelegate.m */; };
 		66F405901C5032E100C7E852 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058F1C5032E100C7E852 /* PhotoViewController.m */; };
@@ -92,6 +94,10 @@
 		66BB69551C5A993C00CCB102 /* SnapTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnapTextField.m; sourceTree = "<group>"; };
 		66BB69571C5A9BAC00CCB102 /* SwipeContainerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwipeContainerViewController.h; sourceTree = "<group>"; };
 		66BB69581C5A9BAC00CCB102 /* SwipeContainerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SwipeContainerViewController.m; sourceTree = "<group>"; };
+		66C673E81C5BC69400D6B1E9 /* NSData+Conversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Conversion.h"; sourceTree = "<group>"; };
+		66C673E91C5BC69400D6B1E9 /* NSData+Conversion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Conversion.m"; sourceTree = "<group>"; };
+		66C673EB1C5BD34100D6B1E9 /* PushNotificationProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationProxy.h; sourceTree = "<group>"; };
+		66C673EC1C5BD34100D6B1E9 /* PushNotificationProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationProxy.m; sourceTree = "<group>"; };
 		66F405851C5032E100C7E852 /* Snapchat-Clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Snapchat-Clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		66F405891C5032E100C7E852 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		66F4058B1C5032E100C7E852 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -147,6 +153,8 @@
 			children = (
 				66494D791C512EA1006593B8 /* APIClient.h */,
 				66494D7A1C512EA1006593B8 /* APIClient.m */,
+				66C673EB1C5BD34100D6B1E9 /* PushNotificationProxy.h */,
+				66C673EC1C5BD34100D6B1E9 /* PushNotificationProxy.m */,
 			);
 			name = Networking;
 			sourceTree = "<group>";
@@ -181,6 +189,8 @@
 			children = (
 				66494D801C51370A006593B8 /* UIColor+SnapchatColors.h */,
 				66494D811C51370A006593B8 /* UIColor+SnapchatColors.m */,
+				66C673E81C5BC69400D6B1E9 /* NSData+Conversion.h */,
+				66C673E91C5BC69400D6B1E9 /* NSData+Conversion.m */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -429,6 +439,7 @@
 				66F405901C5032E100C7E852 /* PhotoViewController.m in Sources */,
 				66494D901C516575006593B8 /* FriendTableCell.m in Sources */,
 				66F405C11C50334A00C7E852 /* InboxViewController.m in Sources */,
+				66C673ED1C5BD34100D6B1E9 /* PushNotificationProxy.m in Sources */,
 				66494D8C1C5163BE006593B8 /* FriendListViewController.m in Sources */,
 				66F4058D1C5032E100C7E852 /* AppDelegate.m in Sources */,
 				6606564C1C57FAD10075F08A /* LoadingView.m in Sources */,
@@ -437,6 +448,7 @@
 				66F9E6591C5690560045638C /* SnapView.m in Sources */,
 				66494D821C51370A006593B8 /* UIColor+SnapchatColors.m in Sources */,
 				66494D861C513A72006593B8 /* CameraView.m in Sources */,
+				66C673EA1C5BC69400D6B1E9 /* NSData+Conversion.m in Sources */,
 				66BB690B1C591DBC00CCB102 /* HomeViewController.m in Sources */,
 				66494D9B1C516E1F006593B8 /* LoginViewController.m in Sources */,
 				66BB690E1C592CA800CCB102 /* SnapTextView.m in Sources */,
@@ -578,7 +590,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: adam tecle (5P4VAPJ2Z5)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: adam tecle (5P4VAPJ2Z5)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Snapchat-Clone",
@@ -588,6 +601,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.atecle.Snapchat-Clone";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "5638935a-fa5e-4736-8500-090dd8dc22fa";
 			};
 			name = Debug;
 		};

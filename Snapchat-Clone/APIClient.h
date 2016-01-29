@@ -11,6 +11,7 @@
 
 #import "User.h"
 #import "Snap.h"
+#import "NSData+Conversion.h"
 
 extern NSString * const APIClientErrorDomain;
 
@@ -32,5 +33,6 @@ typedef NS_ENUM(NSInteger, APIClientErrorCode)
 - (void)retrieveSnapchatsWithSuccess:(void (^)(NSArray *snaps))success failure:(void (^)(NSError *error))failure;
 - (void)retrieveSnapchatWithID:(NSInteger) snapID success:(void (^)(Snap *snap))success failure:(void (^)(NSError *error))failure;
 - (void)markSnapchatReadWithID:(NSInteger) snapID success:(void (^)(Snap *snap))success failure:(void (^)(NSError *error))failure;
+- (void)sendProviderDeviceToken:(NSData *)deviceToken success:(void (^)(NSString *token))success failure:(void (^)(NSError *error))failure;
 
 @end

@@ -18,6 +18,8 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
 @property (strong, nonatomic) NSURLSession *session;
 @property (strong, nonatomic) NSURLSessionConfiguration *configuration;
 
+@property (nonatomic) BOOL registeredForPushNotifications;
+
 @end
 
 @implementation APIClient
@@ -28,7 +30,7 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
     {
         self.APIToken = APIToken;
     }
-    
+
     self.configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     self.session = [NSURLSession sessionWithConfiguration:self.configuration];
     return self;
@@ -44,7 +46,7 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
     
     NSDictionary *parameters = @{@"username" : username, @"password" : password};
     NSError *JSONError = nil;
-
+    
     NSData *parameterJSON = [NSJSONSerialization dataWithJSONObject:parameters options:kNilOptions error:&JSONError];
     
     if (parameterJSON == nil)
@@ -97,7 +99,7 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
             });
             return;
         }
-      
+        
         NSDictionary *userDictionary = dictionary[@"user"];
         User *user = [[User alloc] initFromDictionary:userDictionary];
         NSString *APIToken = dictionary[@"api_token"];
@@ -117,11 +119,13 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
     NSURLRequest *URLRequest = [self requestWithPath:fullPath parameters:nil HTTPMethod:@"GET" failure:failure];
     
     if (URLRequest == nil) return;
-
+    
     NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:URLRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-       
+        
         NSDictionary *dictionary = [self dictionaryFromData:data response:response error:error failure:failure];
         
+        if (dictionary == nil) return;
+
         NSArray *friends = [User usersFromUserDictionaries:dictionary];
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -137,16 +141,17 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
 - (void)sendSnapchatWithImageURL:(NSURL *)imageURL toUsers:(NSArray *)users withSuccess:(void (^)(NSArray *snaps))success failure:(void (^)(NSError *error))failure
 {
     NSString *fullPath = [NSString stringWithFormat:@"%@/snaps", baseURL];
-   
+    
     NSDictionary *parameters = @{@"to" : users, @"image_url" : imageURL.absoluteString};
-
+    
     NSURLRequest *URLRequest = [self requestWithPath:fullPath parameters:parameters HTTPMethod:@"POST" failure:failure];
     
     if (URLRequest == nil) return;
     
-    NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:URLRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error)
-    {
+    NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:URLRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         NSDictionary *dictionary = [self dictionaryFromData:data response:response error:error failure:failure];
+        
+        if (dictionary == nil) return;
 
         NSArray *snaps = [Snap snapsFromDictionaries:dictionary];
         
@@ -165,13 +170,15 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
     NSString *fullPath = [NSString stringWithFormat:@"%@/snaps", baseURL];
     
     NSURLRequest *URLRequest = [self requestWithPath:fullPath parameters:nil HTTPMethod:@"GET" failure:failure];
-
+    
     if (URLRequest == nil) return;
-
+    
     NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:URLRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-       
+        
         NSDictionary *dictionary = [self dictionaryFromData:data response:response error:error failure:failure];
-
+        
+        if (dictionary == nil) return;
+        
         NSArray *snaps = [Snap snapsFromDictionaries:dictionary];
         
         NSArray *reverseSnaps = [[snaps reverseObjectEnumerator] allObjects];
@@ -179,7 +186,7 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
         dispatch_async(dispatch_get_main_queue(), ^{
             success(reverseSnaps);
         });
-
+        
     }];
     
     [dataTask resume];
@@ -190,12 +197,14 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
     NSString *fullPath = [NSString stringWithFormat:@"%@/snaps/%ld", baseURL, (long)snapID];
     
     NSURLRequest *URLRequest = [self requestWithPath:fullPath parameters:nil HTTPMethod:@"GET" failure:failure];
-
+    
     if (URLRequest == nil) return;
-
+    
     NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:URLRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
         NSDictionary *dictionary = [self dictionaryFromData:data response:response error:error failure:failure];
+        
+        if (dictionary == nil) return;
         
         Snap *snap = [[Snap alloc] initFromDictionary: dictionary];
         
@@ -214,20 +223,14 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
     NSString *fullPath = [NSString stringWithFormat:@"%@/media/upload", baseURL];
     
     NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
-  
+    
     NSURLRequest *URLRequest = [self multipartRequestWithPath:fullPath HTTPMethod:@"POST" data:imageData];
-
+    
     NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:URLRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
         NSDictionary *dictionary = [self dictionaryFromData:data response:response error:error failure:failure];
         
-        if (dictionary == nil)
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                failure(error);
-            });
-            return;
-        }
+        if (dictionary == nil) return;
         
         NSURL *imageURL = [NSURL URLWithString: dictionary[@"image_url"]];
         
@@ -245,18 +248,53 @@ NSString * const APIClientErrorDomain = @"APIClientErrorDomain";
     NSString *fullPath = [NSString stringWithFormat:@"%@/snaps/%ld/read", baseURL, (long)snapID];
     
     NSURLRequest *URLRequest = [self requestWithPath:fullPath parameters:nil HTTPMethod:@"PUT" failure:failure];
-
+    
     if (URLRequest == nil) return;
-
+    
     NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:URLRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
         NSDictionary *dictionary = [self dictionaryFromData:data response:response error:error failure:failure];
-
+        
+        if (dictionary == nil) return;
+        
         Snap *snap = [[Snap alloc] initFromDictionary:dictionary];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             success(snap);
         });
+    }];
+    
+    [dataTask resume];
+}
+
+- (void)sendProviderDeviceToken:(NSData *)deviceToken success:(void (^)(NSString *token))success failure:(void (^)(NSError *error))failure
+{
+    NSString *hexString = [deviceToken hexadecimalString];
+    
+    NSString *fullPath = [NSString stringWithFormat:@"%@/users/push_notification_tokens", baseURL];
+    
+    NSDictionary *parameters = @{@"token" : @{@"value" : hexString}};
+    NSURLRequest *URLRequest = [self requestWithPath:fullPath parameters:parameters HTTPMethod:@"POST" failure:failure];
+    
+    if (URLRequest == nil) return;
+    
+    NSURLSessionDataTask *dataTask = [self.session dataTaskWithRequest:URLRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        
+        NSDictionary *dictionary = [self dictionaryFromData:data response:response error:error failure:failure];
+        
+        if (dictionary == nil) return;
+        
+        NSString *token = dictionary[@"token"][@"value"];
+        
+        if (token != nil)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                success(token);
+            });
+            return;
+        }
+        
+        
     }];
     
     [dataTask resume];

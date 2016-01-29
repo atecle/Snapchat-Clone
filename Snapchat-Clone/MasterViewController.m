@@ -49,7 +49,7 @@
     {
         [self showHomeViewController];
     }
-    else
+    else if (self.APIClient == nil)
     {
         _APIClient = [[APIClient alloc] initWithAPIToken:self.APIToken];
         PhotoViewController *photoVC = (PhotoViewController *)self.rightViewController.topViewController;
