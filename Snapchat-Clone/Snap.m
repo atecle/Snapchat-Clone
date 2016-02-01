@@ -30,6 +30,11 @@
         
         _createdDate = [self dateFromString:dictionary[@"created_at"]];
         
+        if ([dictionary[@"updated_at"] isKindOfClass:[NSString class]])
+        {
+            _updatedDate = [self dateFromString:dictionary[@"updated_at"]];
+        }
+        
         _unread = [dictionary[@"unread"] boolValue];
     }
     
@@ -56,7 +61,27 @@
 
 - (NSDate *)dateFromString:(NSString *)dateString
 {
-    return nil;
+    NSString *          userVisibleDateTimeString;
+    NSDateFormatter *   rfc3339DateFormatter;
+    NSLocale *          enUSPOSIXLocale;
+    NSDate *            date;
+    
+    userVisibleDateTimeString = nil;
+    
+    // Convert the RFC 3339 date time string to an NSDate.
+    
+    rfc3339DateFormatter = [[NSDateFormatter alloc] init];
+    
+    enUSPOSIXLocale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+    
+    [rfc3339DateFormatter setLocale:enUSPOSIXLocale];
+    [rfc3339DateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"];
+    [rfc3339DateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    
+    date = [rfc3339DateFormatter dateFromString:dateString];
+    
+    return date;
+
 }
 
 @end

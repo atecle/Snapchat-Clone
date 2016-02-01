@@ -45,7 +45,26 @@ NSString * const InboxTableCellIdentifier = @"InboxTableCell";
         self.usernameLabel.text = snap.fromUsername;
     }
     
+    self.timeLabel.text = [self stringFromDate:snap.createdDate];
+    
     [self.seenImageView setImage:statusImage];
+}
+
+- (NSString *)stringFromDate:(NSDate *)date
+{
+    NSDateFormatter *   dateFormatter;
+    NSLocale *          enUSPOSIXLocale;
+    
+    
+    dateFormatter = [[NSDateFormatter alloc] init];
+    
+    enUSPOSIXLocale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+    
+    [dateFormatter setLocale:enUSPOSIXLocale];
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    
+    NSString *dateString = [dateFormatter stringFromDate:date];
+    return dateString;
 }
 
 @end
