@@ -188,7 +188,7 @@ static NSInteger CharacterLimit = 25;
 {
     CGPoint gestureLocation = [gesture locationInView:self];
     
-    if (gestureLocation.y >= CGRectGetHeight(self.frame) * 0.1 && gestureLocation.y <= CGRectGetHeight(self.frame) * 0.8)
+    if (gestureLocation.y >= CGRectGetHeight(self.frame) * 0.15 && gestureLocation.y <= CGRectGetHeight(self.frame) * 0.85)
     {
         textField.center = CGPointMake(textField.center.x, gestureLocation.y);
     }
@@ -196,12 +196,7 @@ static NSInteger CharacterLimit = 25;
 
 - (void)dropTextField:(UITextField *)textField withGesture:(UILongPressGestureRecognizer *)gesture
 {
-    CGPoint gestureLocation = [gesture locationInView:self];
-    
-    textField.center = CGPointMake(textField.center.x, gestureLocation.y);
-    
-    self.textFieldPosition = gestureLocation;
-    
+    self.textFieldPosition = textField.center;
 }
 
 
