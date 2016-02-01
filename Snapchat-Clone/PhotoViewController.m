@@ -90,7 +90,7 @@ NSString * const PhotoViewControllerIdentifier = @"PhotoViewController";
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-- (void)cameraViewInboxButtonPressed:(CameraView *)cameraView
+- (void)cameraViewDidPressInboxButton:(CameraView *)cameraView
 {
     
 }

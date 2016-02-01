@@ -17,15 +17,13 @@
 
 @protocol CameraViewDelegate <NSObject>
 
-@required
-- (void)cameraView:(CameraView *)cameraView didPressSnapButtonWithImage:(UIImage *)image;
-- (void)cameraViewInboxButtonPressed:(CameraView *)cameraView;
-
-
 @optional
+- (void)cameraView:(CameraView *)cameraView didPressSnapButtonWithImage:(UIImage *)image;
+- (void)cameraViewDidPressTextStyleButton:(CameraView *)cameraView;
+- (void)cameraViewDidPressInboxButton:(CameraView *)cameraView;
 - (void)cameraViewDidEnterCaptureMode:(CameraView *)cameraView;
 - (void)cameraViewDidExitCaptureMode:(CameraView *)cameraView;
-- (void)cameraViewCancelButtonPressed:(CameraView *)cameraView;
+- (void)cameraViewDidPressCancelButton:(CameraView *)cameraView;
 - (void)cameraView:(CameraView *)cameraView didSelectMediaFromImagePickerController:(UIImagePickerController *)imagePickerController;
 
 @end

@@ -10,12 +10,19 @@
 
 static NSInteger ButtonMargin = 20;
 static NSInteger CameraButtonHeight = 80;
+static NSInteger TextStyleButtonHeight = 30;
 static NSInteger FlipCameraButtonHeight = 40;
 static NSInteger CheckBoxButtonHeight = 45;
 static NSInteger CancelButtonHeight = 30;
 static NSInteger CancelButtonWidth = 30;
 
+/**
+ TODO
+ - transform scale animation when flip camera button/text style  pressed
+ - factor out AVCaptureSession 
+ - Fix alignment of buttons/sizing. It's ugly af right now.
 
+ **/
 
 @interface CameraView()
 
@@ -31,6 +38,7 @@ static NSInteger CancelButtonWidth = 30;
 @property (strong, nonatomic) SnapTextView *snapTextView;
 @property (strong, nonatomic) UIImageView *capturedImageView;
 @property (strong, nonatomic) CameraButton *cameraButton;
+@property (strong, nonatomic) UIButton *textStyleButton;
 @property (strong, nonatomic) UIButton *flipCameraButton;
 @property (strong, nonatomic) UIButton *sendSnapButton;
 @property (strong, nonatomic) UIButton *cancelButton;
@@ -50,11 +58,13 @@ static NSInteger CancelButtonWidth = 30;
     if ((self = [super initWithFrame:frame]))
     {
         self.translatesAutoresizingMaskIntoConstraints = NO;
+        
         [self configureCaptureSession];
         [self configureCameraView];
         [self configureSnapContainerView];
         [self configureCameraButton];
         [self configureFlipCameraButton];
+        [self configureTextStyleButton];
         [self configureSendSnapButton];
         [self configureInboxButton];
         [self configureCancelButton];
@@ -176,11 +186,8 @@ static NSInteger CancelButtonWidth = 30;
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.snapContainerView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
     NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.snapContainerView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.snapContainerView attribute:NSLayoutAttributeRight multiplier:1 constant:0];
-    
-    [self addConstraint:topConstraint];
-    [self addConstraint:bottomConstraint];
-    [self addConstraint:leftConstraint];
-    [self addConstraint:rightConstraint];
+
+    [self addConstraints:@[topConstraint, bottomConstraint, leftConstraint, rightConstraint]];
     
     [self configureSnapTextView];
     [self configureImageView];
@@ -206,11 +213,7 @@ static NSInteger CancelButtonWidth = 30;
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self.snapContainerView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeRight multiplier:1 constant:0];
     NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.snapContainerView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.capturedImageView attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
     
-    [self.snapContainerView addConstraint:topConstraint];
-    [self.snapContainerView addConstraint:bottomConstraint];
-    [self.snapContainerView addConstraint:leftConstraint];
-    [self.snapContainerView addConstraint:rightConstraint];
-    [self.snapContainerView addConstraint:heightConstraint];
+    [self.snapContainerView addConstraints:@[topConstraint, bottomConstraint, leftConstraint, rightConstraint, heightConstraint]];
 }
 
 - (void)configureCameraButton
@@ -230,10 +233,26 @@ static NSInteger CancelButtonWidth = 30;
     self.cameraButton = cameraButton;
     
     self.capturedImageView.hidden = YES;
-    [self addConstraint:centerConstraint];
-    [self addConstraint:bottomConstraint];
-    [self addConstraint:heightConstraint];
-    [self addConstraint:widthConstraint];
+    
+    [self addConstraints:@[centerConstraint, bottomConstraint, heightConstraint, widthConstraint]];
+}
+
+- (void)configureTextStyleButton
+{
+    self.textStyleButton = [[UIButton alloc] init];
+    self.textStyleButton.translatesAutoresizingMaskIntoConstraints = NO;
+    self.textStyleButton.hidden = YES;
+    [self.textStyleButton setImage:[UIImage imageNamed:@"text-icon-white"] forState:UIControlStateNormal];
+    [self.textStyleButton addTarget:self action:@selector(textStyleButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self addSubview:self.textStyleButton];
+    
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.textStyleButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:ButtonMargin];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self.textStyleButton attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.flipCameraButton attribute:NSLayoutAttributeLeft multiplier:1 constant:-ButtonMargin];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.textStyleButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:TextStyleButtonHeight];
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self.textStyleButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:TextStyleButtonHeight];
+    
+    [self addConstraints:@[topConstraint, rightConstraint, heightConstraint, widthConstraint]];
 }
 
 - (void)configureFlipCameraButton
@@ -241,46 +260,21 @@ static NSInteger CancelButtonWidth = 30;
     UIButton *flipCameraButton = [[UIButton alloc] init];
     [flipCameraButton setImage:[UIImage imageNamed:@"flip-camera-icon"] forState:UIControlStateNormal];
     flipCameraButton.translatesAutoresizingMaskIntoConstraints = NO;
+    flipCameraButton.adjustsImageWhenHighlighted = NO;
     [flipCameraButton addTarget:self action:@selector(flipCameraButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     [flipCameraButton layoutIfNeeded];
     
     [self addSubview:flipCameraButton];
-    
     
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:flipCameraButton attribute:NSLayoutAttributeRight multiplier:1 constant:ButtonMargin];
     NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:flipCameraButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:10];
     NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:flipCameraButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:FlipCameraButtonHeight];
     NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:flipCameraButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:FlipCameraButtonHeight];
     
-    
     self.flipCameraButton = flipCameraButton;
     self.flipCameraButton.hidden = NO;
     
-    [self addConstraint:rightConstraint];
-    [self addConstraint:topConstraint];
-    [self addConstraint:heightConstraint];
-    [self addConstraint:widthConstraint];
-}
-
-- (void)flipCameraButtonPressed
-{
-    [self.captureSession beginConfiguration];
-    
-    if (self.cameraFlipped)
-    {
-        [self.captureSession removeInput:self.frontCameraDeviceInput];
-        [self.captureSession addInput:self.backCameraDeviceInput];
-    }
-    else
-    {
-        [self.captureSession removeInput:self.backCameraDeviceInput];
-        [self.captureSession addInput:self.frontCameraDeviceInput];
-    }
-    
-    self.cameraFlipped = !self.cameraFlipped;
-    
-    [self.captureSession commitConfiguration];
-    
+    [self addConstraints:@[rightConstraint, topConstraint, heightConstraint, widthConstraint]];
 }
 
 - (void)configureSendSnapButton
@@ -372,6 +366,26 @@ static NSInteger CancelButtonWidth = 30;
     }];
 }
 
+- (void)flipCameraButtonPressed
+{
+    [self.captureSession beginConfiguration];
+    
+    if (self.cameraFlipped)
+    {
+        [self.captureSession removeInput:self.frontCameraDeviceInput];
+        [self.captureSession addInput:self.backCameraDeviceInput];
+    }
+    else
+    {
+        [self.captureSession removeInput:self.backCameraDeviceInput];
+        [self.captureSession addInput:self.frontCameraDeviceInput];
+    }
+    
+    self.cameraFlipped = !self.cameraFlipped;
+    
+    [self.captureSession commitConfiguration];
+}
+
 - (void)sendSnapButtonPressed
 {
     UIImage *image = [self rasterizeViewToImage];
@@ -387,6 +401,7 @@ static NSInteger CancelButtonWidth = 30;
 - (void)cancelButtonPressed
 {
     self.hasImage = NO;
+    [self.snapTextView resetAppearance];
 }
 
 - (void)pickImageButtonPressed
@@ -398,19 +413,9 @@ static NSInteger CancelButtonWidth = 30;
     
 }
 
-- (UIImage *)rasterizeViewToImage
+- (void)textStyleButtonPressed
 {
-    UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, 1);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    CALayer *layer = self.snapContainerView.layer;
-    [layer renderInContext:context];
-    
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    
-    UIGraphicsEndImageContext();
-    
-    return image;
+    [self.snapTextView changeTextAppearance];
 }
 
 #pragma mark - Instance Methods
@@ -439,7 +444,7 @@ static NSInteger CancelButtonWidth = 30;
 - (void)resetToCameraMode
 {
     [self setHasImage:NO];
-    [self.snapTextView clearText];
+    [self.snapTextView resetAppearance];
 }
 
 #pragma mark - Helpers
@@ -512,13 +517,28 @@ static NSInteger CancelButtonWidth = 30;
     return (image);
 }
 
+
+- (UIImage *)rasterizeViewToImage
+{
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, 1);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CALayer *layer = self.snapContainerView.layer;
+    [layer renderInContext:context];
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
 - (void)setHasImage:(BOOL)hasImage
 {
     _hasImage = hasImage;
     [self configureViewForImageState:hasImage];
     
 }
-
 
 - (void)configureViewForImageState:(BOOL)hasImage
 {
@@ -528,6 +548,7 @@ static NSInteger CancelButtonWidth = 30;
         self.cameraButton.hidden = YES;
         self.sendSnapButton.hidden = NO;
         self.cancelButton.hidden = NO;
+        self.textStyleButton.hidden = NO;
         self.capturedImageView.hidden = NO;
         self.snapTextView.enabled = YES;
     }
@@ -538,6 +559,7 @@ static NSInteger CancelButtonWidth = 30;
         self.flipCameraButton.hidden = NO;
         self.sendSnapButton.hidden = YES;
         self.cancelButton.hidden = YES;
+        self.textStyleButton.hidden = YES;
         self.capturedImageView.hidden = YES;
         self.snapTextView.enabled = NO;
     }

@@ -8,6 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSInteger, SnapTextViewStyle)
+{
+    SnapTextViewStyleDark,
+    SnapTextViewStyleClear
+};
+
 @interface SnapTextField : UITextField
+
+@property (nonatomic) SnapTextViewStyle textStyle;
 
 @end

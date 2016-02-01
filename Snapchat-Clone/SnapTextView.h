@@ -17,6 +17,7 @@
 + (instancetype)snapTextViewInView:(UIView *)superview;
 - (instancetype)initWithView:(UIView *)superview;
 
-- (void)clearText;
+- (void)resetAppearance;
+- (void)changeTextAppearance;
 
 @end
