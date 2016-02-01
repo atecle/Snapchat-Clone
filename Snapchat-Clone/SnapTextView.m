@@ -13,9 +13,12 @@ static NSInteger CharacterLimit = 25;
 @interface SnapTextView() <UITextFieldDelegate>
 
 @property (strong, nonatomic) UITapGestureRecognizer *tapGesture;
+@property (strong, nonatomic) UILongPressGestureRecognizer *longPressGesture;
 @property (strong, nonatomic) SnapTextField *textField;
 @property (strong, nonatomic) NSLayoutConstraint *textFieldCenterYConstraint;
 @property (strong, nonatomic) NSLayoutConstraint *textFieldBottomConstraint;
+
+@property (nonatomic) CGPoint textFieldPosition;
 
 @end
 
@@ -46,6 +49,16 @@ static NSInteger CharacterLimit = 25;
     return self;
 }
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    if (CGPointEqualToPoint(self.textFieldPosition, CGPointZero))
+    {
+        self.textFieldPosition = CGPointMake(CGRectGetMidX(self.superview.frame), CGRectGetMidY(self.superview.frame));
+    }
+   
+}
 #pragma mark - Set up
 
 - (void)addConstraintsToSuperView
@@ -82,12 +95,19 @@ static NSInteger CharacterLimit = 25;
     
     self.textFieldCenterYConstraint = centerYConstraint;
     
+    self.textFieldPosition = CGPointZero;
+    
+    NSLog(@"%f %f", CGRectGetMidX(self.superview.frame), CGRectGetMidY(self.superview.frame));
+    
     [self addConstraints:@[widthConstraint, heightConstraint, centerXConstraint, centerYConstraint]];
 }
 
 - (void)configureTextField
 {
     self.textField = [[SnapTextField alloc] init];
+    self.longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+    self.longPressGesture.minimumPressDuration = 0.01f;
+    [self.textField addGestureRecognizer:self.longPressGesture];
     [self.textField setBackgroundColor:[UIColor  colorWithRed:0 green:0 blue:0 alpha:0.5]];
     [self.textField setTextColor:[UIColor whiteColor]];
     self.textField.hidden = YES;
@@ -97,6 +117,7 @@ static NSInteger CharacterLimit = 25;
 - (void)configureTapGesture
 {
     self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(snapTextViewTapped)];
+    [self.textField addGestureRecognizer:self.tapGesture];
     [self addGestureRecognizer:self.tapGesture];
 }
 
@@ -123,6 +144,7 @@ static NSInteger CharacterLimit = 25;
 
 - (void)snapTextViewTapped
 {
+
     if ([self.textField isFirstResponder] == NO)
     {
         [self.textField becomeFirstResponder];
@@ -133,6 +155,55 @@ static NSInteger CharacterLimit = 25;
     }
     
 }
+
+- (void)handleLongPress:(UILongPressGestureRecognizer *)gesture
+{
+    UITextField *textField = (UITextField *)gesture.view;
+    
+
+    switch (gesture.state)
+    {
+        case UIGestureRecognizerStateBegan:
+            [self grabTextField:textField withGesture:gesture];
+            break;
+        case UIGestureRecognizerStateChanged:
+            [self moveTextField:textField withGesture:gesture];
+            break;
+        case UIGestureRecognizerStateEnded:
+            [self dropTextField:textField withGesture:gesture];
+            break;
+        case UIGestureRecognizerStateCancelled:
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)grabTextField:(UITextField *)textField withGesture:(UILongPressGestureRecognizer *)gesture
+{
+    
+}
+
+- (void)moveTextField:(UITextField *)textField withGesture:(UILongPressGestureRecognizer *)gesture
+{
+    CGPoint gestureLocation = [gesture locationInView:self];
+    
+    if (gestureLocation.y >= CGRectGetHeight(self.frame) * 0.1 && gestureLocation.y <= CGRectGetHeight(self.frame) * 0.8)
+    {
+        textField.center = CGPointMake(textField.center.x, gestureLocation.y);
+    }
+}
+
+- (void)dropTextField:(UITextField *)textField withGesture:(UILongPressGestureRecognizer *)gesture
+{
+    CGPoint gestureLocation = [gesture locationInView:self];
+    
+    textField.center = CGPointMake(textField.center.x, gestureLocation.y);
+    
+    self.textFieldPosition = gestureLocation;
+    
+}
+
 
 #pragma mark - UI Methods
 
@@ -157,11 +228,14 @@ static NSInteger CharacterLimit = 25;
 //this will eventually place the text field into whatever position it was last moved
 - (void)animateTextFieldIntoPosition
 {
-    __weak typeof(self) weakSelf = self;
     [self removeConstraint:self.textFieldBottomConstraint];
+    __block CGFloat centerYConstant = CGRectGetMidY(self.frame) - self.textFieldPosition.y;
+    
+    __weak typeof(self) weakSelf = self;
     [UIView animateWithDuration:.3 animations:^{
         __strong typeof(self) self = weakSelf;
         
+        self.textFieldCenterYConstraint.constant = centerYConstant;
         [self addConstraint:self.textFieldCenterYConstraint];
         [self.superview layoutIfNeeded];
     }];
@@ -228,12 +302,17 @@ static NSInteger CharacterLimit = 25;
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-    if (self.enabled == YES)
+    
+    if (self.enabled == NO) return nil;
+    
+    UIView *view = [super hitTest:point withEvent:event];
+
+    if (CGRectContainsPoint(self.textField.frame, point))
     {
-        return self;
+        return self.textField;
     }
 
-    return nil;
+    return view;
 }
 
 
