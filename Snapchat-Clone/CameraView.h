@@ -11,7 +11,7 @@
 
 #import "FriendListViewController.h"
 #import "CameraButton.h"
-#import "SnapTextView.h"
+#import "SnapTextOverlayView.h"
 
 @class CameraView;
 

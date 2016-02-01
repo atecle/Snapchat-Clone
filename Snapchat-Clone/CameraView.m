@@ -35,7 +35,7 @@ static NSInteger CancelButtonWidth = 30;
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
 
 @property (strong, nonatomic) UIView *snapContainerView;
-@property (strong, nonatomic) SnapTextView *snapTextView;
+@property (strong, nonatomic) SnapTextOverlayView *snapTextView;
 @property (strong, nonatomic) UIImageView *capturedImageView;
 @property (strong, nonatomic) CameraButton *cameraButton;
 @property (strong, nonatomic) UIButton *textStyleButton;
@@ -196,7 +196,7 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)configureSnapTextView
 {
-    self.snapTextView = [SnapTextView snapTextViewInView:self.snapContainerView];
+    self.snapTextView = [SnapTextOverlayView snapTextViewInView:self.snapContainerView];
 }
 
 - (void)configureImageView

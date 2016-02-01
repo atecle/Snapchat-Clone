@@ -6,12 +6,12 @@
 //  Copyright © 2016 atecle. All rights reserved.
 //
 
-#import "SnapTextView.h"
+#import "SnapTextOverlayView.h"
 #import "CameraView.h"
 
 static NSInteger CharacterLimit = 25;
 
-@interface SnapTextView() <UITextFieldDelegate>
+@interface SnapTextOverlayView() <UITextFieldDelegate>
 
 @property (strong, nonatomic) UITapGestureRecognizer *tapGesture;
 @property (strong, nonatomic) UILongPressGestureRecognizer *longPressGesture;
@@ -25,11 +25,11 @@ static NSInteger CharacterLimit = 25;
 
 @end
 
-@implementation SnapTextView
+@implementation SnapTextOverlayView
 
 + (instancetype)snapTextViewInView:(UIView *)superview
 {
-    SnapTextView *snapTextView = [[SnapTextView alloc] initWithView:superview];
+    SnapTextOverlayView *snapTextView = [[SnapTextOverlayView alloc] initWithView:superview];
     
     return snapTextView;
 }

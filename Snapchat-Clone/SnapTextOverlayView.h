@@ -10,7 +10,7 @@
 
 #import "SnapTextField.h"
 
-@interface SnapTextView : UIView
+@interface SnapTextOverlayView : UIView
 
 @property (nonatomic) BOOL enabled;
 
