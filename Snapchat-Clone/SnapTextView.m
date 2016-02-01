@@ -160,7 +160,8 @@ static NSInteger CharacterLimit = 25;
 {
     UITextField *textField = (UITextField *)gesture.view;
     
-
+    if ([self.textField isFirstResponder]) return;
+    
     switch (gesture.state)
     {
         case UIGestureRecognizerStateBegan:
@@ -298,7 +299,15 @@ static NSInteger CharacterLimit = 25;
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
     
-    if (self.enabled == NO) return nil;
+    if (self.enabled == NO)
+    {
+        return nil;
+    }
+    
+    if (point.y < CGRectGetHeight(self.frame) * 0.15 || point.y > CGRectGetHeight(self.frame) * 0.85)
+    {
+        return nil;
+    }
     
     UIView *view = [super hitTest:point withEvent:event];
 
