@@ -19,6 +19,7 @@
 		66494D951C5165ED006593B8 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D941C5165ED006593B8 /* User.m */; };
 		66494D981C5165FD006593B8 /* Snap.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D971C5165FD006593B8 /* Snap.m */; };
 		66494D9B1C516E1F006593B8 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66494D9A1C516E1F006593B8 /* LoginViewController.m */; };
+		664F1DE91C600AEE00D58B8F /* SnapTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 664F1DE81C600AEE00D58B8F /* SnapTextView.m */; };
 		66A1FAD01C52D161000A7B4B /* InboxTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A1FACE1C52D161000A7B4B /* InboxTableCell.m */; };
 		66A1FAD11C52D161000A7B4B /* InboxTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66A1FACF1C52D161000A7B4B /* InboxTableCell.xib */; };
 		66A324D31C582B0B0021DFF6 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66A324D21C582B0B0021DFF6 /* HockeySDK.framework */; };
@@ -82,6 +83,8 @@
 		66494D971C5165FD006593B8 /* Snap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Snap.m; sourceTree = "<group>"; };
 		66494D991C516E1F006593B8 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		66494D9A1C516E1F006593B8 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
+		664F1DE71C600AEE00D58B8F /* SnapTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapTextView.h; sourceTree = "<group>"; };
+		664F1DE81C600AEE00D58B8F /* SnapTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnapTextView.m; sourceTree = "<group>"; };
 		66A1FACD1C52D161000A7B4B /* InboxTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxTableCell.h; sourceTree = "<group>"; };
 		66A1FACE1C52D161000A7B4B /* InboxTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxTableCell.m; sourceTree = "<group>"; };
 		66A1FACF1C52D161000A7B4B /* InboxTableCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InboxTableCell.xib; sourceTree = "<group>"; };
@@ -178,6 +181,8 @@
 				6606564B1C57FAD10075F08A /* LoadingView.m */,
 				66BB690C1C592CA800CCB102 /* SnapTextOverlayView.h */,
 				66BB690D1C592CA800CCB102 /* SnapTextOverlayView.m */,
+				664F1DE71C600AEE00D58B8F /* SnapTextView.h */,
+				664F1DE81C600AEE00D58B8F /* SnapTextView.m */,
 				66BB69541C5A993C00CCB102 /* SnapTextField.h */,
 				66BB69551C5A993C00CCB102 /* SnapTextField.m */,
 			);
@@ -447,6 +452,7 @@
 				66494D891C51505B006593B8 /* NavigationController.m in Sources */,
 				66F9E6591C5690560045638C /* SnapView.m in Sources */,
 				66494D821C51370A006593B8 /* UIColor+SnapchatColors.m in Sources */,
+				664F1DE91C600AEE00D58B8F /* SnapTextView.m in Sources */,
 				66494D861C513A72006593B8 /* CameraView.m in Sources */,
 				66C673EA1C5BC69400D6B1E9 /* NSData+Conversion.m in Sources */,
 				66BB690B1C591DBC00CCB102 /* HomeViewController.m in Sources */,

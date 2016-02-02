@@ -35,7 +35,7 @@ static NSInteger CancelButtonWidth = 30;
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
 
 @property (strong, nonatomic) UIView *snapContainerView;
-@property (strong, nonatomic) SnapTextOverlayView *snapTextView;
+@property (strong, nonatomic) SnapTextOverlayView *snapTextOverlayView;
 @property (strong, nonatomic) UIImageView *capturedImageView;
 @property (strong, nonatomic) CameraButton *cameraButton;
 @property (strong, nonatomic) UIButton *textStyleButton;
@@ -189,14 +189,14 @@ static NSInteger CancelButtonWidth = 30;
 
     [self addConstraints:@[topConstraint, bottomConstraint, leftConstraint, rightConstraint]];
     
-    [self configureSnapTextView];
+    [self configureSnapTextOverlayView];
     [self configureImageView];
 }
 
 
-- (void)configureSnapTextView
+- (void)configureSnapTextOverlayView
 {
-    self.snapTextView = [SnapTextOverlayView snapTextViewInView:self.snapContainerView];
+    self.snapTextOverlayView = [SnapTextOverlayView snapTextViewInView:self.snapContainerView];
 }
 
 - (void)configureImageView
@@ -401,7 +401,7 @@ static NSInteger CancelButtonWidth = 30;
 - (void)cancelButtonPressed
 {
     self.hasImage = NO;
-    [self.snapTextView resetAppearance];
+    [self.snapTextOverlayView resetAppearance];
 }
 
 - (void)pickImageButtonPressed
@@ -415,7 +415,7 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)textStyleButtonPressed
 {
-    [self.snapTextView changeTextAppearance];
+    [self.snapTextOverlayView changeTextAppearance];
 }
 
 #pragma mark - Instance Methods
@@ -444,7 +444,7 @@ static NSInteger CancelButtonWidth = 30;
 - (void)resetToCameraMode
 {
     [self setHasImage:NO];
-    [self.snapTextView resetAppearance];
+    [self.snapTextOverlayView resetAppearance];
 }
 
 #pragma mark - Helpers
@@ -550,7 +550,7 @@ static NSInteger CancelButtonWidth = 30;
         self.cancelButton.hidden = NO;
         self.textStyleButton.hidden = NO;
         self.capturedImageView.hidden = NO;
-        self.snapTextView.enabled = YES;
+        self.snapTextOverlayView.hidden = NO;
     }
     else
     {
@@ -561,7 +561,7 @@ static NSInteger CancelButtonWidth = 30;
         self.cancelButton.hidden = YES;
         self.textStyleButton.hidden = YES;
         self.capturedImageView.hidden = YES;
-        self.snapTextView.enabled = NO;
+        self.snapTextOverlayView.hidden = YES;
     }
 }
 

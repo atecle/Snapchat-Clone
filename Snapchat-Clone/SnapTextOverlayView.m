@@ -8,20 +8,39 @@
 
 #import "SnapTextOverlayView.h"
 #import "CameraView.h"
+#import "SnapTextField.h"
+#import "SnapTextView.h"
+
+typedef NS_ENUM(NSInteger, SnapTextStyle)
+{
+    SnapTextStyleDefault,
+    SnapTextStyleLight,
+    SnapTextStyleLightCentered
+};
 
 static NSInteger CharacterLimit = 25;
 
-@interface SnapTextOverlayView() <UITextFieldDelegate>
+@interface SnapTextOverlayView() <UITextFieldDelegate, UITextViewDelegate>
 
+@property (strong, nonatomic) UIVisualEffectView *blurView;
 @property (strong, nonatomic) UITapGestureRecognizer *tapGesture;
-@property (strong, nonatomic) UILongPressGestureRecognizer *longPressGesture;
 @property (strong, nonatomic) UIPinchGestureRecognizer *pinchGesture;
+
 @property (strong, nonatomic) SnapTextField *textField;
+@property (strong, nonatomic) SnapTextView *textView;
+
 @property (strong, nonatomic) NSLayoutConstraint *textFieldHeightConstraint;
 @property (strong, nonatomic) NSLayoutConstraint *textFieldCenterYConstraint;
 @property (strong, nonatomic) NSLayoutConstraint *textFieldBottomConstraint;
 
+@property (strong, nonatomic) NSLayoutConstraint *textViewHeightConstraint;
+@property (strong, nonatomic) NSLayoutConstraint *textViewBottomConstraint;
+@property (strong, nonatomic) NSLayoutConstraint *textViewCenterYConstraint;
+
 @property (nonatomic) CGPoint textFieldPosition;
+@property (nonatomic) CGPoint textViewPosition;
+
+@property (nonatomic) SnapTextStyle snapTextStyle;
 
 @end
 
@@ -39,14 +58,22 @@ static NSInteger CharacterLimit = 25;
     if ((self = [super initWithFrame:CGRectZero]))
     {
         [superview addSubview:self];
+        
         [self setBackgroundColor:[UIColor clearColor]];
-        self.enabled = NO;
+        self.snapTextStyle = SnapTextStyleDefault;
+        
         [self observeKeyboard];
+        
         [self addConstraintsToSuperView];
+        
         [self configureTapGesture];
         //[self configurePinchGesture];
+        
         [self configureTextField];
         [self addConstraintsToTextField];
+        
+        [self configureTextView];
+        [self addConstraintsToTextView];
     }
     
     return self;
@@ -67,25 +94,35 @@ static NSInteger CharacterLimit = 25;
 
 - (void)changeTextAppearance
 {
-    if (self.textField.textStyle == SnapTextViewStyleDark)
+    
+    if ([self.textField isFirstResponder] == NO && [self.textView isFirstResponder] == NO)
     {
-        self.textField.textStyle = SnapTextViewStyleClear;
-        [self.textField setFont:[UIFont boldSystemFontOfSize:40]];
-        [self.textField setBackgroundColor:[UIColor clearColor]];
-        self.textFieldHeightConstraint.constant = 20;
-        self.pinchGesture.enabled = NO;
-    }
-    else if (self.textField.textStyle == SnapTextViewStyleClear)
-    {
-        [self.textField setFont:[UIFont systemFontOfSize:16]];
-        [self.textField setBackgroundColor:[UIColor  colorWithRed:0 green:0 blue:0 alpha:0.5]];
-        self.textField.textStyle = SnapTextViewStyleDark;
-        self.textFieldHeightConstraint.constant = 0;
-        self.pinchGesture.enabled = YES;
+        if (self.snapTextStyle == SnapTextStyleDefault)
+        {
+            self.textField.hidden = NO;
+            [self.textField becomeFirstResponder];
+        }
+        else
+        {
+            self.textView.hidden = NO;
+            [self.textView becomeFirstResponder];
+        }
+        return;
     }
     
-    [self layoutIfNeeded];
-    [self moveTextFieldIntoPositionAnimated:NO];
+    switch (self.snapTextStyle) {
+        case SnapTextStyleDefault:
+            self.snapTextStyle = SnapTextStyleLight;
+            break;
+        case SnapTextStyleLight:
+            self.snapTextStyle = SnapTextStyleLightCentered;
+            break;
+        case SnapTextStyleLightCentered:
+            self.snapTextStyle = SnapTextStyleDefault;
+            break;
+        default:
+            break;
+    }
 }
 
 - (void)resetAppearance
@@ -144,17 +181,39 @@ static NSInteger CharacterLimit = 25;
     self.textField = [[SnapTextField alloc] init];
     self.textField.textStyle = SnapTextViewStyleDark;
     
-    self.longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
-    self.longPressGesture.minimumPressDuration = 0.01f;
-    [self.longPressGesture requireGestureRecognizerToFail:self.tapGesture];
-    
-    [self.textField addGestureRecognizer:self.longPressGesture];
-    
     [self.textField setBackgroundColor:[UIColor  colorWithRed:0 green:0 blue:0 alpha:0.5]];
     [self.textField setTextColor:[UIColor whiteColor]];
     
     self.textField.hidden = YES;
     self.textField.delegate = self;
+}
+
+- (void)addConstraintsToTextView
+{
+    self.textView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:self.textView];
+    
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.textView attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
+    
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.textView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:0.0625 constant:0];
+    
+    NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.textView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
+    
+    NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.textView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
+    
+    self.textViewHeightConstraint = heightConstraint;
+    self.textViewCenterYConstraint = centerYConstraint;
+    
+    [self addConstraints:@[widthConstraint, heightConstraint, centerXConstraint, centerYConstraint]];
+}
+
+- (void)configureTextView
+{
+    self.textView = [[SnapTextView alloc] init];
+    self.textView.hidden = YES;
+    self.textView.delegate = self;
+    [self.textView addObserver:self forKeyPath:@"contentSize" options: (NSKeyValueObservingOptionNew) context:nil];
+    
 }
 
 - (void)configureTapGesture
@@ -179,58 +238,31 @@ static NSInteger CharacterLimit = 25;
 
 - (void)snapTextViewTapped
 {
-    if ([self.textField isFirstResponder] == NO)
+    if (self.snapTextStyle == SnapTextStyleDefault)
     {
-        [self.textField becomeFirstResponder];
+        if ([self.textField isFirstResponder] == NO)
+        {
+            self.textField.hidden = NO;
+            [self.textField becomeFirstResponder];
+        }
+        else
+        {
+            [self.textField resignFirstResponder];
+        }
     }
     else
     {
-        [self.textField resignFirstResponder];
+        if ([self.textView isFirstResponder] == NO)
+        {
+            self.textView.hidden = NO;
+            [self.textView becomeFirstResponder];
+        }
+        else
+        {
+            [self.textView resignFirstResponder];
+        }
     }
-}
-
-- (void)handleLongPress:(UILongPressGestureRecognizer *)gesture
-{
-    UITextField *textField = (UITextField *)gesture.view;
     
-    if ([self.textField isFirstResponder]) return;
-    
-    switch (gesture.state)
-    {
-        case UIGestureRecognizerStateBegan:
-            [self grabTextField:textField withGesture:gesture];
-            break;
-        case UIGestureRecognizerStateChanged:
-            [self moveTextField:textField withGesture:gesture];
-            break;
-        case UIGestureRecognizerStateEnded:
-            [self dropTextField:textField withGesture:gesture];
-            break;
-        case UIGestureRecognizerStateCancelled:
-            break;
-        default:
-            break;
-    }
-}
-
-- (void)grabTextField:(UITextField *)textField withGesture:(UILongPressGestureRecognizer *)gesture
-{
-    
-}
-
-- (void)moveTextField:(UITextField *)textField withGesture:(UILongPressGestureRecognizer *)gesture
-{
-    CGPoint gestureLocation = [gesture locationInView:self];
-    
-    if (gestureLocation.y >= CGRectGetHeight(self.frame) * 0.15 && gestureLocation.y <= CGRectGetHeight(self.frame) * 0.85)
-    {
-        textField.center = CGPointMake(textField.center.x, gestureLocation.y);
-    }
-}
-
-- (void)dropTextField:(UITextField *)textField withGesture:(UILongPressGestureRecognizer *)gesture
-{
-    self.textFieldPosition = textField.center;
 }
 
 - (void)handlePinch:(UIPinchGestureRecognizer *)gesture
@@ -259,7 +291,7 @@ static NSInteger CharacterLimit = 25;
     textField.contentScaleFactor = gesture.scale;
 }
 
-#pragma mark - UI Methods
+#pragma mark - UI
 
 - (void)animateTextFieldAboveKeyboard:(CGRect)keyboardFrame
 {
@@ -274,6 +306,22 @@ static NSInteger CharacterLimit = 25;
         __strong typeof(self) self = weakSelf;
         self.textField.hidden = NO;
         [self addConstraint:self.textFieldBottomConstraint];
+        [self.superview layoutIfNeeded];
+    }];
+}
+
+- (void)animateTextViewAboveKeyboard:(CGRect)keyboardFrame
+{
+    if (self.textViewBottomConstraint == nil)
+    {
+        self.textViewBottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.textView attribute:NSLayoutAttributeBottom multiplier:1 constant:keyboardFrame.size.height];
+    }
+    __weak typeof(self) weakSelf = self;
+    [self removeConstraint:self.textViewCenterYConstraint];
+    [UIView animateWithDuration:.3 animations:^{
+        __strong typeof(self) self = weakSelf;
+        self.textField.hidden = NO;
+        [self addConstraint:self.textViewBottomConstraint];
         [self.superview layoutIfNeeded];
     }];
 }
@@ -304,6 +352,77 @@ static NSInteger CharacterLimit = 25;
     }
 }
 
+- (void)moveTextViewIntoPositionAnimated:(BOOL)animated
+{
+    [self removeConstraint:self.textViewBottomConstraint];
+    
+    __block CGFloat centerYConstant = CGRectGetMidY(self.frame) - self.textViewPosition.y;
+    
+    __weak typeof(self) weakSelf = self;
+    void (^work)() = ^{
+        __strong typeof(self) self = weakSelf;
+        self.textViewCenterYConstraint.constant = centerYConstant;
+        [self addConstraint:self.textViewCenterYConstraint];
+        [self.superview layoutIfNeeded];
+    };
+    
+    if (animated == YES)
+    {
+        [UIView animateWithDuration:.3 animations:^{
+            work();
+        }];
+    }
+    else
+    {
+        work();
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"contentSize"])
+    {
+        self.textViewHeightConstraint.constant = self.textView.contentSize.height;
+    }
+}
+
+- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath
+{
+    
+}
+
+- (void)updateViewForSnapTextStyle
+{
+    if (self.snapTextStyle == SnapTextStyleDefault)
+    {
+        //we are currently editing text
+        if ([self.textView isFirstResponder])
+        {
+            //remove visual effect
+            [self.textView resignFirstResponder];
+            self.textView.hidden = YES;
+            
+            self.textField.hidden = NO;
+            [self.textField becomeFirstResponder];
+            self.textField.text = self.textView.text;
+        }
+        else
+        {
+            self.textView.hidden = YES;
+            self.textField.hidden = NO;
+            self.textField.text = self.textView.text;
+        }
+    }
+    else if (self.snapTextStyle == SnapTextStyleLight)
+    {
+        
+    }
+    else if (self.snapTextStyle == SnapTextStyleLightCentered)
+    {
+        
+    }
+}
+
 #pragma mark - Keyboard Observer
 
 - (void)keyboardWillShow:(NSNotification *)notification
@@ -311,28 +430,51 @@ static NSInteger CharacterLimit = 25;
     NSValue *keyboardFrameValue = [[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey];
     CGRect keyboardFrame = [keyboardFrameValue CGRectValue];
     
-    [self.textField setHidden:NO];
-    [self addGestureRecognizer:self.tapGesture];
-    self.textField.textAlignment = NSTextAlignmentLeft;
-    [self animateTextFieldAboveKeyboard:keyboardFrame];
+    if (self.snapTextStyle == SnapTextStyleDefault)
+    {
+        
+        [self.textField setHidden:NO];
+        self.textField.textAlignment = NSTextAlignmentLeft;
+        [self animateTextFieldAboveKeyboard:keyboardFrame];
+    }
+    else
+    {
+        [self.textView setHidden:NO];
+        [self animateTextViewAboveKeyboard:keyboardFrame];
+        
+    }
+    
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
-    if ([self.textField.text length] == 0 || self.enabled == NO)
+    //if in dark text state
+    if ([self.textField.text length] == 0)
     {
         self.textField.hidden = YES;
-        [self addGestureRecognizer:self.tapGesture];
+        self.tapGesture.enabled = YES;
     }
     else
     {
-        [self.textField addGestureRecognizer:self.tapGesture];
         self.textField.textAlignment = NSTextAlignmentCenter;
         [self moveTextFieldIntoPositionAnimated:YES];
+        self.tapGesture.enabled = NO;
+    }
+    
+    //if in light text state
+    if ([self.textView.text length] == 0)
+    {
+        self.textView.hidden = YES;
+        self.tapGesture.enabled = YES;
+    }
+    else
+    {
+        [self moveTextViewIntoPositionAnimated:YES];
+        self.tapGesture.enabled = NO;
     }
 }
 
-#pragma mark - UITextFieldDelegate 
+#pragma mark - UITextFieldDelegate
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
@@ -345,12 +487,52 @@ static NSInteger CharacterLimit = 25;
     return YES;
 }
 
-- (void)textFieldDidBeginEditing:(UITextField *)textField
+//- (void)textFieldDidBeginEditing:(UITextField *)textField
+//{
+//    if ([textField.text length] == 0)
+//    {
+//        return;
+//    }
+//}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
 {
     if ([textField.text length] == 0)
     {
+        self.tapGesture.enabled = YES;
+        self.textField.hidden = YES;
         return;
     }
+    
+    self.tapGesture.enabled = NO;
+    return;
+}
+
+#pragma mark - UITextViewDelegate
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    return [text length] + [textView.text length] <= CharacterLimit;
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView
+{
+    if ([textView.text length] == 0)
+    {
+        self.tapGesture.enabled = YES;
+        return;
+    }
+    
+    self.tapGesture.enabled = NO;
+    return;
+}
+
+#pragma mark - Helpers
+
+- (void)setSnapTextStyle:(SnapTextStyle)snapTextStyle
+{
+    _snapTextStyle = snapTextStyle;
+    [self updateViewForSnapTextStyle];
 }
 
 #pragma mark - Overrides
@@ -358,34 +540,29 @@ static NSInteger CharacterLimit = 25;
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
     
-    if (self.enabled == NO)
-    {
-        return nil;
-    }
-    
-    if (point.y < CGRectGetHeight(self.frame) * 0.15 || point.y > CGRectGetHeight(self.frame) * 0.85)
-    {
-        return nil;
-    }
-    
     UIView *view = [super hitTest:point withEvent:event];
-
+    
     if (CGRectContainsPoint(self.textField.frame, point))
     {
         return self.textField;
     }
-
+    
     return view;
 }
 
-#pragma mark - Helpers
-
-- (void)setEnabled:(BOOL)enabled
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    _enabled = enabled;
     
-    self.textField.hidden = YES;
-    [self.textField resignFirstResponder];
+}
+
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    
 }
 
 @end

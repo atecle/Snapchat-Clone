@@ -8,11 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "SnapTextField.h"
-
 @interface SnapTextOverlayView : UIView
-
-@property (nonatomic) BOOL enabled;
 
 + (instancetype)snapTextViewInView:(UIView *)superview;
 - (instancetype)initWithView:(UIView *)superview;
