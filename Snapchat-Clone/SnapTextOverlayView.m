@@ -18,6 +18,10 @@ typedef NS_ENUM(NSInteger, SnapTextStyle)
     SnapTextStyleLightCentered
 };
 
+//BUGS
+//TextField registers input while hidden
+//tap gesture response delayed when pressing cancel and navigating back
+
 static NSInteger CharacterLimit = 25;
 
 @interface SnapTextOverlayView() <UITextFieldDelegate, UITextViewDelegate>
@@ -86,6 +90,8 @@ static NSInteger CharacterLimit = 25;
     if (CGPointEqualToPoint(self.textFieldPosition, CGPointZero))
     {
         self.textFieldPosition = CGPointMake(CGRectGetMidX(self.superview.frame), CGRectGetMidY(self.superview.frame));
+        self.textViewPosition = CGPointMake(CGRectGetMidX(self.superview.frame), CGRectGetMidY(self.superview.frame));
+        
     }
 }
 
@@ -94,8 +100,7 @@ static NSInteger CharacterLimit = 25;
 
 - (void)changeTextAppearance
 {
-    
-    if ([self.textField isFirstResponder] == NO && [self.textView isFirstResponder] == NO)
+    if ([self.textField isFirstResponder] == NO  && ([self.textView.text length] == 0) && [self.textView isFirstResponder] == NO && ([self.textField.text length] == 0))
     {
         if (self.snapTextStyle == SnapTextStyleDefault)
         {
@@ -128,9 +133,15 @@ static NSInteger CharacterLimit = 25;
 - (void)resetAppearance
 {
     self.textField.text = @"";
-    [self addGestureRecognizer:self.tapGesture];
+    self.textView.text = @"";
+    self.textField.hidden = YES;
+    self.textView.hidden = YES;
+    [self.textView resignFirstResponder];
+    [self.textField resignFirstResponder];
+    self.tapGesture.enabled = YES;
     self.textFieldPosition = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
-    if (self.textField.textStyle == SnapTextViewStyleClear) [self changeTextAppearance];
+    self.snapTextStyle = SnapTextStyleDefault;
+    [self layoutIfNeeded];
 }
 
 #pragma mark - Set up
@@ -193,9 +204,11 @@ static NSInteger CharacterLimit = 25;
     self.textView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:self.textView];
     
+    CGFloat height = CGRectGetHeight(self.frame) * 0.0625;
+    
     NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.textView attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
     
-    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.textView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:0.0625 constant:0];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.textView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:0 constant:height];
     
     NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.textView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
     
@@ -320,7 +333,6 @@ static NSInteger CharacterLimit = 25;
     [self removeConstraint:self.textViewCenterYConstraint];
     [UIView animateWithDuration:.3 animations:^{
         __strong typeof(self) self = weakSelf;
-        self.textField.hidden = NO;
         [self addConstraint:self.textViewBottomConstraint];
         [self.superview layoutIfNeeded];
     }];
@@ -383,18 +395,19 @@ static NSInteger CharacterLimit = 25;
     if ([keyPath isEqualToString:@"contentSize"])
     {
         self.textViewHeightConstraint.constant = self.textView.contentSize.height;
+        self.textView.contentOffset = CGPointZero;
+        [self.textView layoutIfNeeded];
     }
-}
-
-- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath
-{
-    
 }
 
 - (void)updateViewForSnapTextStyle
 {
+    if (self.hidden == YES) return;
+    
     if (self.snapTextStyle == SnapTextStyleDefault)
     {
+        self.textView.textAlignment = NSTextAlignmentLeft;
+        
         //we are currently editing text
         if ([self.textView isFirstResponder])
         {
@@ -415,11 +428,31 @@ static NSInteger CharacterLimit = 25;
     }
     else if (self.snapTextStyle == SnapTextStyleLight)
     {
-        
+        if ([self.textField isFirstResponder])
+        {
+            //            [self.textField resignFirstResponder];
+            //            self.textField.hidden = YES;
+            //
+            //            //add visual effect
+            //            self.textView.hidden = NO;
+            //            [self.textView becomeFirstResponder];
+            //            self.textView.text = self.textField.text;
+            [self.textView becomeFirstResponder];
+            self.textField.hidden = YES;
+            self.textView.hidden = NO;
+            self.textView.text = self.textField.text;
+            
+        }
+        else
+        {
+            self.textField.hidden = YES;
+            self.textView.hidden = NO;
+            self.textView.text = self.textField.text;
+        }
     }
     else if (self.snapTextStyle == SnapTextStyleLightCentered)
     {
-        
+        self.textView.textAlignment = NSTextAlignmentCenter;
     }
 }
 
@@ -427,6 +460,8 @@ static NSInteger CharacterLimit = 25;
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
+    self.tapGesture.enabled = YES;
+    
     NSValue *keyboardFrameValue = [[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey];
     CGRect keyboardFrame = [keyboardFrameValue CGRectValue];
     
@@ -439,7 +474,6 @@ static NSInteger CharacterLimit = 25;
     }
     else
     {
-        [self.textView setHidden:NO];
         [self animateTextViewAboveKeyboard:keyboardFrame];
         
     }
@@ -448,29 +482,34 @@ static NSInteger CharacterLimit = 25;
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
-    //if in dark text state
-    if ([self.textField.text length] == 0)
+    if (self.snapTextStyle == SnapTextStyleDefault)
     {
-        self.textField.hidden = YES;
-        self.tapGesture.enabled = YES;
+        if ([self.textField.text length] == 0)
+        {
+            self.textField.hidden = YES;
+            self.tapGesture.enabled = YES;
+        }
+        else
+        {
+            self.textField.textAlignment = NSTextAlignmentCenter;
+            [self moveTextFieldIntoPositionAnimated:YES];
+            self.tapGesture.enabled = NO;
+        }
     }
     else
     {
-        self.textField.textAlignment = NSTextAlignmentCenter;
-        [self moveTextFieldIntoPositionAnimated:YES];
-        self.tapGesture.enabled = NO;
-    }
-    
-    //if in light text state
-    if ([self.textView.text length] == 0)
-    {
-        self.textView.hidden = YES;
-        self.tapGesture.enabled = YES;
-    }
-    else
-    {
-        [self moveTextViewIntoPositionAnimated:YES];
-        self.tapGesture.enabled = NO;
+        
+        //if in light text state
+        if ([self.textView.text length] == 0)
+        {
+            self.textView.hidden = YES;
+            self.tapGesture.enabled = YES;
+        }
+        else
+        {
+            [self moveTextViewIntoPositionAnimated:YES];
+            self.tapGesture.enabled = NO;
+        }
     }
 }
 
@@ -487,13 +526,13 @@ static NSInteger CharacterLimit = 25;
     return YES;
 }
 
-//- (void)textFieldDidBeginEditing:(UITextField *)textField
-//{
-//    if ([textField.text length] == 0)
-//    {
-//        return;
-//    }
-//}
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    if ([textField.text length] == 0)
+    {
+        return;
+    }
+}
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
@@ -504,7 +543,6 @@ static NSInteger CharacterLimit = 25;
         return;
     }
     
-    self.tapGesture.enabled = NO;
     return;
 }
 
@@ -523,7 +561,6 @@ static NSInteger CharacterLimit = 25;
         return;
     }
     
-    self.tapGesture.enabled = NO;
     return;
 }
 
@@ -539,7 +576,6 @@ static NSInteger CharacterLimit = 25;
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-    
     UIView *view = [super hitTest:point withEvent:event];
     
     if (CGRectContainsPoint(self.textField.frame, point))
