@@ -402,7 +402,6 @@ static NSInteger CancelButtonWidth = 30;
 - (void)cancelButtonPressed
 {
     self.hasImage = NO;
-    [self.snapTextOverlayView resetAppearance];
 }
 
 - (void)pickImageButtonPressed
@@ -445,7 +444,7 @@ static NSInteger CancelButtonWidth = 30;
 - (void)resetToCameraMode
 {
     [self setHasImage:NO];
-    [self.snapTextOverlayView resetAppearance];
+    [self.snapTextOverlayView hide];
 }
 
 #pragma mark - Helpers
@@ -553,6 +552,7 @@ static NSInteger CancelButtonWidth = 30;
         self.textStyleButton.hidden = NO;
         self.capturedImageView.hidden = NO;
         self.snapTextOverlayView.hidden = NO;
+        [self.snapTextOverlayView show];
     }
     else
     {
@@ -564,6 +564,8 @@ static NSInteger CancelButtonWidth = 30;
         self.textStyleButton.hidden = YES;
         self.capturedImageView.hidden = YES;
         self.snapTextOverlayView.hidden = YES;
+        [self.snapTextOverlayView hide];
+
     }
 }
 

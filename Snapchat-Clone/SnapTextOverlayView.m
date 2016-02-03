@@ -19,6 +19,7 @@ typedef NS_ENUM(NSInteger, SnapTextMode)
     SnapTextModeLightCentered
 };
 
+
 //BUGS
 //TextField registers input while hidden
 //tap gesture response delayed when pressing cancel and navigating back
@@ -50,6 +51,10 @@ static NSInteger CharacterLimit = 25;
 
 @property (nonatomic, readonly) SnapTextMode snapTextMode;
 @property (nonatomic, readonly) SnapTextMode previousSnapTextMode;
+
+@property (nonatomic) BOOL textFieldIsBeingMoved;
+@property (nonatomic) BOOL textViewIsBeingMoved;
+
 
 @end
 
@@ -137,7 +142,7 @@ static NSInteger CharacterLimit = 25;
 }
 
 
-- (void)resetAppearance
+- (void)hide
 {
     [self setSnapTextStyle:SnapTextModeHidden];
     _previousSnapTextMode = SnapTextModeHidden;
@@ -146,12 +151,17 @@ static NSInteger CharacterLimit = 25;
     self.textField.text = @"";
     self.textView.text = @"";
     
-    self.tapGesture.enabled = YES;
+    self.tapGesture.enabled = NO;
     
     self.textFieldPosition = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     self.textViewPosition = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     
     [self layoutIfNeeded];
+}
+
+- (void)show
+{
+    self.tapGesture.enabled = YES;
 }
 
 #pragma mark - Set up
@@ -249,7 +259,7 @@ static NSInteger CharacterLimit = 25;
 - (void)configureTapGesture
 {
     self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(snapTextViewTapped)];
-    self.tapGesture.enabled = YES;
+    self.tapGesture.enabled = NO;
     [self addGestureRecognizer:self.tapGesture];
 }
 
@@ -621,17 +631,78 @@ static NSInteger CharacterLimit = 25;
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
+
+    if ([self.textView isFirstResponder] == YES || [self.textField isFirstResponder] == YES || self.snapTextMode == SnapTextModeHidden)
+    {
+        return;
+    }
     
+    UITouch *touch = [[event allTouches] anyObject];
+    CGPoint touchLocation = [touch locationInView:self];
+    
+    if (self.snapTextMode == SnapTextModeNormal)
+    {
+        if (CGRectContainsPoint(self.textField.frame, touchLocation))
+        {
+            self.textFieldIsBeingMoved = YES;
+        }
+    }
+    else
+    {
+        if (CGRectContainsPoint(self.textView.frame, touchLocation))
+        {
+            self.textViewIsBeingMoved = YES;
+        }
+    }
+    
+    
+    [super touchesBegan:touches withEvent:event];
+
 }
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     
+    UITouch *touch = [[event allTouches] anyObject];
+    CGPoint touchLocation = [touch locationInView:self];
+    
+    if (self.textFieldIsBeingMoved == YES && [self textCanMoveToPoint:touchLocation])
+    {
+        self.textField.center = CGPointMake(self.textField.center.x, touchLocation.y);
+    }
+    else if (self.textViewIsBeingMoved == YES && [self textCanMoveToPoint:touchLocation])
+    {
+        self.textView.center = CGPointMake(self.textView.center.x, touchLocation.y);
+    }
+    [super touchesMoved:touches withEvent:event];
+
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     
+    UITouch *touch = [[event allTouches] anyObject];
+    CGPoint touchLocation = [touch locationInView:self];
+    
+    if (self.textFieldIsBeingMoved == YES)
+    {
+        self.textField.center = CGPointMake(self.textField.center.x, touchLocation.y);
+        self.textFieldPosition = self.textField.center;
+    }
+    else if (self.textViewIsBeingMoved == YES)
+    {
+        self.textView.center = CGPointMake(self.textView.center.x, touchLocation.y);
+        self.textViewPosition = self.textView.center;
+    }
+    
+    [super touchesMoved:touches withEvent:event];
+
+    
+}
+
+- (BOOL)textCanMoveToPoint:(CGPoint )location
+{
+    return (location.y > CGRectGetHeight(self.frame) * 0.2 && location.y < CGRectGetHeight(self.frame) * 0.8);
 }
 
 @end

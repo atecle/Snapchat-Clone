@@ -13,7 +13,8 @@
 + (instancetype)snapTextViewInView:(UIView *)superview;
 - (instancetype)initWithView:(UIView *)superview;
 
-- (void)resetAppearance;
+- (void)show;
+- (void)hide;
 - (void)textStyleButtonPressed;
 
 @end
