@@ -29,6 +29,7 @@
 		66BB69591C5A9BAC00CCB102 /* SwipeContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB69581C5A9BAC00CCB102 /* SwipeContainerViewController.m */; };
 		66C673EA1C5BC69400D6B1E9 /* NSData+Conversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C673E91C5BC69400D6B1E9 /* NSData+Conversion.m */; };
 		66C673ED1C5BD34100D6B1E9 /* PushNotificationProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C673EC1C5BD34100D6B1E9 /* PushNotificationProxy.m */; };
+		66E3D8531C62824F0092422F /* Button.m in Sources */ = {isa = PBXBuildFile; fileRef = 66E3D8521C62824F0092422F /* Button.m */; };
 		66F4058A1C5032E100C7E852 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F405891C5032E100C7E852 /* main.m */; };
 		66F4058D1C5032E100C7E852 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058C1C5032E100C7E852 /* AppDelegate.m */; };
 		66F405901C5032E100C7E852 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F4058F1C5032E100C7E852 /* PhotoViewController.m */; };
@@ -101,6 +102,8 @@
 		66C673E91C5BC69400D6B1E9 /* NSData+Conversion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Conversion.m"; sourceTree = "<group>"; };
 		66C673EB1C5BD34100D6B1E9 /* PushNotificationProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationProxy.h; sourceTree = "<group>"; };
 		66C673EC1C5BD34100D6B1E9 /* PushNotificationProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationProxy.m; sourceTree = "<group>"; };
+		66E3D8511C62824F0092422F /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Button.h; sourceTree = "<group>"; };
+		66E3D8521C62824F0092422F /* Button.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Button.m; sourceTree = "<group>"; };
 		66F405851C5032E100C7E852 /* Snapchat-Clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Snapchat-Clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		66F405891C5032E100C7E852 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		66F4058B1C5032E100C7E852 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -185,6 +188,8 @@
 				664F1DE81C600AEE00D58B8F /* SnapTextView.m */,
 				66BB69541C5A993C00CCB102 /* SnapTextField.h */,
 				66BB69551C5A993C00CCB102 /* SnapTextField.m */,
+				66E3D8511C62824F0092422F /* Button.h */,
+				66E3D8521C62824F0092422F /* Button.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -440,6 +445,7 @@
 				66494D7F1C512FC3006593B8 /* CameraButton.m in Sources */,
 				66A1FAD01C52D161000A7B4B /* InboxTableCell.m in Sources */,
 				66494D981C5165FD006593B8 /* Snap.m in Sources */,
+				66E3D8531C62824F0092422F /* Button.m in Sources */,
 				66494D7B1C512EA1006593B8 /* APIClient.m in Sources */,
 				66F405901C5032E100C7E852 /* PhotoViewController.m in Sources */,
 				66494D901C516575006593B8 /* FriendTableCell.m in Sources */,

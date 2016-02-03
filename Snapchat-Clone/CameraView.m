@@ -7,6 +7,7 @@
 //
 
 #import "CameraView.h"
+#import "Button.h"
 
 static NSInteger ButtonMargin = 20;
 static NSInteger CameraButtonHeight = 80;
@@ -38,12 +39,12 @@ static NSInteger CancelButtonWidth = 30;
 @property (strong, nonatomic) SnapTextOverlayView *snapTextOverlayView;
 @property (strong, nonatomic) UIImageView *capturedImageView;
 @property (strong, nonatomic) CameraButton *cameraButton;
-@property (strong, nonatomic) UIButton *textStyleButton;
-@property (strong, nonatomic) UIButton *flipCameraButton;
-@property (strong, nonatomic) UIButton *sendSnapButton;
-@property (strong, nonatomic) UIButton *cancelButton;
-@property (strong, nonatomic) UIButton *inboxButton;
-@property (strong, nonatomic) UIButton *pickImageButton;
+@property (strong, nonatomic) Button *textStyleButton;
+@property (strong, nonatomic) Button *flipCameraButton;
+@property (strong, nonatomic) Button *sendSnapButton;
+@property (strong, nonatomic) Button *cancelButton;
+@property (strong, nonatomic) Button *inboxButton;
+@property (strong, nonatomic) Button *pickImageButton;
 
 @property (nonatomic) BOOL cameraFlipped;
 
@@ -89,7 +90,7 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)configurePickImageButton
 {
-    self.pickImageButton = [[UIButton alloc] init];
+    self.pickImageButton = [[Button alloc] init];
     [self addSubview:self.pickImageButton];
     [self.pickImageButton addTarget:self action:@selector(pickImageButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     [self.pickImageButton setTitle:NSLocalizedString(@"PICK AN IMAGE", nil) forState:UIControlStateNormal];
@@ -239,7 +240,7 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)configureTextStyleButton
 {
-    self.textStyleButton = [[UIButton alloc] init];
+    self.textStyleButton = [[Button alloc] init];
     self.textStyleButton.translatesAutoresizingMaskIntoConstraints = NO;
     self.textStyleButton.hidden = YES;
     [self.textStyleButton setImage:[UIImage imageNamed:@"text-icon-white"] forState:UIControlStateNormal];
@@ -257,7 +258,7 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)configureFlipCameraButton
 {
-    UIButton *flipCameraButton = [[UIButton alloc] init];
+    Button *flipCameraButton = [[Button alloc] init];
     [flipCameraButton setImage:[UIImage imageNamed:@"flip-camera-icon"] forState:UIControlStateNormal];
     flipCameraButton.translatesAutoresizingMaskIntoConstraints = NO;
     flipCameraButton.adjustsImageWhenHighlighted = NO;
@@ -279,7 +280,7 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)configureSendSnapButton
 {
-    UIButton *sendSnapButton = [[UIButton alloc] init];
+    Button *sendSnapButton = [[Button alloc] init];
     [sendSnapButton setImage:[UIImage imageNamed:@"white-angle-arrow"] forState:UIControlStateNormal];
     sendSnapButton.translatesAutoresizingMaskIntoConstraints = NO;
     [sendSnapButton addTarget:self action:@selector(sendSnapButtonPressed) forControlEvents:UIControlEventTouchUpInside];
@@ -303,7 +304,7 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)configureInboxButton
 {
-    UIButton *inboxButton = [[UIButton alloc] init];
+    Button *inboxButton = [[Button alloc] init];
     [inboxButton setImage:[UIImage imageNamed:@"white-check-box"] forState:UIControlStateNormal];
     inboxButton.translatesAutoresizingMaskIntoConstraints = NO;
     [inboxButton addTarget:self action:@selector(inboxButtonPressed) forControlEvents:UIControlEventTouchUpInside];
@@ -325,7 +326,7 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)configureCancelButton
 {
-    UIButton *cancelButton = [[UIButton alloc] init];
+    Button *cancelButton = [[Button alloc] init];
     [cancelButton setImage:[UIImage imageNamed:@"white-x"] forState:UIControlStateNormal];
     cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
     [cancelButton addTarget:self action:@selector(cancelButtonPressed) forControlEvents:UIControlEventTouchUpInside];

@@ -99,7 +99,6 @@ static NSInteger CharacterLimit = 25;
     }
 }
 
-
 #pragma mark - Instance Methods
 
 - (void)textStyleButtonPressed
@@ -135,7 +134,6 @@ static NSInteger CharacterLimit = 25;
             break;
         }
     }
-    
 }
 
 
@@ -295,7 +293,6 @@ static NSInteger CharacterLimit = 25;
 
 - (void)handlePinch:(UIPinchGestureRecognizer *)gesture
 {
-    
     if ([self.textField isFirstResponder]) return;
     
     switch (gesture.state)
@@ -320,6 +317,101 @@ static NSInteger CharacterLimit = 25;
 }
 
 #pragma mark - UI
+
+- (void)setSnapTextStyle:(SnapTextMode)snapTextMode
+{
+    SnapTextMode oldSnapTextMode = self.snapTextMode;
+    
+    if (oldSnapTextMode == snapTextMode)
+    {
+        return;
+    }
+    
+    switch (snapTextMode) {
+        case SnapTextModeHidden:
+        {
+            _previousSnapTextMode = _snapTextMode;
+            _snapTextMode = snapTextMode;
+            
+            [self.textView resignFirstResponder];
+            [self.textField resignFirstResponder];
+            
+            self.textField.hidden = YES;
+            self.textView.hidden = YES;
+            
+            self.textField.enabled = NO;
+            self.textView.editable = NO;
+            
+            break;
+        }
+        case SnapTextModeNormal:
+        {
+            _previousSnapTextMode = _snapTextMode;
+            _snapTextMode = snapTextMode;
+            
+            self.textField.enabled = YES;
+            
+            if ([self.textView isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
+            {
+                [self.textField becomeFirstResponder];
+            }
+            
+            self.textField.hidden = NO;
+            self.textView.hidden = YES;
+            
+            self.textView.editable = NO;
+            
+            self.textField.text = self.snapText;
+            
+            break;
+        }
+        case SnapTextModeLight:
+        {
+            _previousSnapTextMode = _snapTextMode;
+            _snapTextMode = snapTextMode;
+            
+            self.textView.editable = YES;
+            
+            if ([self.textField isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
+            {
+                [self.textView becomeFirstResponder];
+            }
+            
+            self.textField.hidden = YES;
+            self.textView.hidden = NO;
+            
+            self.textField.enabled = NO;
+            
+            self.textView.text = self.snapText;
+            self.textView.textAlignment = NSTextAlignmentLeft;
+            
+            break;
+        }
+        case SnapTextModeLightCentered:
+        {
+            _previousSnapTextMode = _snapTextMode;
+            _snapTextMode = snapTextMode;
+            
+            self.textView.editable = YES;
+            
+            if ([self.textField isFirstResponder] || self.previousSnapTextMode == SnapTextModeHidden)
+            {
+                [self.textView becomeFirstResponder];
+            }
+            
+            self.textField.hidden = YES;
+            self.textView.hidden = NO;
+            
+            self.textField.enabled = NO;
+            
+            self.textView.textAlignment = NSTextAlignmentCenter;
+            
+            break;
+        }
+    }
+    
+    [self layoutIfNeeded];
+}
 
 - (void)animateTextFieldAboveKeyboard:(CGRect)keyboardFrame
 {
@@ -414,102 +506,6 @@ static NSInteger CharacterLimit = 25;
     }
 }
 
-- (void)setSnapTextStyle:(SnapTextMode)snapTextMode
-{
-    
-    SnapTextMode oldSnapTextMode = self.snapTextMode;
-    
-    if (oldSnapTextMode == snapTextMode)
-    {
-        return;
-    }
-    
-    switch (snapTextMode) {
-        case SnapTextModeHidden:
-        {
-            _previousSnapTextMode = _snapTextMode;
-            _snapTextMode = snapTextMode;
-            
-            [self.textView resignFirstResponder];
-            [self.textField resignFirstResponder];
-            
-            self.textField.hidden = YES;
-            self.textView.hidden = YES;
-            
-            self.textField.enabled = NO;
-            self.textView.editable = NO;
-            
-            break;
-        }
-        case SnapTextModeNormal:
-        {
-            _previousSnapTextMode = _snapTextMode;
-            _snapTextMode = snapTextMode;
-            
-            self.textField.enabled = YES;
-
-            if ([self.textView isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
-            {
-                [self.textField becomeFirstResponder];
-            }
-            
-            self.textField.hidden = NO;
-            self.textView.hidden = YES;
-            
-            self.textView.editable = NO;
-            
-            self.textField.text = self.snapText;
-            
-            break;
-        }
-        case SnapTextModeLight:
-        {
-            _previousSnapTextMode = _snapTextMode;
-            _snapTextMode = snapTextMode;
-            
-            self.textView.editable = YES;
-
-            if ([self.textField isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
-            {
-                [self.textView becomeFirstResponder];
-            }
-            
-            self.textField.hidden = YES;
-            self.textView.hidden = NO;
-            
-            self.textField.enabled = NO;
-            
-            self.textView.text = self.snapText;
-            self.textView.textAlignment = NSTextAlignmentLeft;
-        
-            break;
-        }
-        case SnapTextModeLightCentered:
-        {
-            _previousSnapTextMode = _snapTextMode;
-            _snapTextMode = snapTextMode;
-            
-            self.textView.editable = YES;
-
-            if ([self.textField isFirstResponder] || self.previousSnapTextMode == SnapTextModeHidden)
-            {
-                [self.textView becomeFirstResponder];
-            }
-            
-            self.textField.hidden = YES;
-            self.textView.hidden = NO;
-            
-            self.textField.enabled = NO;
-            
-            self.textView.textAlignment = NSTextAlignmentCenter;
-            
-            break;
-        }
-    }
-    
-    [self layoutIfNeeded];
-}
-
 #pragma mark - Keyboard Observer
 
 - (void)keyboardWillShow:(NSNotification *)notification
@@ -528,12 +524,10 @@ static NSInteger CharacterLimit = 25;
     {
         [self animateTextViewAboveKeyboard:keyboardFrame];
     }
-    
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
-    
     if ([self.snapText length] == 0)
     {
         self.tapGesture.enabled = YES;
@@ -608,8 +602,6 @@ static NSInteger CharacterLimit = 25;
 
 - (void)textViewDidChange:(UITextView *)textView
 {
-    NSLog(@"Text View: %@", textView.text);
-    
     self.snapText = textView.text;
 }
 
