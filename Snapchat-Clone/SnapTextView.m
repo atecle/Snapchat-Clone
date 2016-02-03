@@ -22,4 +22,9 @@
     return self;
 }
 
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [self.superview touchesBegan:touches withEvent:event];
+}
+
 @end
