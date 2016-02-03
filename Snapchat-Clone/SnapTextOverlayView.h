@@ -14,6 +14,6 @@
 - (instancetype)initWithView:(UIView *)superview;
 
 - (void)resetAppearance;
-- (void)changeTextAppearance;
+- (void)textStyleButtonPressed;
 
 @end

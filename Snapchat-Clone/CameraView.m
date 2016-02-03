@@ -415,7 +415,7 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)textStyleButtonPressed
 {
-    [self.snapTextOverlayView changeTextAppearance];
+    [self.snapTextOverlayView textStyleButtonPressed];
 }
 
 #pragma mark - Instance Methods
