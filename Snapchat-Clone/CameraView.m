@@ -547,6 +547,7 @@ static NSInteger CancelButtonWidth = 30;
     {
         self.previewLayer.hidden = YES;
         self.cameraButton.hidden = YES;
+        self.flipCameraButton.hidden = YES;
         self.sendSnapButton.hidden = NO;
         self.cancelButton.hidden = NO;
         self.textStyleButton.hidden = NO;
