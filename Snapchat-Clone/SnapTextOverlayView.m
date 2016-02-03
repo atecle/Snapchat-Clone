@@ -141,17 +141,18 @@ static NSInteger CharacterLimit = 25;
 
 - (void)resetAppearance
 {
+    [self setSnapTextStyle:SnapTextModeHidden];
+    _previousSnapTextMode = SnapTextModeHidden;
+
     self.snapText = @"";
     self.textField.text = @"";
     self.textView.text = @"";
     
-    self.textField.hidden = YES;
-    self.textView.hidden = YES;
-    [self.textView resignFirstResponder];
-    [self.textField resignFirstResponder];
     self.tapGesture.enabled = YES;
+    
     self.textFieldPosition = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
-    [self setSnapTextStyle:SnapTextModeHidden];
+    self.textViewPosition = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+    
     [self layoutIfNeeded];
 }
 
@@ -214,7 +215,6 @@ static NSInteger CharacterLimit = 25;
 - (void)observeTextField
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidChange:) name:UITextFieldTextDidChangeNotification object:self.textField];
-
 }
 
 - (void)addConstraintsToTextView
