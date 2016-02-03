@@ -37,7 +37,9 @@ static NSInteger CharacterLimit = 25;
 
 @property (strong, nonatomic) SnapTextField *textField;
 @property (strong, nonatomic) SnapTextView *textView;
-@property (strong, nonatomic) UIView *movableTextContainerView;
+
+@property (strong, nonatomic) UIPanGestureRecognizer *textFieldPanGesture;
+@property (strong, nonatomic) UIPanGestureRecognizer *textViewPanGesture;
 
 @property (strong, nonatomic) NSLayoutConstraint *textFieldHeightConstraint;
 @property (strong, nonatomic) NSLayoutConstraint *textFieldCenterYConstraint;
@@ -52,10 +54,6 @@ static NSInteger CharacterLimit = 25;
 
 @property (nonatomic, readonly) SnapTextMode snapTextMode;
 @property (nonatomic, readonly) SnapTextMode previousSnapTextMode;
-
-@property (nonatomic) BOOL textFieldIsBeingMoved;
-@property (nonatomic) BOOL textViewIsBeingMoved;
-
 
 @end
 
@@ -81,7 +79,6 @@ static NSInteger CharacterLimit = 25;
         [self addConstraintsToSuperView];
         
         [self configureTapGesture];
-        //[self configurePinchGesture];
         
         [self configureTextField];
         [self observeTextField];
@@ -89,9 +86,7 @@ static NSInteger CharacterLimit = 25;
         
         [self configureTextView];
         [self addConstraintsToTextView];
-        
-        [self configureMovableTextContainerView];
-        [self addConstraintsToMovableTextContainerView];
+
     }
     
     return self;
@@ -217,6 +212,9 @@ static NSInteger CharacterLimit = 25;
     self.textField.textStyle = SnapTextViewStyleDark;
     self.textView.returnKeyType = UIReturnKeyDone;
     
+    self.textFieldPanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(dragTextField:)];
+    [self.textField addGestureRecognizer:self.textFieldPanGesture];
+    
     [self.textField setBackgroundColor:[UIColor  colorWithRed:0 green:0 blue:0 alpha:0.5]];
     [self.textField setTextColor:[UIColor whiteColor]];
     
@@ -254,20 +252,13 @@ static NSInteger CharacterLimit = 25;
 {    
     self.textView = [[SnapTextView alloc] init];
     self.textView.returnKeyType = UIReturnKeyDone;
+    
+    self.textViewPanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(dragTextView:)];
+    [self.textView addGestureRecognizer:self.textViewPanGesture];
+    
     self.textView.hidden = YES;
     self.textView.delegate = self;
     [self.textView addObserver:self forKeyPath:@"contentSize" options: (NSKeyValueObservingOptionNew) context:nil];
-    
-}
-
-- (void)configureMovableTextContainerView
-{
-    
-}
-
-- (void)addConstraintsToMovableTextContainerView
-{
-    
 }
 
 - (void)configureTapGesture
@@ -333,6 +324,26 @@ static NSInteger CharacterLimit = 25;
         default:
             break;
     }
+}
+
+- (void)dragTextField:(UIPanGestureRecognizer *)gesture
+{
+    CGPoint location = [gesture locationInView:self];
+    
+    if ([self textCanMoveToPoint:location] == NO) return;
+    
+    self.textField.center = CGPointMake(self.textField.center.x, location.y);
+    self.textFieldPosition = self.textField.center;
+}
+
+- (void)dragTextView:(UIPanGestureRecognizer *)gesture
+{
+    CGPoint location = [gesture locationInView:self];
+    
+    if ([self textCanMoveToPoint:location] == NO) return;
+    
+    self.textView.center = CGPointMake(self.textView.center.x, location.y);
+    self.textViewPosition = self.textView.center;
 }
 
 - (void)changeSizeOfTextField:(UITextField *)textField withGesture:(UIPinchGestureRecognizer *)gesture
@@ -618,12 +629,6 @@ static NSInteger CharacterLimit = 25;
     return [text length] + [textView.text length] <= CharacterLimit;
 }
 
-//- (void)textViewDidBeginEditing:(UITextView *)textView
-//{
-//    textView.selectedRange = NSMakeRange(self.snapText.length, 0);
-//    [textView layoutIfNeeded];
-//}
-
 - (void)textViewDidChange:(UITextView *)textView
 {
     self.snapText = textView.text;
@@ -641,80 +646,7 @@ static NSInteger CharacterLimit = 25;
     return;
 }
 
-#pragma mark - Overrides
-
-//- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-//{
-//
-//    if ([self.textView isFirstResponder] == YES || [self.textField isFirstResponder] == YES || self.snapTextMode == SnapTextModeHidden)
-//    {
-//        return;
-//    }
-//    
-//    UITouch *touch = [[event allTouches] anyObject];
-//    CGPoint touchLocation = [touch locationInView:self];
-//    
-//    if (self.snapTextMode == SnapTextModeNormal)
-//    {
-//        if (CGRectContainsPoint(self.textField.frame, touchLocation))
-//        {
-//            self.textFieldIsBeingMoved = YES;
-//            return;
-//        }
-//    }
-//    else
-//    {
-//        if (CGRectContainsPoint(self.textView.frame, touchLocation))
-//        {
-//            self.textViewIsBeingMoved = YES;
-//            return;
-//        }
-//    }
-//    
-//    
-//    [super touchesBegan:touches withEvent:event];
-//
-//}
-//
-//- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-//{
-//    
-//    UITouch *touch = [[event allTouches] anyObject];
-//    CGPoint touchLocation = [touch locationInView:self];
-//    
-//    if (self.textFieldIsBeingMoved == YES && [self textCanMoveToPoint:touchLocation])
-//    {
-//        self.textField.center = CGPointMake(self.textField.center.x, touchLocation.y);
-//    }
-//    else if (self.textViewIsBeingMoved == YES && [self textCanMoveToPoint:touchLocation])
-//    {
-//        self.textView.center = CGPointMake(self.textView.center.x, touchLocation.y);
-//    }
-//    [super touchesMoved:touches withEvent:event];
-//
-//}
-//
-//- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-//{
-//    
-//    UITouch *touch = [[event allTouches] anyObject];
-//    CGPoint touchLocation = [touch locationInView:self];
-//    
-//    if (self.textFieldIsBeingMoved == YES)
-//    {
-//        self.textField.center = CGPointMake(self.textField.center.x, touchLocation.y);
-//        self.textFieldPosition = self.textField.center;
-//    }
-//    else if (self.textViewIsBeingMoved == YES)
-//    {
-//        self.textView.center = CGPointMake(self.textView.center.x, touchLocation.y);
-//        self.textViewPosition = self.textView.center;
-//    }
-//    
-//    [super touchesMoved:touches withEvent:event];
-//
-//    
-//}
+#pragma mark - Helpers
 
 - (BOOL)textCanMoveToPoint:(CGPoint )location
 {
