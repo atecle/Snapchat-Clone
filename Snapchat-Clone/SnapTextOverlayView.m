@@ -470,7 +470,6 @@ static NSInteger CharacterLimit = 25;
         self.textFieldBottomConstraint.constant = keyboardFrame.size.height;
         [self layoutIfNeeded];
     } completion:^(BOOL finished) {
-        NSLog(@"%@", self);
     }];
 }
 
@@ -482,7 +481,6 @@ static NSInteger CharacterLimit = 25;
         self.textViewBottomConstraint.constant = keyboardFrame.size.height;
         [self.superview layoutIfNeeded];
     } completion:^(BOOL finished) {
-        NSLog(@"%@", self);
     }];
 }
 
