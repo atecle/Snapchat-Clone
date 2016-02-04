@@ -77,6 +77,9 @@ static NSInteger CharacterLimit = 25;
         
         [self addConstraintsToSuperView];
         
+        [self configureBlurView];
+        [self addConstraintsToBlurView];
+        
         [self configureTapGesture];
         [self configurePinchGesture];
         
@@ -86,6 +89,7 @@ static NSInteger CharacterLimit = 25;
         
         [self configureTextView];
         [self addConstraintsToTextView];
+    
     }
     
     return self;
@@ -197,28 +201,6 @@ static NSInteger CharacterLimit = 25;
     
 }
 
-- (void)configureTextField
-{
-    self.textField = [[SnapTextField alloc] init];
-    self.textField.textStyle = SnapTextViewStyleDark;
-    self.textView.returnKeyType = UIReturnKeyDone;
-    
-    self.textFieldPanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(dragTextField:)];
-    [self.textField addGestureRecognizer:self.textFieldPanGesture];
-    self.textFieldPanGesture.enabled = NO;
-    
-    [self.textField setBackgroundColor:[UIColor  colorWithRed:0 green:0 blue:0 alpha:0.5]];
-    [self.textField setTextColor:[UIColor whiteColor]];
-    
-    self.textField.hidden = YES;
-    self.textField.delegate = self;
-}
-
-- (void)observeTextField
-{
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidChange:) name:UITextFieldTextDidChangeNotification object:self.textField];
-}
-
 - (void)addConstraintsToTextView
 {
     self.textView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -241,6 +223,49 @@ static NSInteger CharacterLimit = 25;
     [self addConstraints:@[widthConstraint, heightConstraint, centerXConstraint, bottomConstraint]];
 }
 
+- (void)addConstraintsToBlurView
+{
+    self.blurView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:self.blurView];
+    
+    
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.blurView attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
+    
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.blurView attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
+    
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.blurView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.blurView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.blurView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.blurView attribute:NSLayoutAttributeRight multiplier:1 constant:0];
+    
+    [self.superview addConstraints:@[widthConstraint, heightConstraint, leftConstraint, rightConstraint, bottomConstraint, topConstraint]];
+}
+
+- (void)configureTextField
+{
+    self.textField = [[SnapTextField alloc] init];
+    self.textField.textStyle = SnapTextViewStyleDark;
+    self.textView.returnKeyType = UIReturnKeyDone;
+    
+    self.textFieldPanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(dragTextField:)];
+    [self.textField addGestureRecognizer:self.textFieldPanGesture];
+    self.textFieldPanGesture.enabled = NO;
+    
+    [self.textField setBackgroundColor:[UIColor  colorWithRed:0 green:0 blue:0 alpha:0.5]];
+    [self.textField setTextColor:[UIColor whiteColor]];
+    
+    self.textField.hidden = YES;
+    self.textField.delegate = self;
+}
+
+- (void)observeTextField
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidChange:) name:UITextFieldTextDidChangeNotification object:self.textField];
+}
+
 - (void)configureTextView
 {
     self.textView = [[SnapTextView alloc] init];
@@ -252,6 +277,12 @@ static NSInteger CharacterLimit = 25;
     self.textView.hidden = YES;
     self.textView.delegate = self;
     [self.textView addObserver:self forKeyPath:@"contentSize" options: (NSKeyValueObservingOptionNew) context:nil];
+}
+
+- (void)configureBlurView
+{
+    self.blurView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
+    self.blurView.hidden = YES;
 }
 
 - (void)configureTapGesture
@@ -389,6 +420,7 @@ static NSInteger CharacterLimit = 25;
             if ([self.textView isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
             {
                 [self.textField becomeFirstResponder];
+                self.blurView.hidden = YES;
             }
             
             if (self.textViewBottomConstraintConstant != self.textFieldBottomConstraintConstant)
@@ -417,6 +449,7 @@ static NSInteger CharacterLimit = 25;
             if ([self.textField isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
             {
                 [self.textView becomeFirstResponder];
+                self.blurView.hidden = NO;
             }
             
             if (self.textViewBottomConstraintConstant != self.textFieldBottomConstraintConstant)
@@ -579,6 +612,7 @@ static NSInteger CharacterLimit = 25;
         self.textViewBottomConstraintConstant = 0;
         self.textViewBottomConstraint.constant = self.textViewBottomConstraintConstant;
         self.textFieldBottomConstraint.constant = self.textFieldBottomConstraintConstant;
+        self.blurView.hidden = YES;
         return;
     }
     
@@ -594,6 +628,7 @@ static NSInteger CharacterLimit = 25;
     {
         self.textViewPanGesture.enabled = YES;
         [self moveTextViewIntoPositionAnimated:YES];
+        self.blurView.hidden = YES;
     }
 }
 
