@@ -32,8 +32,6 @@ static NSInteger CharacterLimit = 25;
 @property (strong, nonatomic) NSString *snapText;
 
 @property (strong, nonatomic) UIVisualEffectView *blurView;
-@property (strong, nonatomic) UITapGestureRecognizer *tapGesture;
-@property (strong, nonatomic) UIPinchGestureRecognizer *pinchGesture;
 
 @property (strong, nonatomic) SnapTextField *textField;
 @property (strong, nonatomic) SnapTextView *textView;
@@ -41,16 +39,17 @@ static NSInteger CharacterLimit = 25;
 @property (strong, nonatomic) UIPanGestureRecognizer *textFieldPanGesture;
 @property (strong, nonatomic) UIPanGestureRecognizer *textViewPanGesture;
 
+@property (strong, nonatomic) UIPinchGestureRecognizer *pinchGesture;
+@property (strong, nonatomic) UITapGestureRecognizer *tapGesture;
+
 @property (strong, nonatomic) NSLayoutConstraint *textFieldHeightConstraint;
-@property (strong, nonatomic) NSLayoutConstraint *textFieldCenterYConstraint;
 @property (strong, nonatomic) NSLayoutConstraint *textFieldBottomConstraint;
 
 @property (strong, nonatomic) NSLayoutConstraint *textViewHeightConstraint;
 @property (strong, nonatomic) NSLayoutConstraint *textViewBottomConstraint;
-@property (strong, nonatomic) NSLayoutConstraint *textViewCenterYConstraint;
 
-@property (nonatomic) CGPoint textFieldPosition;
-@property (nonatomic) CGPoint textViewPosition;
+@property (nonatomic) CGFloat textFieldBottomConstraintConstant;
+@property (nonatomic) CGFloat textViewBottomConstraintConstant;
 
 @property (nonatomic, readonly) SnapTextMode snapTextMode;
 @property (nonatomic, readonly) SnapTextMode previousSnapTextMode;
@@ -79,6 +78,7 @@ static NSInteger CharacterLimit = 25;
         [self addConstraintsToSuperView];
         
         [self configureTapGesture];
+        [self configurePinchGesture];
         
         [self configureTextField];
         [self observeTextField];
@@ -86,21 +86,9 @@ static NSInteger CharacterLimit = 25;
         
         [self configureTextView];
         [self addConstraintsToTextView];
-
     }
     
     return self;
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    
-    if (CGPointEqualToPoint(self.textFieldPosition, CGPointZero))
-    {
-        self.textFieldPosition = CGPointMake(CGRectGetMidX(self.superview.frame), CGRectGetMidY(self.superview.frame));
-        self.textViewPosition = CGPointMake(CGRectGetMidX(self.superview.frame), CGRectGetMidY(self.superview.frame));
-    }
 }
 
 #pragma mark - Instance Methods
@@ -112,29 +100,29 @@ static NSInteger CharacterLimit = 25;
         {
             if (self.previousSnapTextMode == SnapTextModeHidden)
             {
-                [self setSnapTextStyle:SnapTextModeNormal];
-
+                [self setSnapTextMode:SnapTextModeNormal];
+                
             }
             else
             {
-                [self setSnapTextStyle:self.previousSnapTextMode];
+                [self setSnapTextMode:self.previousSnapTextMode];
             }
             
             break;
         }
         case SnapTextModeNormal:
         {
-            [self setSnapTextStyle:SnapTextModeLight];
+            [self setSnapTextMode:SnapTextModeLight];
             break;
         }
         case SnapTextModeLight:
         {
-            [self setSnapTextStyle:SnapTextModeLightCentered];
+            [self setSnapTextMode:SnapTextModeLightCentered];
             break;
         }
         case SnapTextModeLightCentered:
         {
-            [self setSnapTextStyle:SnapTextModeNormal];
+            [self setSnapTextMode:SnapTextModeNormal];
             break;
         }
     }
@@ -143,17 +131,20 @@ static NSInteger CharacterLimit = 25;
 
 - (void)hide
 {
-    [self setSnapTextStyle:SnapTextModeHidden];
+    [self setSnapTextMode:SnapTextModeHidden];
     _previousSnapTextMode = SnapTextModeHidden;
-
+    
     self.snapText = @"";
     self.textField.text = @"";
     self.textView.text = @"";
     
     self.tapGesture.enabled = NO;
     
-    self.textFieldPosition = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
-    self.textViewPosition = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+    self.textFieldBottomConstraintConstant = 0;
+    self.textViewBottomConstraintConstant = 0;
+    
+    self.textFieldBottomConstraint.constant = self.textFieldBottomConstraintConstant;
+    self.textViewBottomConstraint.constant = self.textViewBottomConstraintConstant;
     
     [self layoutIfNeeded];
 }
@@ -195,15 +186,15 @@ static NSInteger CharacterLimit = 25;
     
     NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
     
-    NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
     
-    self.textFieldCenterYConstraint = centerYConstraint;
     
     self.textFieldHeightConstraint = heightConstraint;
+    self.textFieldBottomConstraint = bottomConstraint;
+    self.textFieldBottomConstraintConstant = 0;
     
-    self.textFieldPosition = CGPointZero;
+    [self addConstraints:@[widthConstraint, heightConstraint, centerXConstraint, bottomConstraint]];
     
-    [self addConstraints:@[widthConstraint, heightConstraint, centerXConstraint, centerYConstraint]];
 }
 
 - (void)configureTextField
@@ -214,6 +205,7 @@ static NSInteger CharacterLimit = 25;
     
     self.textFieldPanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(dragTextField:)];
     [self.textField addGestureRecognizer:self.textFieldPanGesture];
+    self.textFieldPanGesture.enabled = NO;
     
     [self.textField setBackgroundColor:[UIColor  colorWithRed:0 green:0 blue:0 alpha:0.5]];
     [self.textField setTextColor:[UIColor whiteColor]];
@@ -240,16 +232,17 @@ static NSInteger CharacterLimit = 25;
     
     NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.textView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
     
-    NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.textView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.textView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
     
     self.textViewHeightConstraint = heightConstraint;
-    self.textViewCenterYConstraint = centerYConstraint;
+    self.textViewBottomConstraint = bottomConstraint;
+    self.textViewBottomConstraintConstant = 0;
     
-    [self addConstraints:@[widthConstraint, heightConstraint, centerXConstraint, centerYConstraint]];
+    [self addConstraints:@[widthConstraint, heightConstraint, centerXConstraint, bottomConstraint]];
 }
 
 - (void)configureTextView
-{    
+{
     self.textView = [[SnapTextView alloc] init];
     self.textView.returnKeyType = UIReturnKeyDone;
     
@@ -288,11 +281,11 @@ static NSInteger CharacterLimit = 25;
     {
         if (self.previousSnapTextMode == SnapTextModeHidden)
         {
-            [self setSnapTextStyle:SnapTextModeNormal];
+            [self setSnapTextMode:SnapTextModeNormal];
         }
         else
         {
-            [self setSnapTextStyle:self.previousSnapTextMode];
+            [self setSnapTextMode:self.previousSnapTextMode];
         }
         return;
     }
@@ -308,14 +301,14 @@ static NSInteger CharacterLimit = 25;
 
 - (void)handlePinch:(UIPinchGestureRecognizer *)gesture
 {
-    if ([self.textField isFirstResponder]) return;
+    if ([self.textField isFirstResponder] || [self.textView isFirstResponder] || self.snapTextMode == SnapTextModeHidden || self.snapTextMode == SnapTextModeNormal) return;
     
     switch (gesture.state)
     {
         case UIGestureRecognizerStateBegan:
             break;
         case UIGestureRecognizerStateChanged:
-            [self changeSizeOfTextField:self.textField withGesture:gesture];
+            [self changeSizeOfTextView:self.textView withGesture:gesture];
             break;
         case UIGestureRecognizerStateEnded:
             break;
@@ -332,8 +325,10 @@ static NSInteger CharacterLimit = 25;
     
     if ([self textCanMoveToPoint:location] == NO) return;
     
-    self.textField.center = CGPointMake(self.textField.center.x, location.y);
-    self.textFieldPosition = self.textField.center;
+    CGFloat bottomConstant = CGRectGetHeight(self.frame) - location.y;
+    self.textFieldBottomConstraint.constant = bottomConstant;
+    self.textFieldBottomConstraintConstant = self.textFieldBottomConstraint.constant;
+    [self layoutIfNeeded];
 }
 
 - (void)dragTextView:(UIPanGestureRecognizer *)gesture
@@ -342,18 +337,21 @@ static NSInteger CharacterLimit = 25;
     
     if ([self textCanMoveToPoint:location] == NO) return;
     
-    self.textView.center = CGPointMake(self.textView.center.x, location.y);
-    self.textViewPosition = self.textView.center;
+    CGFloat bottomConstant = CGRectGetHeight(self.frame) - location.y;
+    self.textViewBottomConstraint.constant = bottomConstant;
+    self.textViewBottomConstraintConstant = self.textViewBottomConstraint.constant;
+    [self layoutIfNeeded];
+    
 }
 
-- (void)changeSizeOfTextField:(UITextField *)textField withGesture:(UIPinchGestureRecognizer *)gesture
+- (void)changeSizeOfTextView:(UITextView *)textView withGesture:(UIPinchGestureRecognizer *)gesture
 {
-    textField.contentScaleFactor = gesture.scale;
+    textView.transform = CGAffineTransformMakeScale(gesture.scale, gesture.scale);
 }
 
 #pragma mark - UI
 
-- (void)setSnapTextStyle:(SnapTextMode)snapTextMode
+- (void)setSnapTextMode:(SnapTextMode)snapTextMode
 {
     SnapTextMode oldSnapTextMode = self.snapTextMode;
     
@@ -384,14 +382,20 @@ static NSInteger CharacterLimit = 25;
             _previousSnapTextMode = _snapTextMode;
             _snapTextMode = snapTextMode;
             
-            self.textField.center = self.textView.center;
-            self.textFieldPosition = self.textViewPosition;
+           // self.textField.center = self.textView.center;
             
             self.textField.enabled = YES;
             
             if ([self.textView isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
             {
                 [self.textField becomeFirstResponder];
+            }
+            
+            if (self.textViewBottomConstraintConstant != self.textFieldBottomConstraintConstant)
+            {
+                self.textFieldBottomConstraintConstant = self.textViewBottomConstraintConstant;
+                self.textFieldBottomConstraint.constant = self.textFieldBottomConstraintConstant;
+                [self layoutIfNeeded];
             }
             
             self.textField.hidden = NO;
@@ -408,14 +412,18 @@ static NSInteger CharacterLimit = 25;
             _previousSnapTextMode = _snapTextMode;
             _snapTextMode = snapTextMode;
             
-            self.textView.center = self.textField.center;
-            self.textViewPosition = self.textFieldPosition;
-            
             self.textView.editable = YES;
             
             if ([self.textField isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
             {
                 [self.textView becomeFirstResponder];
+            }
+            
+            if (self.textViewBottomConstraintConstant != self.textFieldBottomConstraintConstant)
+            {
+                self.textViewBottomConstraintConstant = self.textFieldBottomConstraintConstant;
+                self.textViewBottomConstraint.constant = self.textViewBottomConstraintConstant;
+                [self layoutIfNeeded];
             }
             
             self.textField.hidden = YES;
@@ -456,47 +464,39 @@ static NSInteger CharacterLimit = 25;
 
 - (void)animateTextFieldAboveKeyboard:(CGRect)keyboardFrame
 {
-    if (self.textFieldBottomConstraint == nil)
-    {
-        self.textFieldBottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.textField attribute:NSLayoutAttributeBottom multiplier:1 constant:keyboardFrame.size.height];
-    }
-    
     __weak typeof(self) weakSelf = self;
-    [self removeConstraint:self.textFieldCenterYConstraint];
     [UIView animateWithDuration:.3 animations:^{
         __strong typeof(self) self = weakSelf;
-        [self addConstraint:self.textFieldBottomConstraint];
+        self.textFieldBottomConstraint.constant = keyboardFrame.size.height;
         [self layoutIfNeeded];
+    } completion:^(BOOL finished) {
+        NSLog(@"%@", self);
     }];
 }
 
 - (void)animateTextViewAboveKeyboard:(CGRect)keyboardFrame
 {
-    if (self.textViewBottomConstraint == nil)
-    {
-        self.textViewBottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.textView attribute:NSLayoutAttributeBottom multiplier:1 constant:keyboardFrame.size.height];
-    }
     __weak typeof(self) weakSelf = self;
-    [self removeConstraint:self.textViewCenterYConstraint];
     [UIView animateWithDuration:.3 animations:^{
         __strong typeof(self) self = weakSelf;
-        [self addConstraint:self.textViewBottomConstraint];
+        self.textViewBottomConstraint.constant = keyboardFrame.size.height;
         [self.superview layoutIfNeeded];
+    } completion:^(BOOL finished) {
+        NSLog(@"%@", self);
     }];
 }
 
 - (void)moveTextFieldIntoPositionAnimated:(BOOL)animated
 {
-    [self removeConstraint:self.textFieldBottomConstraint];
-    
-    __block CGFloat centerYConstant = CGRectGetMidY(self.frame) - self.textFieldPosition.y;
-    
+    if (self.textFieldBottomConstraintConstant == 0)
+    {
+        self.textFieldBottomConstraintConstant = CGRectGetMidY(self.frame);
+    }
     __weak typeof(self) weakSelf = self;
     void (^work)() = ^{
         __strong typeof(self) self = weakSelf;
-        self.textFieldCenterYConstraint.constant = centerYConstant;
-        [self addConstraint:self.textFieldCenterYConstraint];
-        [self.superview layoutIfNeeded];
+        self.textFieldBottomConstraint.constant = self.textFieldBottomConstraintConstant;
+        [self layoutIfNeeded];
     };
     
     if (animated == YES)
@@ -513,15 +513,15 @@ static NSInteger CharacterLimit = 25;
 
 - (void)moveTextViewIntoPositionAnimated:(BOOL)animated
 {
-    [self removeConstraint:self.textViewBottomConstraint];
-    
-    __block CGFloat centerYConstant = CGRectGetMidY(self.frame) - self.textViewPosition.y;
+    if (self.textViewBottomConstraintConstant == 0)
+    {
+        self.textViewBottomConstraintConstant = CGRectGetMidY(self.frame);
+    }
     
     __weak typeof(self) weakSelf = self;
     void (^work)() = ^{
         __strong typeof(self) self = weakSelf;
-        self.textViewCenterYConstraint.constant = centerYConstant;
-        [self addConstraint:self.textViewCenterYConstraint];
+        self.textViewBottomConstraint.constant = self.textViewBottomConstraintConstant;
         [self.superview layoutIfNeeded];
     };
     
@@ -559,10 +559,12 @@ static NSInteger CharacterLimit = 25;
     if (self.snapTextMode == SnapTextModeNormal)
     {
         self.textField.textAlignment = NSTextAlignmentLeft;
+        self.textFieldPanGesture.enabled = NO;
         [self animateTextFieldAboveKeyboard:keyboardFrame];
     }
     else
     {
+        self.textViewPanGesture.enabled = NO;
         [self animateTextViewAboveKeyboard:keyboardFrame];
     }
 }
@@ -572,7 +574,13 @@ static NSInteger CharacterLimit = 25;
     if ([self.snapText length] == 0)
     {
         self.tapGesture.enabled = YES;
-        [self setSnapTextStyle:SnapTextModeHidden];
+        self.textViewPanGesture.enabled = NO;
+        self.textFieldPanGesture.enabled = NO;
+        [self setSnapTextMode:SnapTextModeHidden];
+        self.textFieldBottomConstraintConstant = 0;
+        self.textViewBottomConstraintConstant = 0;
+        self.textViewBottomConstraint.constant = self.textViewBottomConstraintConstant;
+        self.textFieldBottomConstraint.constant = self.textFieldBottomConstraintConstant;
         return;
     }
     
@@ -581,10 +589,12 @@ static NSInteger CharacterLimit = 25;
     if (self.snapTextMode == SnapTextModeNormal)
     {
         self.textField.textAlignment = NSTextAlignmentCenter;
+        self.textFieldPanGesture.enabled = YES;
         [self moveTextFieldIntoPositionAnimated:YES];
     }
     else
     {
+        self.textViewPanGesture.enabled = YES;
         [self moveTextViewIntoPositionAnimated:YES];
     }
 }
@@ -615,7 +625,7 @@ static NSInteger CharacterLimit = 25;
 {
     if ([textField.text length] == 0)
     {
-        [self setSnapTextStyle:SnapTextModeHidden];
+        [self setSnapTextMode:SnapTextModeHidden];
         self.tapGesture.enabled = YES;
         return;
     }
@@ -631,7 +641,7 @@ static NSInteger CharacterLimit = 25;
         [textView resignFirstResponder];
         return NO;
     }
-
+    
     return [text length] + [textView.text length] <= CharacterLimit;
 }
 
@@ -644,7 +654,7 @@ static NSInteger CharacterLimit = 25;
 {
     if ([textView.text length] == 0)
     {
-        [self setSnapTextStyle:SnapTextModeHidden];
+        [self setSnapTextMode:SnapTextModeHidden];
         self.tapGesture.enabled = YES;
         return;
     }
@@ -657,6 +667,11 @@ static NSInteger CharacterLimit = 25;
 - (BOOL)textCanMoveToPoint:(CGPoint )location
 {
     return (location.y > CGRectGetHeight(self.frame) * 0.2 && location.y < CGRectGetHeight(self.frame) * 0.8);
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    
 }
 
 @end

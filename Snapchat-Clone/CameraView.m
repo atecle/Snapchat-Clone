@@ -244,8 +244,8 @@ static NSInteger CancelButtonWidth = 30;
     self.textStyleButton.translatesAutoresizingMaskIntoConstraints = NO;
     self.textStyleButton.hidden = YES;
     [self.textStyleButton setImage:[UIImage imageNamed:@"text-icon-white"] forState:UIControlStateNormal];
-    [self.textStyleButton addTarget:self action:@selector(textStyleButtonPressed) forControlEvents:UIControlEventTouchDown];
-    [self.textStyleButton addTarget:self action:@selector(textStyleButtonReleased) forControlEvents:UIControlEventTouchUpInside];
+    [self.textStyleButton addTarget:self action:@selector(textStyleButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    
     
     [self addSubview:self.textStyleButton];
     
@@ -264,7 +264,7 @@ static NSInteger CancelButtonWidth = 30;
     flipCameraButton.translatesAutoresizingMaskIntoConstraints = NO;
     flipCameraButton.adjustsImageWhenHighlighted = NO;
     [flipCameraButton addTarget:self action:@selector(flipCameraButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-    [flipCameraButton layoutIfNeeded];
+    flipCameraButton.contentEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     
     [self addSubview:flipCameraButton];
     
@@ -276,7 +276,7 @@ static NSInteger CancelButtonWidth = 30;
     self.flipCameraButton = flipCameraButton;
     self.flipCameraButton.hidden = NO;
     
-    [self addConstraints:@[rightConstraint, topConstraint, heightConstraint, widthConstraint]];
+    [self addConstraints:@[rightConstraint, topConstraint]];
 }
 
 - (void)configureSendSnapButton
@@ -416,19 +416,7 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)textStyleButtonPressed
 {
-    [UIView animateWithDuration:.1 animations:^{
-        self.textStyleButton.transform = CGAffineTransformMakeScale(1.3, 1.3);
-    }];
-    
     [self.snapTextOverlayView textStyleButtonPressed];
-}
-
-- (void)textStyleButtonReleased
-{
-    [UIView animateWithDuration:.1 animations:^{
-        self.textStyleButton.transform = CGAffineTransformMakeScale(1, 1);
-    }];
-    
 }
 
 #pragma mark - Instance Methods

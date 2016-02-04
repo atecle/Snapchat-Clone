@@ -20,9 +20,4 @@
     return CGRectInset(bounds, 10, 0);
 }
 
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    [self.superview touchesBegan:touches withEvent:event];
-}
-
 @end

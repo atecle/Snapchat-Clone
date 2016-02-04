@@ -2,15 +2,16 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "flip-camera-icon-white.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "flip-camera-icon-white-1@2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
+      "filename" : "flip-camera-icon-white@3x.png",
       "scale" : "3x"
     }
   ],
