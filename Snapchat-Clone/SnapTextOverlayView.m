@@ -384,6 +384,9 @@ static NSInteger CharacterLimit = 25;
             _previousSnapTextMode = _snapTextMode;
             _snapTextMode = snapTextMode;
             
+            self.textField.center = self.textView.center;
+            self.textFieldPosition = self.textViewPosition;
+            
             self.textField.enabled = YES;
             
             if ([self.textView isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
@@ -404,6 +407,9 @@ static NSInteger CharacterLimit = 25;
         {
             _previousSnapTextMode = _snapTextMode;
             _snapTextMode = snapTextMode;
+            
+            self.textView.center = self.textField.center;
+            self.textViewPosition = self.textFieldPosition;
             
             self.textView.editable = YES;
             

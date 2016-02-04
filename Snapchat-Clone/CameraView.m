@@ -244,12 +244,13 @@ static NSInteger CancelButtonWidth = 30;
     self.textStyleButton.translatesAutoresizingMaskIntoConstraints = NO;
     self.textStyleButton.hidden = YES;
     [self.textStyleButton setImage:[UIImage imageNamed:@"text-icon-white"] forState:UIControlStateNormal];
-    [self.textStyleButton addTarget:self action:@selector(textStyleButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    [self.textStyleButton addTarget:self action:@selector(textStyleButtonPressed) forControlEvents:UIControlEventTouchDown];
+    [self.textStyleButton addTarget:self action:@selector(textStyleButtonReleased) forControlEvents:UIControlEventTouchUpInside];
     
     [self addSubview:self.textStyleButton];
     
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.textStyleButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:ButtonMargin];
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self.textStyleButton attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.flipCameraButton attribute:NSLayoutAttributeLeft multiplier:1 constant:-ButtonMargin];
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.textStyleButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:15];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRightMargin relatedBy:NSLayoutRelationEqual toItem:self.textStyleButton attribute:NSLayoutAttributeRight multiplier:1 constant:10];
     NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.textStyleButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:TextStyleButtonHeight];
     NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self.textStyleButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:TextStyleButtonHeight];
     
@@ -287,8 +288,8 @@ static NSInteger CancelButtonWidth = 30;
     
     [self addSubview:sendSnapButton];
     
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:sendSnapButton attribute:NSLayoutAttributeRight multiplier:1 constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:sendSnapButton attribute:NSLayoutAttributeBottom multiplier:1 constant:ButtonMargin];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:sendSnapButton attribute:NSLayoutAttributeRight multiplier:1 constant:-10];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:sendSnapButton attribute:NSLayoutAttributeBottom multiplier:1 constant:10];
     NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:sendSnapButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonHeight];
     NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:sendSnapButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:CameraButtonHeight];
     
@@ -415,7 +416,19 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)textStyleButtonPressed
 {
+    [UIView animateWithDuration:.1 animations:^{
+        self.textStyleButton.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    }];
+    
     [self.snapTextOverlayView textStyleButtonPressed];
+}
+
+- (void)textStyleButtonReleased
+{
+    [UIView animateWithDuration:.1 animations:^{
+        self.textStyleButton.transform = CGAffineTransformMakeScale(1, 1);
+    }];
+    
 }
 
 #pragma mark - Instance Methods
