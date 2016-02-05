@@ -64,7 +64,7 @@ static NSInteger CharacterLimit = 25;
         [self setBackgroundColor:[UIColor clearColor]];
         
         [self observeKeyboard];
-                
+        
         [self configureBlurView];
         [self addConstraintsToBlurView];
         
@@ -77,7 +77,7 @@ static NSInteger CharacterLimit = 25;
         
         [self configureTextView];
         [self addConstraintsToTextView];
-    
+        
     }
     
     return self;
@@ -375,6 +375,7 @@ static NSInteger CharacterLimit = 25;
             self.textField.enabled = NO;
             self.textView.editable = NO;
             
+            [self hideBlurViewAnimated:YES];
             break;
         }
         case SnapTextModeNormal:
@@ -382,14 +383,12 @@ static NSInteger CharacterLimit = 25;
             _previousSnapTextMode = _snapTextMode;
             _snapTextMode = snapTextMode;
             
-           // self.textField.center = self.textView.center;
-            
             self.textField.enabled = YES;
             
             if ([self.textView isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
             {
                 [self.textField becomeFirstResponder];
-                self.blurView.hidden = YES;
+                [self hideBlurViewAnimated:YES];
             }
             
             if (self.textViewBottomConstraintConstant != self.textFieldBottomConstraintConstant)
@@ -418,7 +417,7 @@ static NSInteger CharacterLimit = 25;
             if ([self.textField isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
             {
                 [self.textView becomeFirstResponder];
-                self.blurView.hidden = NO;
+                [self showBlurViewAnimated:YES];
             }
             
             if (self.textViewBottomConstraintConstant != self.textFieldBottomConstraintConstant)
@@ -564,6 +563,7 @@ static NSInteger CharacterLimit = 25;
     }
     else
     {
+        [self showBlurViewAnimated:YES];
         self.textViewPanGesture.enabled = NO;
         [self animateTextViewAboveKeyboard:keyboardFrame];
     }
@@ -576,12 +576,17 @@ static NSInteger CharacterLimit = 25;
         self.tapGesture.enabled = YES;
         self.textViewPanGesture.enabled = NO;
         self.textFieldPanGesture.enabled = NO;
+        
         [self setSnapTextMode:SnapTextModeHidden];
+        
         self.textFieldBottomConstraintConstant = 0;
         self.textViewBottomConstraintConstant = 0;
+        
         self.textViewBottomConstraint.constant = self.textViewBottomConstraintConstant;
         self.textFieldBottomConstraint.constant = self.textFieldBottomConstraintConstant;
-        self.blurView.hidden = YES;
+        
+        [self hideBlurViewAnimated:YES];
+        
         return;
     }
     
@@ -597,7 +602,7 @@ static NSInteger CharacterLimit = 25;
     {
         self.textViewPanGesture.enabled = YES;
         [self moveTextViewIntoPositionAnimated:YES];
-        self.blurView.hidden = YES;
+        [self hideBlurViewAnimated:YES];
     }
 }
 
@@ -671,9 +676,48 @@ static NSInteger CharacterLimit = 25;
     return (location.y > CGRectGetHeight(self.frame) * 0.2 && location.y < CGRectGetHeight(self.frame) * 0.8);
 }
 
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+- (void)showBlurViewAnimated:(BOOL)animated
+{
+    self.blurView.alpha = 0;
+    self.blurView.hidden = NO;
+    
+    void (^work)() = ^{
+        self.blurView.alpha = 1;
+    };
+    
+    if (animated == YES)
+    {
+        [UIView animateWithDuration:.1 animations:^{
+            work();
+        } completion:nil];
+    }
+    else
+    {
+        work();
+    }
+
+}
+
+- (void)hideBlurViewAnimated:(BOOL)animated
 {
     
+    void (^work)() = ^{
+        self.blurView.alpha = 0;
+    };
+    
+    if (animated == YES)
+    {
+        [UIView animateWithDuration:.2 animations:^{
+            work();
+        } completion:^(BOOL finished) {
+            self.blurView.hidden = YES;
+        }];
+    }
+    else
+    {
+        work();
+        self.blurView.hidden = YES;
+    }
 }
 
 @end
