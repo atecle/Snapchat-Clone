@@ -10,9 +10,6 @@
 
 @interface SnapTextOverlayView : UIView
 
-+ (instancetype)snapTextViewInView:(UIView *)superview;
-- (instancetype)initWithView:(UIView *)superview;
-
 - (void)show;
 - (void)hide;
 - (void)textStyleButtonPressed;

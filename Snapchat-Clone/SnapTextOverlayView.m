@@ -20,9 +20,8 @@ typedef NS_ENUM(NSInteger, SnapTextMode)
 };
 
 
-//BUGS
-//TextField registers input while hidden
-//tap gesture response delayed when pressing cancel and navigating back
+//TODO
+//Layout bug while changing text style during editing.
 
 static NSInteger CharacterLimit = 25;
 
@@ -58,25 +57,14 @@ static NSInteger CharacterLimit = 25;
 
 @implementation SnapTextOverlayView
 
-+ (instancetype)snapTextViewInView:(UIView *)superview
+- (instancetype)initWithFrame:(CGRect)frame
 {
-    SnapTextOverlayView *snapTextView = [[SnapTextOverlayView alloc] initWithView:superview];
-    
-    return snapTextView;
-}
-
-- (instancetype)initWithView:(UIView *)superview
-{
-    if ((self = [super initWithFrame:CGRectZero]))
+    if ((self = [super initWithFrame:frame]))
     {
-        [superview addSubview:self];
-        
         [self setBackgroundColor:[UIColor clearColor]];
         
         [self observeKeyboard];
-        
-        [self addConstraintsToSuperView];
-        
+                
         [self configureBlurView];
         [self addConstraintsToBlurView];
         
@@ -160,25 +148,6 @@ static NSInteger CharacterLimit = 25;
 
 #pragma mark - Set up
 
-- (void)addConstraintsToSuperView
-{
-    self.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
-    
-    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
-    
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0];
-    
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
-    
-    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
-    
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:0];
-    
-    [self.superview addConstraints:@[widthConstraint, heightConstraint, leftConstraint, rightConstraint, bottomConstraint, topConstraint]];
-}
-
 - (void)addConstraintsToTextField
 {
     self.textField.translatesAutoresizingMaskIntoConstraints = NO;
@@ -241,7 +210,7 @@ static NSInteger CharacterLimit = 25;
     
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.blurView attribute:NSLayoutAttributeRight multiplier:1 constant:0];
     
-    [self.superview addConstraints:@[widthConstraint, heightConstraint, leftConstraint, rightConstraint, bottomConstraint, topConstraint]];
+    [self addConstraints:@[widthConstraint, heightConstraint, leftConstraint, rightConstraint, bottomConstraint, topConstraint]];
 }
 
 - (void)configureTextField
@@ -512,7 +481,7 @@ static NSInteger CharacterLimit = 25;
     [UIView animateWithDuration:.3 animations:^{
         __strong typeof(self) self = weakSelf;
         self.textViewBottomConstraint.constant = keyboardFrame.size.height;
-        [self.superview layoutIfNeeded];
+        [self layoutIfNeeded];
     } completion:^(BOOL finished) {
     }];
 }
@@ -553,7 +522,7 @@ static NSInteger CharacterLimit = 25;
     void (^work)() = ^{
         __strong typeof(self) self = weakSelf;
         self.textViewBottomConstraint.constant = self.textViewBottomConstraintConstant;
-        [self.superview layoutIfNeeded];
+        [self layoutIfNeeded];
     };
     
     if (animated == YES)

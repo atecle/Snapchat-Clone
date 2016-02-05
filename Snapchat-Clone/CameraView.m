@@ -197,7 +197,23 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)configureSnapTextOverlayView
 {
-    self.snapTextOverlayView = [SnapTextOverlayView snapTextViewInView:self.snapContainerView];
+    self.snapTextOverlayView = [[SnapTextOverlayView alloc] init];
+    self.snapTextOverlayView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:self.snapTextOverlayView];
+  
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.snapTextOverlayView attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
+    
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.snapTextOverlayView attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
+    
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.snapTextOverlayView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.snapTextOverlayView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.snapTextOverlayView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.snapTextOverlayView attribute:NSLayoutAttributeRight multiplier:1 constant:0];
+    
+    [self addConstraints:@[widthConstraint, heightConstraint, leftConstraint, rightConstraint, bottomConstraint, topConstraint]];
 }
 
 - (void)configureImageView
