@@ -53,6 +53,7 @@ static NSInteger CharacterLimit = 25;
 @property (nonatomic, readonly) SnapTextMode snapTextMode;
 @property (nonatomic, readonly) SnapTextMode previousSnapTextMode;
 
+@property (nonatomic, readonly) BOOL keyboardShown;
 @end
 
 @implementation SnapTextOverlayView
@@ -385,12 +386,6 @@ static NSInteger CharacterLimit = 25;
             
             self.textField.enabled = YES;
             
-            if ([self.textView isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
-            {
-                [self.textField becomeFirstResponder];
-                [self hideBlurViewAnimated:YES];
-            }
-            
             if (self.textViewBottomConstraintConstant != self.textFieldBottomConstraintConstant)
             {
                 self.textFieldBottomConstraintConstant = self.textViewBottomConstraintConstant;
@@ -398,6 +393,12 @@ static NSInteger CharacterLimit = 25;
                 [self layoutIfNeeded];
             }
             
+            if ([self.textView isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
+            {
+                [self.textField becomeFirstResponder];
+                [self hideBlurViewAnimated:YES];
+            }
+        
             self.textField.hidden = NO;
             self.textView.hidden = YES;
             
@@ -414,17 +415,17 @@ static NSInteger CharacterLimit = 25;
             
             self.textView.editable = YES;
             
-            if ([self.textField isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
-            {
-                [self.textView becomeFirstResponder];
-                [self showBlurViewAnimated:YES];
-            }
-            
             if (self.textViewBottomConstraintConstant != self.textFieldBottomConstraintConstant)
             {
                 self.textViewBottomConstraintConstant = self.textFieldBottomConstraintConstant;
                 self.textViewBottomConstraint.constant = self.textViewBottomConstraintConstant;
                 [self layoutIfNeeded];
+            }
+            
+            if ([self.textField isFirstResponder] == YES || self.previousSnapTextMode == SnapTextModeHidden)
+            {
+                [self.textView becomeFirstResponder];
+                [self showBlurViewAnimated:YES];
             }
             
             self.textField.hidden = YES;
@@ -463,26 +464,50 @@ static NSInteger CharacterLimit = 25;
     [self layoutIfNeeded];
 }
 
-- (void)animateTextFieldAboveKeyboard:(CGRect)keyboardFrame
+- (void)moveTextFieldAboveKeyboard:(CGRect)keyboardFrame animated:(BOOL)animated
 {
     __weak typeof(self) weakSelf = self;
-    [UIView animateWithDuration:.3 animations:^{
+    void (^work)() = ^{
         __strong typeof(self) self = weakSelf;
         self.textFieldBottomConstraint.constant = keyboardFrame.size.height;
         [self layoutIfNeeded];
-    } completion:^(BOOL finished) {
-    }];
+    };
+    
+    if (animated == YES)
+    {
+        [UIView animateWithDuration:.3 animations:^{
+            work();
+        } completion:^(BOOL finished) {
+        }];
+    }
+    else
+    {
+        work();
+    }
+    
 }
 
-- (void)animateTextViewAboveKeyboard:(CGRect)keyboardFrame
+- (void)moveTextViewAboveKeyboard:(CGRect)keyboardFrame animated:(BOOL)animated
 {
     __weak typeof(self) weakSelf = self;
-    [UIView animateWithDuration:.3 animations:^{
+    void (^work)() = ^{
         __strong typeof(self) self = weakSelf;
         self.textViewBottomConstraint.constant = keyboardFrame.size.height;
         [self layoutIfNeeded];
-    } completion:^(BOOL finished) {
-    }];
+    };
+    
+    if (animated == YES)
+    {
+        [UIView animateWithDuration:.3 animations:^{
+            work();
+        } completion:^(BOOL finished) {
+        }];
+    }
+    else
+    {
+        work();
+    }
+  
 }
 
 - (void)moveTextFieldIntoPositionAnimated:(BOOL)animated
@@ -550,6 +575,8 @@ static NSInteger CharacterLimit = 25;
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
+    BOOL animated = (self.keyboardShown == NO);
+    
     self.tapGesture.enabled = YES;
     
     NSValue *keyboardFrameValue = [[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey];
@@ -559,18 +586,23 @@ static NSInteger CharacterLimit = 25;
     {
         self.textField.textAlignment = NSTextAlignmentLeft;
         self.textFieldPanGesture.enabled = NO;
-        [self animateTextFieldAboveKeyboard:keyboardFrame];
+        [self moveTextFieldAboveKeyboard:keyboardFrame animated:animated];
     }
     else
     {
         [self showBlurViewAnimated:YES];
         self.textViewPanGesture.enabled = NO;
-        [self animateTextViewAboveKeyboard:keyboardFrame];
+        [self moveTextViewAboveKeyboard:keyboardFrame animated:animated];
     }
+    
+    [self setKeyboardShown:YES];
+    
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
+    [self setKeyboardShown:NO];
+    
     if ([self.snapText length] == 0)
     {
         self.tapGesture.enabled = YES;
@@ -687,9 +719,10 @@ static NSInteger CharacterLimit = 25;
     
     if (animated == YES)
     {
-        [UIView animateWithDuration:.1 animations:^{
+        [UIView animateWithDuration:.1 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             work();
         } completion:nil];
+        
     }
     else
     {
@@ -707,7 +740,7 @@ static NSInteger CharacterLimit = 25;
     
     if (animated == YES)
     {
-        [UIView animateWithDuration:.2 animations:^{
+        [UIView animateWithDuration:.1 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             work();
         } completion:^(BOOL finished) {
             self.blurView.hidden = YES;
@@ -718,6 +751,11 @@ static NSInteger CharacterLimit = 25;
         work();
         self.blurView.hidden = YES;
     }
+}
+
+- (void)setKeyboardShown:(BOOL)keyboardShown
+{
+    _keyboardShown = keyboardShown;
 }
 
 @end
