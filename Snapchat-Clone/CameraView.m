@@ -44,6 +44,7 @@ static NSInteger CancelButtonWidth = 30;
 @property (strong, nonatomic) Button *sendSnapButton;
 @property (strong, nonatomic) Button *cancelButton;
 @property (strong, nonatomic) Button *inboxButton;
+@property (strong, nonatomic) Button *storiesButton;
 @property (strong, nonatomic) Button *pickImageButton;
 
 @property (nonatomic) BOOL cameraFlipped;
@@ -68,6 +69,7 @@ static NSInteger CancelButtonWidth = 30;
         [self configureTextStyleButton];
         [self configureSendSnapButton];
         [self configureInboxButton];
+        [self configureStoriesButton];
         [self configureCancelButton];
         
 #if TARGET_IPHONE_SIMULATOR
@@ -282,8 +284,8 @@ static NSInteger CancelButtonWidth = 30;
     
     [self addSubview:flipCameraButton];
     
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:flipCameraButton attribute:NSLayoutAttributeRight multiplier:1 constant:ButtonMargin];
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:flipCameraButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:10];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:flipCameraButton attribute:NSLayoutAttributeRight multiplier:1 constant:0];
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:flipCameraButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     
     self.flipCameraButton = flipCameraButton;
     self.flipCameraButton.hidden = NO;
@@ -300,7 +302,7 @@ static NSInteger CancelButtonWidth = 30;
     
     [self addSubview:sendSnapButton];
     
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:sendSnapButton attribute:NSLayoutAttributeRight multiplier:1 constant:-10];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:sendSnapButton attribute:NSLayoutAttributeRight multiplier:1 constant:-5];
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:sendSnapButton attribute:NSLayoutAttributeBottom multiplier:1 constant:10];
     
     [self addConstraint:rightConstraint];
@@ -322,7 +324,7 @@ static NSInteger CancelButtonWidth = 30;
     
     [self addSubview:inboxButton];
     
-    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:inboxButton attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:inboxButton attribute:NSLayoutAttributeLeft multiplier:1 constant:-10];
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:inboxButton attribute:NSLayoutAttributeBottom multiplier:1 constant:20];
     
     [self addConstraint:leftConstraint];
@@ -331,6 +333,24 @@ static NSInteger CancelButtonWidth = 30;
     [self addConstraints:@[leftConstraint, bottomConstraint]];
     
     self.inboxButton = inboxButton;
+}
+
+- (void)configureStoriesButton
+{
+    Button *storiesButton = [[Button alloc] init];
+    
+    [storiesButton setImage:[UIImage imageNamed:@"list-icon"] forState:UIControlStateNormal];
+    storiesButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [storiesButton addTarget:self action:@selector(storiesButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self addSubview:storiesButton];
+    
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:storiesButton attribute:NSLayoutAttributeRight multiplier:1 constant:10];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:storiesButton attribute:NSLayoutAttributeBottom multiplier:1 constant:20];
+    
+    [self addConstraints:@[rightConstraint, bottomConstraint]];
+    
+    self.storiesButton = storiesButton;
 }
 
 - (void)configureCancelButton
@@ -399,6 +419,11 @@ static NSInteger CancelButtonWidth = 30;
 }
 
 - (void)inboxButtonPressed
+{
+    
+}
+
+- (void)storiesButtonPressed
 {
     
 }
