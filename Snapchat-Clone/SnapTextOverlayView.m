@@ -50,10 +50,16 @@ static NSInteger CharacterLimit = 25;
 @property (nonatomic) CGFloat textFieldBottomConstraintConstant;
 @property (nonatomic) CGFloat textViewBottomConstraintConstant;
 
+@property (nonatomic) CGPoint pinchP1;
+@property (nonatomic) CGPoint pinchP2;
+@property (nonatomic) CGAffineTransform originalTextViewTransform;
+@property (nonatomic) CATransform3D originalTextViewLayerTransform;
+
 @property (nonatomic, readonly) SnapTextMode snapTextMode;
 @property (nonatomic, readonly) SnapTextMode previousSnapTextMode;
 
 @property (nonatomic, readonly) BOOL keyboardShown;
+//@property (nonatomic) CGFloat
 @end
 
 @implementation SnapTextOverlayView
@@ -240,6 +246,7 @@ static NSInteger CharacterLimit = 25;
 {
     self.textView = [[SnapTextView alloc] init];
     self.textView.returnKeyType = UIReturnKeyDone;
+    self.textView.backgroundColor = [UIColor blackColor];
     
     self.textViewPanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(dragTextView:)];
     [self.textView addGestureRecognizer:self.textViewPanGesture];
@@ -307,17 +314,67 @@ static NSInteger CharacterLimit = 25;
     switch (gesture.state)
     {
         case UIGestureRecognizerStateBegan:
+            [self pinchGestureBegan:gesture];
             break;
         case UIGestureRecognizerStateChanged:
-            [self changeSizeOfTextView:self.textView withGesture:gesture];
+            [self manipulateSizeAndRotationOfTextView:self.textView withPinchGesture:gesture];
             break;
         case UIGestureRecognizerStateEnded:
+            [self pinchGestureEnded:gesture];
             break;
         case UIGestureRecognizerStateCancelled:
+            [self pinchGestureCancelled:gesture];
             break;
         default:
             break;
     }
+}
+
+- (void)pinchGestureBegan:(UIPinchGestureRecognizer *)gesture
+{
+    if ([gesture numberOfTouches] != 2) return;
+    
+    self.originalTextViewTransform = self.textView.transform;
+    self.originalTextViewLayerTransform = self.textView.layer.transform;
+
+    self.pinchP1 = [gesture locationOfTouch:0 inView:self];
+    self.pinchP2 = [gesture locationOfTouch:1 inView:self];
+}
+
+- (void)manipulateSizeAndRotationOfTextView:(UITextView *)textView withPinchGesture:(UIPinchGestureRecognizer *)gesture
+{
+    if ([gesture numberOfTouches] != 2) return;
+  
+    double m1 = [self calculateSlopeForPoint:self.pinchP1 p2:self.pinchP2];
+    
+    CGPoint p1 = [gesture locationOfTouch:0 inView:self];
+    CGPoint p2 = [gesture locationOfTouch:1 inView:self];
+    
+    double m2 = [self calculateSlopeForPoint:p1 p2:p2];
+    
+    double angle = atan(((m1-m2)/(1+m1*m2)));
+    
+    if (isnan(angle)) return;
+    
+    NSLog(@"%f", angle);
+    
+    CATransform3D scaledTransform = CATransform3DScale(self.originalTextViewLayerTransform, gesture.scale, gesture.scale, 1);
+    CATransform3D rotatedTransform = CATransform3DRotate(scaledTransform, -angle, 0, 0, 1);
+    
+
+    
+    self.textView.layer.transform = rotatedTransform;
+
+}
+
+- (void)pinchGestureEnded:(UIPinchGestureRecognizer *)gesture
+{
+    NSLog(@"%@", self.textView);
+}
+
+- (void)pinchGestureCancelled:(UIPinchGestureRecognizer *)gesture
+{
+    
 }
 
 - (void)dragTextField:(UIPanGestureRecognizer *)gesture
@@ -345,10 +402,6 @@ static NSInteger CharacterLimit = 25;
     
 }
 
-- (void)changeSizeOfTextView:(UITextView *)textView withGesture:(UIPinchGestureRecognizer *)gesture
-{
-    textView.transform = CGAffineTransformMakeScale(gesture.scale, gesture.scale);
-}
 
 #pragma mark - UI
 
@@ -756,6 +809,17 @@ static NSInteger CharacterLimit = 25;
 - (void)setKeyboardShown:(BOOL)keyboardShown
 {
     _keyboardShown = keyboardShown;
+}
+
+- (double)calculateSlopeForPoint:(CGPoint)p1 p2:(CGPoint)p2
+{
+    CGFloat x1 = p1.x;
+    CGFloat x2 = p2.x;
+    
+    CGFloat y1 = p1.y;
+    CGFloat y2 = p2.y;
+    
+    return ((y2 - y1)/(x2 - x1));
 }
 
 @end

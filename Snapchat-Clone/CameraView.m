@@ -430,6 +430,7 @@ static NSInteger CancelButtonWidth = 30;
 
 - (void)cancelButtonPressed
 {
+    self.previewLayer.hidden = NO;
     self.hasImage = NO;
 }
 
